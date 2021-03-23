@@ -54,10 +54,7 @@ class Login extends Component {
       };
       console.log('INi adalah data yang dikirm ', data);
       axios
-        .post(
-          `http://192.168.0.103/hey-buddy/jzl/api/api/index`,
-          qs.stringify(data),
-        )
+        .post(`${API_URL}/jzl/api/api/index`, qs.stringify(data))
         .then((res) => {
           console.log(res);
           const msg = res.data.message;

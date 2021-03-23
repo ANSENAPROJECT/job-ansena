@@ -39,7 +39,7 @@ const Router = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen
+        <Stack.Screen
           name="splash"
           component={Splash}
           options={{
@@ -59,7 +59,7 @@ const Router = () => {
           options={{
             headerShown: false,
           }}
-        /> */}
+        />
         <Stack.Screen
           name="addjobgroup"
           component={AddJobGroup}

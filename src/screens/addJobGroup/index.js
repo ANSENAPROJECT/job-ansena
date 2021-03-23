@@ -29,6 +29,7 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import axios from 'axios';
 import Modal from 'react-native-modal';
+import {API_URL} from '@env';
 
 const windowHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -219,7 +220,7 @@ const AddJobGroup = ({navigation}) => {
 
   const getData = () => {
     axios
-      .get('https://job.ansena-sa.com/jzl/api/api/getListUser')
+      .get(`${API_URL}/job.ansena-sa.com/jzl/api/api/getListUser`)
       .then((res) => {
         // console.log(res.data);
         setDataCrew(res.data);
@@ -838,7 +839,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainColor,
     padding: 20,
     borderRadius: 20,
-    height: windowHeight,
+    height: windowHeight - 30,
     width: deviceWidth,
     shadowColor: '#000',
     shadowOffset: {

@@ -66,7 +66,7 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
 
   const getDataJob = () => {
     axios
-      .get(`http://192.168.0.103/hey-buddy/jzl/api/api/getListIndex/${idUser}`)
+      .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
         console.log('Result Data Job : ', res);
         setWaiting(res.data.waiting);

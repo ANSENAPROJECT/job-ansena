@@ -20,7 +20,7 @@ const CardJob = () => {
 
   const getData = () => {
     axios
-      .get(`http://192.168.0.103/hey-buddy/jzl/api/api/getListIndex/${idUser}`)
+      .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
         console.log(res);
         let i = '';
