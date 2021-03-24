@@ -11,18 +11,23 @@ import {
   BackHandler,
   Alert,
   Dimensions,
-  Pressable,
+  FlatList,
+  ToastAndroid,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {
   ArrowDown,
+  Check,
+  CheckActive,
   CoAdmin,
   Crew,
+  Hamberger,
   Leader,
   Plus1,
   RadioChecked,
   RadioUncheck,
   Search,
+  SortBtn,
   Subjob,
 } from '../../assets';
 import {colors} from '../../utils/colors';
@@ -30,6 +35,7 @@ import {fonts} from '../../utils/fonts';
 import axios from 'axios';
 import Modal from 'react-native-modal';
 import {API_URL} from '@env';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const windowHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -38,14 +44,20 @@ const time = Date(new Date()).split(' ');
 const hour = time[4].split(':').slice(0, -1).join(':');
 const timeNow = time[2] + ' ' + time[1] + ' ' + hour;
 
-const data = [
-  {idUser: 1, name: 'Fachri', pt: 'ansena'},
-  {idUser: 2, name: 'Joko', pt: 'ansena'},
-  {idUser: 3, name: 'Tingkir', pt: 'ansena'},
-  {idUser: 4, name: 'Alex', pt: 'ansena'},
-  {idUser: 5, name: 'Tini', pt: 'ansena'},
-  {idUser: 6, name: 'Eko', pt: 'ansena'},
-];
+const datetime = new Date();
+const getYear = datetime.getFullYear();
+const getMonth = datetime.getMonth() + 1;
+const getDate = datetime.getDate();
+
+// const addZero = (data) => {
+//   if (data < 10) {
+//     console.log(`0${data}`);
+//   } else if (data > 9) {
+//     console.log(data);
+//   }
+// // };
+
+// console.log(addZero(getMonth));
 
 const AddJobGroup = ({navigation}) => {
   // handleBack
@@ -70,11 +82,15 @@ const AddJobGroup = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+  useEffect(() => {
+    getData();
+  }, []);
+
   const [title, setTitle] = useState('New Job Group 1');
   const [arrow, setArrow] = useState(false);
   const [arrowLead, setArrowLead] = useState(false);
   const [arrowSub, setArrowSub] = useState(false);
-  const [dataCrew, setDataCrew] = useState(data);
+  const [dataCrew, setDataCrew] = useState([]);
   const [colapseCrew, setColapseCrew] = useState(true);
   const [colapseLeader, setColapseLeader] = useState(true);
   const [colapseSubjob, setColapseSubjob] = useState(true);
@@ -84,8 +100,9 @@ const AddJobGroup = ({navigation}) => {
   const [modalCoadmin, setModalCoadmin] = useState(
     new Animated.Value(deviceWidth),
   );
-  const [checkedCoadmin, setCheckedCoAdmin] = useState({});
-  const [checkCrew, setcheckCrew] = useState('');
+  const [checkedCoadmin, setCheckedCoAdmin] = useState('');
+  const [checkCrew, setcheckCrew] = useState([]);
+  const [leader, setLeader] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
   //Toogle Collapse
@@ -199,7 +216,7 @@ const AddJobGroup = ({navigation}) => {
   };
   //End Of animation
 
-  //Modal
+  //Function Modal
   const openModal = () => {
     Animated.timing(modalCoadmin, {
       duration: 300,
@@ -215,12 +232,11 @@ const AddJobGroup = ({navigation}) => {
       useNativeDriver: true,
     }).start();
   };
-
-  //End of Modal
+  //End of function Modal
 
   const getData = () => {
     axios
-      .get(`${API_URL}/job.ansena-sa.com/jzl/api/api/getListUser`)
+      .get(`https://job.ansena-sa.com/jzl/api/api/getListUser`)
       .then((res) => {
         // console.log(res.data);
         setDataCrew(res.data);
@@ -230,6 +246,93 @@ const AddJobGroup = ({navigation}) => {
       });
   };
 
+  const addNewItem = (idUser, name, idPt) => {
+    if (checkCrew.length < 1) {
+      setcheckCrew([
+        ...checkCrew,
+        {
+          idUser,
+          name,
+          idPt,
+        },
+      ]);
+    } else {
+      var foundValue = checkCrew.filter((obj) => obj.idUser === idUser);
+      // console.log('ini found value : ', foundValue[0], idUser);
+      if (foundValue.length == 0) {
+        setcheckCrew([
+          ...checkCrew,
+          {
+            idUser,
+            name,
+            idPt,
+          },
+        ]);
+      } else if (foundValue[0].idUser == idUser) {
+        const newCrew = checkCrew.filter((item) => item.idUser !== idUser);
+        setcheckCrew(newCrew);
+      }
+    }
+  };
+
+  const removeListCrew = (idUser, index) => {
+    if (idUser === leader.idUser) {
+      setLeader('');
+      const arr = [...checkCrew];
+      arr.splice(index, 1);
+      setcheckCrew(arr);
+    } else {
+      const arr = [...checkCrew];
+      arr.splice(index, 1);
+      setcheckCrew(arr);
+    }
+  };
+
+  const showToastWithGravityAndOffset = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+      25,
+      50,
+    );
+  };
+
+  const postData = () => {
+    function formatDate(date) {
+      var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    }
+
+    if (title === 'New Job Group 1' || title === '') {
+      showToastWithGravityAndOffset('Title Job Group must be fill in');
+    } else if (checkedCoadmin.length < 1) {
+      showToastWithGravityAndOffset('Co Admin must be fill in');
+    } else if (checkCrew.length < 1) {
+      showToastWithGravityAndOffset('Crew must be fill in');
+    } else if (leader.idUser == undefined) {
+      showToastWithGravityAndOffset('Leader must be fill in');
+    } else {
+      showToastWithGravityAndOffset('Data success Sent');
+      const dataPost = {
+        title: title,
+        pt: checkCrew.map(({idPt}) => idPt),
+        crew: checkCrew.map(({idUser}) => idUser),
+        leaderId: leader.idUser,
+        admin: 1,
+        coAdmin: checkedCoadmin.idUser,
+        date: formatDate(`${getYear} ${getMonth} ${getDate}`),
+      };
+      console.log(dataPost);
+    }
+  };
   return (
     <>
       <ScrollView style={styles.container}>
@@ -245,7 +348,7 @@ const AddJobGroup = ({navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              navigation.push('dashboard');
+              postData();
             }}>
             <Text style={{...styles.btnheader, color: colors.badgeBlue}}>
               Done
@@ -256,6 +359,8 @@ const AddJobGroup = ({navigation}) => {
           <Text style={styles.subtitleDate}>Date & Time</Text>
           <Text style={styles.date}>{timeNow}</Text>
         </View>
+
+        {/* Body */}
         <View style={styles.inputjobgroup}>
           <TextInput
             placeholder="Job Group Title"
@@ -264,6 +369,8 @@ const AddJobGroup = ({navigation}) => {
             }}
           />
         </View>
+
+        {/* Add Co Admin */}
         <TouchableOpacity
           style={styles.addCoAdmin}
           activeOpacity={0.6}
@@ -293,7 +400,7 @@ const AddJobGroup = ({navigation}) => {
 
         {/* assign Crew */}
         <TouchableOpacity
-          activeOpacity={0.6}
+          activeOpacity={0.9}
           style={styles.crew}
           onPress={() => {
             toogleCrew();
@@ -313,7 +420,9 @@ const AddJobGroup = ({navigation}) => {
               <Text>Assign Crew</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: colors.txtGrey}}>None</Text>
+              <Text style={{color: colors.txtGrey}}>
+                {checkCrew.length < 1 ? 'None' : checkCrew.length}
+              </Text>
               <Animated.Image
                 source={ArrowDown}
                 style={[
@@ -329,16 +438,66 @@ const AddJobGroup = ({navigation}) => {
           </View>
           <Collapsible collapsed={colapseCrew}>
             <View style={styles.content}>
-              {/* {dataCrew &&
-                dataCrew.map(({idUser, idPt, name, pt}, index) => {
+              <FlatList
+                data={checkCrew}
+                renderItem={({item, index}) => {
+                  const idUser = item.idUser;
+                  const name = item.name;
                   return (
-                    <View key={index} style={{flexDirection: 'row'}}>
-                      <Text>{index + 1}</Text>
-                      <Text>{name}</Text>
-                      <Text>{pt}</Text>
-                    </View>
+                    <Swipeable
+                      renderRightActions={(progress, dragX) => {
+                        const scales = dragX.interpolate({
+                          inputRange: [0, 100],
+                          outputRange: [0, 1],
+                        });
+                        return (
+                          <TouchableOpacity
+                            activeOpacity={0.6}
+                            style={{
+                              alignItems: 'center',
+                              backgroundColor: 'red',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: 80,
+                              transform: [{rotate: '180deg'}],
+                            }}
+                            onPress={() => {
+                              // alert(index);
+                              removeListCrew(idUser, index);
+                            }}>
+                            <Animated.Text
+                              style={{
+                                transform: [{scale: scales}],
+                                color: 'white',
+                                fontFamily: fonts.SFProDisplayHeavy,
+                                fontSize: 18,
+                              }}>
+                              Delete
+                            </Animated.Text>
+                          </TouchableOpacity>
+                        );
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          height: 50,
+                          width: '100%',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          backgroundColor: 'white',
+                          paddingHorizontal: 20,
+                        }}>
+                        <Text>{name}</Text>
+                        <Image
+                          source={Hamberger}
+                          style={{height: 20, width: 20}}
+                        />
+                      </View>
+                    </Swipeable>
                   );
-                })} */}
+                }}
+                keyExtractor={(item) => item.idUser}
+              />
               <TouchableOpacity
                 style={styles.containerAdd}
                 onPress={() => {
@@ -356,7 +515,7 @@ const AddJobGroup = ({navigation}) => {
 
         {/* Assign Leader */}
         <TouchableOpacity
-          activeOpacity={0.6}
+          activeOpacity={0.9}
           style={styles.leader}
           onPress={() => {
             toogleLeader();
@@ -367,6 +526,7 @@ const AddJobGroup = ({navigation}) => {
               justifyContent: 'space-between',
               width: '100%',
               alignItems: 'center',
+              marginBottom: 20,
             }}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image
@@ -376,7 +536,9 @@ const AddJobGroup = ({navigation}) => {
               <Text>Assign Leader</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: colors.txtGrey}}>None</Text>
+              <Text style={{color: colors.txtGrey}}>
+                {leader === '' ? 'None' : leader.name}
+              </Text>
               <Animated.Image
                 source={ArrowDown}
                 style={[
@@ -395,20 +557,38 @@ const AddJobGroup = ({navigation}) => {
           </View>
           <Collapsible collapsed={colapseLeader} align="center">
             <View style={styles.content}>
-              {dataCrew &&
-                dataCrew.map(({idUser, idPt, name, pt}) => {
+              {checkCrew.length > 0 &&
+                checkCrew.map(({idUser, idPt, name, pt}, index) => {
                   return (
-                    <View key={idUser}>
+                    <TouchableOpacity
+                      key={index}
+                      style={{
+                        flexDirection: 'row',
+                        height: 30,
+                        alignItems: 'center',
+                        marginBottom: 20,
+                      }}
+                      onPress={() => {
+                        setLeader({idUser, name});
+                      }}>
+                      <Image
+                        source={
+                          leader.idUser === idUser ? RadioChecked : RadioUncheck
+                        }
+                        style={{height: 15, width: 15, marginRight: 10}}
+                      />
                       <Text>{name}</Text>
-                    </View>
+                      <Text>{pt}</Text>
+                    </TouchableOpacity>
                   );
                 })}
             </View>
           </Collapsible>
         </TouchableOpacity>
+
         {/* SubJOB */}
         <TouchableOpacity
-          activeOpacity={0.6}
+          activeOpacity={0.9}
           style={styles.subjob}
           onPress={toogleSubJob}>
           <View
@@ -464,6 +644,7 @@ const AddJobGroup = ({navigation}) => {
           </Collapsible>
         </TouchableOpacity>
       </ScrollView>
+
       {/* Start Modal Co admin*/}
       <Animated.View
         style={[
@@ -476,7 +657,6 @@ const AddJobGroup = ({navigation}) => {
           <TouchableOpacity
             onPress={() => {
               closeModal();
-              setCheckedCoAdmin('');
             }}>
             <Text style={styles.txtCancel}>Cancel</Text>
           </TouchableOpacity>
@@ -502,8 +682,18 @@ const AddJobGroup = ({navigation}) => {
           <ScrollView style={styles.dataCoAdmin}>
             {dataCrew &&
               dataCrew.map(({idUser, idPt, name, pt}, index) => {
+                var foundValue =
+                  checkCrew.length > 0 &&
+                  checkCrew.filter((obj) => obj.idUser === idUser);
                 return (
                   <TouchableOpacity
+                    disabled={
+                      foundValue.length > 0
+                        ? foundValue[0].idUser
+                          ? true
+                          : false
+                        : false
+                    }
                     activeOpacity={0.6}
                     onPress={() => {
                       setCheckedCoAdmin({
@@ -511,27 +701,59 @@ const AddJobGroup = ({navigation}) => {
                         name,
                         idPt,
                       });
-                    }}>
+                    }}
+                    key={index}>
                     <View style={styles.listData} key={index}>
                       <View style={{flexDirection: 'row'}}>
                         <Text
                           style={{
-                            color: checkCrew == idUser ? 'red' : 'black',
+                            color:
+                              foundValue.length > 0
+                                ? foundValue[0].idUser
+                                  ? colors.txtGrey
+                                  : 'black'
+                                : 'black',
                           }}>
                           {name}
                         </Text>
                       </View>
                       <View
                         style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text>{pt}</Text>
-                        <Image
-                          source={
-                            checkedCoadmin.idUser === idUser
-                              ? RadioChecked
-                              : RadioUncheck
-                          }
-                          style={{height: 20, width: 20, marginLeft: 10}}
-                        />
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color:
+                              foundValue.length > 0
+                                ? foundValue[0].idUser
+                                  ? colors.txtGrey
+                                  : 'black'
+                                : 'black',
+                          }}>
+                          {pt}
+                        </Text>
+                        {foundValue.length > 0 ? (
+                          foundValue[0].idUser ? (
+                            <View style={{marginRight: 30}} />
+                          ) : (
+                            <Image
+                              source={
+                                checkedCoadmin.idUser === idUser
+                                  ? RadioChecked
+                                  : RadioUncheck
+                              }
+                              style={{height: 20, width: 20, marginLeft: 10}}
+                            />
+                          )
+                        ) : (
+                          <Image
+                            source={
+                              checkedCoadmin.idUser === idUser
+                                ? RadioChecked
+                                : RadioUncheck
+                            }
+                            style={{height: 20, width: 20, marginLeft: 10}}
+                          />
+                        )}
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -540,6 +762,7 @@ const AddJobGroup = ({navigation}) => {
           </ScrollView>
         </View>
       </Animated.View>
+      {/* End Modal Coadmin */}
 
       {/* Modal set Crew */}
       <Modal
@@ -592,28 +815,37 @@ const AddJobGroup = ({navigation}) => {
               }}>
               <View style={styles.headerData}>
                 <Text style={{color: colors.txtGrey}}>Name</Text>
-                <Text style={{color: colors.txtGrey, marginRight: 40}}>
-                  Details
-                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{color: colors.txtGrey, marginRight: 10}}>
+                    Details
+                  </Text>
+                  <Image source={Check} style={{height: 15, width: 20}} />
+                </View>
               </View>
               <ScrollView style={styles.dataCoAdmin}>
                 {dataCrew &&
                   dataCrew.map(({idUser, idPt, name, pt}, index) => {
+                    var foundValue =
+                      checkCrew.length > 0 &&
+                      checkCrew.filter((obj) => obj.idUser === idUser);
                     return (
                       <TouchableOpacity
                         activeOpacity={0.6}
+                        key={index}
                         onPress={() => {
-                          setCheckedCoAdmin({
-                            idUser,
-                            name,
-                            idPt,
-                          });
-                        }}>
+                          addNewItem(idUser, name, idPt);
+                        }}
+                        disabled={
+                          checkedCoadmin.idUser == idUser ? true : false
+                        }>
                         <View style={styles.listData} key={index}>
                           <View style={{flexDirection: 'row'}}>
                             <Text
                               style={{
-                                color: checkCrew == idUser ? 'red' : 'black',
+                                color:
+                                  checkedCoadmin.idUser == idUser
+                                    ? colors.txtGrey
+                                    : 'black',
                               }}>
                               {name}
                             </Text>
@@ -623,14 +855,24 @@ const AddJobGroup = ({navigation}) => {
                               flexDirection: 'row',
                               alignItems: 'center',
                             }}>
-                            <Text>{pt}</Text>
+                            <Text
+                              style={{
+                                color:
+                                  checkedCoadmin.idUser == idUser
+                                    ? colors.txtGrey
+                                    : 'black',
+                              }}>
+                              {pt}
+                            </Text>
                             <Image
                               source={
-                                checkedCoadmin.idUser === idUser
-                                  ? RadioChecked
-                                  : RadioUncheck
+                                foundValue.length > 0
+                                  ? foundValue[0].idUser
+                                    ? CheckActive
+                                    : null
+                                  : null
                               }
-                              style={{height: 20, width: 20, marginLeft: 10}}
+                              style={{height: 15, width: 20, marginLeft: 10}}
                             />
                           </View>
                         </View>
@@ -640,7 +882,13 @@ const AddJobGroup = ({navigation}) => {
               </ScrollView>
             </View>
             <View style={styles.bottomModal}>
-              <Text style={styles.txtBottomModal}>Sort By..</Text>
+              <View style={{flexDirection: 'row'}}>
+                <Image
+                  source={SortBtn}
+                  style={{height: 15, width: 15, marginRight: 10}}
+                />
+                <Text style={styles.txtBottomModal}>Sort By..</Text>
+              </View>
               <Text style={styles.txtBottomModal}>Filter</Text>
             </View>
           </View>
@@ -742,7 +990,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   content: {
-    marginTop: 10,
+    marginTop: 20,
   },
   containerAdd: {
     flexDirection: 'row',
@@ -838,7 +1086,8 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: colors.mainColor,
     padding: 20,
-    borderRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
     height: windowHeight - 30,
     width: deviceWidth,
     shadowColor: '#000',

@@ -23,6 +23,9 @@ import Hamberger from './icons/hamburger.png';
 import BackIcon from './icons/back.png';
 import RadioUncheck from './icons/radiounchecked.png';
 import RadioChecked from './icons/radiochecked.png';
+import SortBtn from './icons/sortbtn.png';
+import CheckActive from './icons/checkActive.png';
+import Check from './icons/check.png';
 
 export {
   Logo,
@@ -50,4 +53,7 @@ export {
   BackIcon,
   RadioUncheck,
   RadioChecked,
+  SortBtn,
+  CheckActive,
+  Check,
 };

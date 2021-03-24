@@ -22,13 +22,13 @@ const CardJob = () => {
     axios
       .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         let i = '';
         for (let j = 0; j < 4 - res.data.result.length; j++) {
           i += '0';
         }
         const allData = res.data.result.concat(i.split(''));
-        console.log(allData);
+        // console.log(allData);
         setJobList(allData);
       })
       .catch(({response}) => {

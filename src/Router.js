@@ -12,6 +12,7 @@ import Splash from './screens/splash';
 import Login from './screens/auth/login';
 import Dashboard from './screens/dashboard';
 import AddJobGroup from './screens/addJobGroup';
+import TestScreen from './screens/testScreen';
 
 const Stack = createStackNavigator();
 
@@ -68,6 +69,13 @@ const Router = () => {
             gestureEnabled: true,
             gestureDirection: 'horizontal',
             ...TransitionPresets.SlideFromRightIOS,
+          }}
+        />
+        <Stack.Screen
+          name="testScreen"
+          component={TestScreen}
+          options={{
+            headerShown: false,
           }}
         />
       </Stack.Navigator>
