@@ -26,6 +26,9 @@ import RadioChecked from './icons/radiochecked.png';
 import SortBtn from './icons/sortbtn.png';
 import CheckActive from './icons/checkActive.png';
 import Check from './icons/check.png';
+import DotMenu from './icons/dotmenu.png';
+import Cross from './icons/x.png';
+import ArrowUp from './icons/arrowup.png';
 
 export {
   Logo,
@@ -56,4 +59,7 @@ export {
   SortBtn,
   CheckActive,
   Check,
+  DotMenu,
+  Cross,
+  ArrowUp,
 };

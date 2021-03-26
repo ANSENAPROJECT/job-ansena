@@ -15,12 +15,16 @@ import {
   ToastAndroid,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
+import Popover, {PopoverPlacement} from 'react-native-popover-view';
 import {
   ArrowDown,
+  ArrowUp,
   Check,
   CheckActive,
   CoAdmin,
   Crew,
+  Cross,
+  DotMenu,
   Hamberger,
   Leader,
   Plus1,
@@ -58,6 +62,20 @@ const getDate = datetime.getDate();
 // // };
 
 // console.log(addZero(getMonth));
+
+const data = [
+  {idUser: 1, name: 'fachri', idPt: 1, pt: 'ansena'},
+  {idUser: 2, name: 'Ghiffary', idPt: 1, pt: 'ansena'},
+  {idUser: 3, name: 'joko', idPt: 1, pt: 'ansena'},
+  {idUser: 4, name: 'widodo', idPt: 1, pt: 'ansena'},
+  {idUser: 5, name: 'prabowo', idPt: 1, pt: 'ansena'},
+  {idUser: 6, name: 'teguh', idPt: 1, pt: 'ansena'},
+  {idUser: 7, name: 'tingkir', idPt: 1, pt: 'ansena'},
+  {idUser: 8, name: 'anisa', idPt: 1, pt: 'ansena'},
+  {idUser: 9, name: 'loli', idPt: 1, pt: 'ansena'},
+  {idUser: 10, name: 'lativa', idPt: 1, pt: 'ansena'},
+  {idUser: 11, name: 'james', idPt: 1, pt: 'ansena'},
+];
 
 const AddJobGroup = ({navigation}) => {
   // handleBack
@@ -103,7 +121,9 @@ const AddJobGroup = ({navigation}) => {
   const [checkedCoadmin, setCheckedCoAdmin] = useState('');
   const [checkCrew, setcheckCrew] = useState([]);
   const [leader, setLeader] = useState('');
+  const [subJob, setSubJob] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
 
   //Toogle Collapse
   const toogleCrew = () => {
@@ -236,9 +256,9 @@ const AddJobGroup = ({navigation}) => {
 
   const getData = () => {
     axios
-      .get(`https://job.ansena-sa.com/jzl/api/api/getListUser`)
+      .get(`${API_URL}/jzl/api/api/getListUser/1`)
       .then((res) => {
-        // console.log(res.data);
+        // console.log('Ini adalah list dataCrew', res.data);
         setDataCrew(res.data);
       })
       .catch(({response}) => {
@@ -273,6 +293,10 @@ const AddJobGroup = ({navigation}) => {
         setcheckCrew(newCrew);
       }
     }
+  };
+
+  const addSubjob = () => {
+    setSubJob([...subJob, subJob.length]);
   };
 
   const removeListCrew = (idUser, index) => {
@@ -333,9 +357,15 @@ const AddJobGroup = ({navigation}) => {
       console.log(dataPost);
     }
   };
+
+  const goToDetail = () => {
+    setShowPopover(false);
+  };
   return (
     <>
+      {/* The View */}
       <ScrollView style={styles.container}>
+        {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
             onPress={() => {
@@ -355,6 +385,8 @@ const AddJobGroup = ({navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Date */}
         <View style={styles.datetime}>
           <Text style={styles.subtitleDate}>Date & Time</Text>
           <Text style={styles.date}>{timeNow}</Text>
@@ -625,21 +657,92 @@ const AddJobGroup = ({navigation}) => {
           </View>
           <Collapsible collapsed={colapseSubjob} align="center">
             <View style={styles.content}>
-              {/* {dataCrew &&
-                dataCrew.map(({idUser, idPt, name, pt}) => {
+              <FlatList
+                data={subJob}
+                keyExtractor={(item, index) => index}
+                renderItem={({item, index}) => {
                   return (
-                    <View key={idUser}>
-                      <Text>{name}</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text>{index + 1}. </Text>
+                        <TextInput placeholder="Input Subjob" />
+                      </View>
+                      <Popover
+                        placement={PopoverPlacement.BOTTOM}
+                        style={{borderRadius: 20, height: 50, width: 100}}
+                        isVisible={showPopover}
+                        from={
+                          <TouchableOpacity
+                            onRequestClose={() => setShowPopover(false)}
+                            onPress={() => setShowPopover(true)}>
+                            <Image
+                              source={DotMenu}
+                              style={{height: 15, width: 15}}
+                            />
+                          </TouchableOpacity>
+                        }>
+                        <View
+                          style={{
+                            height: 80,
+                            width: 200,
+                            padding: 10,
+                            justifyContent: 'space-between',
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setShowPopover(false);
+                              navigation.navigate('addsubjob');
+                            }}
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text style={{color: '#5cb7f8'}}>Details</Text>
+                            <Image
+                              source={ArrowUp}
+                              style={{height: 20, width: 20}}
+                            />
+                          </TouchableOpacity>
+                          <View
+                            style={{
+                              borderWidth: 0.5,
+                              width: '100%',
+                              borderColor: '#e0dfe1',
+                            }}
+                          />
+                          <TouchableOpacity
+                            onPress={() => {
+                              alert('delete');
+                            }}
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text style={{color: '#e06655'}}>Delete</Text>
+                            <Image
+                              source={Cross}
+                              style={{height: 20, width: 20}}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </Popover>
                     </View>
                   );
-                })} */}
-              <View style={styles.containerAdd}>
+                }}
+              />
+              <TouchableOpacity style={styles.containerAdd} onPress={addSubjob}>
                 <Image
                   source={Plus1}
                   style={{height: 15, width: 15, marginRight: 10}}
                 />
                 <Text style={styles.addBtn}>Add ..</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </Collapsible>
         </TouchableOpacity>
@@ -680,60 +783,71 @@ const AddJobGroup = ({navigation}) => {
             </Text>
           </View>
           <ScrollView style={styles.dataCoAdmin}>
-            {dataCrew &&
-              dataCrew.map(({idUser, idPt, name, pt}, index) => {
-                var foundValue =
-                  checkCrew.length > 0 &&
-                  checkCrew.filter((obj) => obj.idUser === idUser);
-                return (
-                  <TouchableOpacity
-                    disabled={
-                      foundValue.length > 0
-                        ? foundValue[0].idUser
-                          ? true
+            {dataCrew.length < 1
+              ? null
+              : dataCrew.map(({idUser, idPt, name, pt}, index) => {
+                  var foundValue =
+                    checkCrew.length > 0 &&
+                    checkCrew.filter((obj) => obj.idUser === idUser);
+                  return (
+                    <TouchableOpacity
+                      disabled={
+                        foundValue.length > 0
+                          ? foundValue[0].idUser
+                            ? true
+                            : false
                           : false
-                        : false
-                    }
-                    activeOpacity={0.6}
-                    onPress={() => {
-                      setCheckedCoAdmin({
-                        idUser,
-                        name,
-                        idPt,
-                      });
-                    }}
-                    key={index}>
-                    <View style={styles.listData} key={index}>
-                      <View style={{flexDirection: 'row'}}>
-                        <Text
-                          style={{
-                            color:
-                              foundValue.length > 0
-                                ? foundValue[0].idUser
-                                  ? colors.txtGrey
-                                  : 'black'
-                                : 'black',
-                          }}>
-                          {name}
-                        </Text>
-                      </View>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            color:
-                              foundValue.length > 0
-                                ? foundValue[0].idUser
-                                  ? colors.txtGrey
-                                  : 'black'
-                                : 'black',
-                          }}>
-                          {pt}
-                        </Text>
-                        {foundValue.length > 0 ? (
-                          foundValue[0].idUser ? (
-                            <View style={{marginRight: 30}} />
+                      }
+                      activeOpacity={0.6}
+                      onPress={() => {
+                        setCheckedCoAdmin({
+                          idUser,
+                          name,
+                          idPt,
+                        });
+                      }}
+                      key={index}>
+                      <View style={styles.listData} key={index}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text
+                            style={{
+                              color:
+                                foundValue.length > 0
+                                  ? foundValue[0].idUser
+                                    ? colors.txtGrey
+                                    : 'black'
+                                  : 'black',
+                            }}>
+                            {name}
+                          </Text>
+                        </View>
+                        <View
+                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              color:
+                                foundValue.length > 0
+                                  ? foundValue[0].idUser
+                                    ? colors.txtGrey
+                                    : 'black'
+                                  : 'black',
+                            }}>
+                            {pt}
+                          </Text>
+                          {foundValue.length > 0 ? (
+                            foundValue[0].idUser ? (
+                              <View style={{marginRight: 30}} />
+                            ) : (
+                              <Image
+                                source={
+                                  checkedCoadmin.idUser === idUser
+                                    ? RadioChecked
+                                    : RadioUncheck
+                                }
+                                style={{height: 20, width: 20, marginLeft: 10}}
+                              />
+                            )
                           ) : (
                             <Image
                               source={
@@ -743,22 +857,12 @@ const AddJobGroup = ({navigation}) => {
                               }
                               style={{height: 20, width: 20, marginLeft: 10}}
                             />
-                          )
-                        ) : (
-                          <Image
-                            source={
-                              checkedCoadmin.idUser === idUser
-                                ? RadioChecked
-                                : RadioUncheck
-                            }
-                            style={{height: 20, width: 20, marginLeft: 10}}
-                          />
-                        )}
+                          )}
+                        </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
+                    </TouchableOpacity>
+                  );
+                })}
           </ScrollView>
         </View>
       </Animated.View>

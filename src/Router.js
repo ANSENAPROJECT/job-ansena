@@ -13,6 +13,7 @@ import Login from './screens/auth/login';
 import Dashboard from './screens/dashboard';
 import AddJobGroup from './screens/addJobGroup';
 import TestScreen from './screens/testScreen';
+import AddSubJob from './screens/addSubJob';
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,13 @@ const Router = () => {
             gestureEnabled: true,
             gestureDirection: 'horizontal',
             ...TransitionPresets.SlideFromRightIOS,
+          }}
+        />
+        <Stack.Screen
+          name="addsubjob"
+          component={AddSubJob}
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen
