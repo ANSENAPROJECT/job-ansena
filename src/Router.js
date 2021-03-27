@@ -77,6 +77,9 @@ const Router = () => {
           component={AddSubJob}
           options={{
             headerShown: false,
+            gestureEnabled: true,
+            gestureDirection: 'vertical',
+            ...TransitionPresets.ModalSlideFromBottomIOS,
           }}
         />
         <Stack.Screen

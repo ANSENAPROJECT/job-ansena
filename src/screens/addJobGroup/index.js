@@ -659,7 +659,7 @@ const AddJobGroup = ({navigation}) => {
             <View style={styles.content}>
               <FlatList
                 data={subJob}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(index) => index}
                 renderItem={({item, index}) => {
                   return (
                     <View
@@ -667,10 +667,11 @@ const AddJobGroup = ({navigation}) => {
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
+                        paddingHorizontal: 14,
                       }}>
                       <View
                         style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text>{index + 1}. </Text>
+                        <Text style={{marginRight: 20}}>{index + 1}. </Text>
                         <TextInput placeholder="Input Subjob" />
                       </View>
                       <Popover
@@ -1094,7 +1095,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   content: {
-    marginTop: 20,
+    marginTop: 10,
   },
   containerAdd: {
     flexDirection: 'row',

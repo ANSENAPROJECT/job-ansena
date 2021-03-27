@@ -29,6 +29,14 @@ import Check from './icons/check.png';
 import DotMenu from './icons/dotmenu.png';
 import Cross from './icons/x.png';
 import ArrowUp from './icons/arrowup.png';
+import SwitchDefault from './icons/switch.png';
+import SwitchActive from './icons/switchactive.png';
+import DeadlineDate from './icons/deadlinedate.png';
+import DeadlineHour from './icons/deadlinehour.png';
+import Remind from './icons/remind.png';
+import Daylight from './icons/daylight.png';
+import Morning from './icons/morning.png';
+import Afternoon from './icons/afternoon.png';
 
 export {
   Logo,
@@ -62,4 +70,12 @@ export {
   DotMenu,
   Cross,
   ArrowUp,
+  SwitchDefault,
+  SwitchActive,
+  DeadlineDate,
+  DeadlineHour,
+  Remind,
+  Daylight,
+  Morning,
+  Afternoon,
 };
