@@ -11,7 +11,7 @@ const Splash = ({navigation}) => {
       auth.code != null
         ? navigation.replace('dashboard')
         : navigation.replace('login');
-    }, 3000);
+    }, 2000);
   });
   return (
     <View style={styles.container}>

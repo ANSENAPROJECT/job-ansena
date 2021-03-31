@@ -37,6 +37,9 @@ import Remind from './icons/remind.png';
 import Daylight from './icons/daylight.png';
 import Morning from './icons/morning.png';
 import Afternoon from './icons/afternoon.png';
+import Camera from './icons/camera.png';
+import Galery from './icons/galery.png';
+import StopFill from './icons/stopfill.png';
 
 export {
   Logo,
@@ -78,4 +81,7 @@ export {
   Daylight,
   Morning,
   Afternoon,
+  Camera,
+  Galery,
+  StopFill,
 };

@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 const TestScreen = () => {
   return (
     <View>
-      <Text>Ini TestSCreen</Text>
+      <Text>INi adalah halmaan testScreen</Text>
     </View>
   );
 };

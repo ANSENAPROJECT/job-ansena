@@ -53,16 +53,6 @@ const getYear = datetime.getFullYear();
 const getMonth = datetime.getMonth() + 1;
 const getDate = datetime.getDate();
 
-// const addZero = (data) => {
-//   if (data < 10) {
-//     console.log(`0${data}`);
-//   } else if (data > 9) {
-//     console.log(data);
-//   }
-// // };
-
-// console.log(addZero(getMonth));
-
 const data = [
   {idUser: 1, name: 'fachri', idPt: 1, pt: 'ansena'},
   {idUser: 2, name: 'Ghiffary', idPt: 1, pt: 'ansena'},
@@ -277,8 +267,7 @@ const AddJobGroup = ({navigation}) => {
         },
       ]);
     } else {
-      var foundValue = checkCrew.filter((obj) => obj.idUser === idUser);
-      // console.log('ini found value : ', foundValue[0], idUser);
+      let foundValue = checkCrew.filter((obj) => obj.idUser === idUser);
       if (foundValue.length == 0) {
         setcheckCrew([
           ...checkCrew,
@@ -675,9 +664,10 @@ const AddJobGroup = ({navigation}) => {
                         <TextInput placeholder="Input Subjob" />
                       </View>
                       <Popover
-                        placement={PopoverPlacement.BOTTOM}
+                        // placement={PopoverPlacement.BOTTOM}
                         style={{borderRadius: 20, height: 50, width: 100}}
                         isVisible={showPopover}
+                        onRequestClose={() => setShowPopover(false)}
                         from={
                           <TouchableOpacity
                             onRequestClose={() => setShowPopover(false)}
