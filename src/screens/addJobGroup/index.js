@@ -13,6 +13,7 @@ import {
   Dimensions,
   FlatList,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import Popover, {PopoverPlacement} from 'react-native-popover-view';
@@ -53,20 +54,6 @@ const getYear = datetime.getFullYear();
 const getMonth = datetime.getMonth() + 1;
 const getDate = datetime.getDate();
 
-const data = [
-  {idUser: 1, name: 'fachri', idPt: 1, pt: 'ansena'},
-  {idUser: 2, name: 'Ghiffary', idPt: 1, pt: 'ansena'},
-  {idUser: 3, name: 'joko', idPt: 1, pt: 'ansena'},
-  {idUser: 4, name: 'widodo', idPt: 1, pt: 'ansena'},
-  {idUser: 5, name: 'prabowo', idPt: 1, pt: 'ansena'},
-  {idUser: 6, name: 'teguh', idPt: 1, pt: 'ansena'},
-  {idUser: 7, name: 'tingkir', idPt: 1, pt: 'ansena'},
-  {idUser: 8, name: 'anisa', idPt: 1, pt: 'ansena'},
-  {idUser: 9, name: 'loli', idPt: 1, pt: 'ansena'},
-  {idUser: 10, name: 'lativa', idPt: 1, pt: 'ansena'},
-  {idUser: 11, name: 'james', idPt: 1, pt: 'ansena'},
-];
-
 const AddJobGroup = ({navigation}) => {
   // handleBack
   useEffect(() => {
@@ -90,15 +77,12 @@ const AddJobGroup = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
-  useEffect(() => {
-    getData();
-  }, []);
-
   const [title, setTitle] = useState('New Job Group 1');
   const [arrow, setArrow] = useState(false);
   const [arrowLead, setArrowLead] = useState(false);
   const [arrowSub, setArrowSub] = useState(false);
   const [dataCrew, setDataCrew] = useState([]);
+  const [pages, setPages] = useState(1);
   const [colapseCrew, setColapseCrew] = useState(true);
   const [colapseLeader, setColapseLeader] = useState(true);
   const [colapseSubjob, setColapseSubjob] = useState(true);
@@ -114,6 +98,13 @@ const AddJobGroup = ({navigation}) => {
   const [subJob, setSubJob] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const [searchData, setSearchData] = useState([]);
+
+  useEffect(() => {
+    getData();
+  }, [search]);
 
   //Toogle Collapse
   const toogleCrew = () => {
@@ -148,6 +139,7 @@ const AddJobGroup = ({navigation}) => {
   // End toogle collapse
 
   //Animation
+
   const startAnimation = () => {
     Animated.timing(animation, {
       toValue: 180,
@@ -242,14 +234,43 @@ const AddJobGroup = ({navigation}) => {
       useNativeDriver: true,
     }).start();
   };
+
+  const handleLoadmore = () => {
+    setPages(pages + 1);
+    getData();
+    setIsLoading(true);
+  };
+
+  const renderFooter = () => {
+    return isLoading ? (
+      <View>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    ) : null;
+  };
+
   //End of function Modal
 
   const getData = () => {
     axios
-      .get(`${API_URL}/jzl/api/api/getListUser/1`)
+      .get(`${API_URL}/jzl/api/api/getListUser/${pages}`)
       .then((res) => {
         // console.log('Ini adalah list dataCrew', res.data);
-        setDataCrew(res.data);
+        setDataCrew(dataCrew.concat(res.data.data));
+        setIsLoading(true);
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const searchName = () => {
+    axios
+      .get(`${API_URL}/jzl/api/api/getListUser/${search}`)
+      .then((res) => {
+        console.log(res.data.data);
+        setSearchData(res.data.data);
+        setIsLoading(true);
       })
       .catch(({response}) => {
         console.log(response);
@@ -284,10 +305,6 @@ const AddJobGroup = ({navigation}) => {
     }
   };
 
-  const addSubjob = () => {
-    setSubJob([...subJob, subJob.length]);
-  };
-
   const removeListCrew = (idUser, index) => {
     if (idUser === leader.idUser) {
       setLeader('');
@@ -299,6 +316,10 @@ const AddJobGroup = ({navigation}) => {
       arr.splice(index, 1);
       setcheckCrew(arr);
     }
+  };
+
+  const addSubjob = () => {
+    setSubJob([...subJob, subJob.length]);
   };
 
   const showToastWithGravityAndOffset = (msg) => {
@@ -395,7 +416,9 @@ const AddJobGroup = ({navigation}) => {
         <TouchableOpacity
           style={styles.addCoAdmin}
           activeOpacity={0.6}
-          onPress={() => openModal()}>
+          onPress={() => {
+            openModal();
+          }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image
               source={CoAdmin}
@@ -648,7 +671,7 @@ const AddJobGroup = ({navigation}) => {
             <View style={styles.content}>
               <FlatList
                 data={subJob}
-                keyExtractor={(index) => index}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => {
                   return (
                     <View
@@ -763,7 +786,11 @@ const AddJobGroup = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={styles.formSearch}>
-          <TextInput placeholder="Search Co-Admin Name..." />
+          <TextInput
+            placeholder="Search Co-Admin Name..."
+            onChangeText={(search) => setSearch(search)}
+            onSubmitEditing={searchName}
+          />
           <Image source={Search} />
         </View>
         <View style={styles.containerScrollDataModal}>
@@ -773,88 +800,90 @@ const AddJobGroup = ({navigation}) => {
               Details
             </Text>
           </View>
-          <ScrollView style={styles.dataCoAdmin}>
-            {dataCrew.length < 1
-              ? null
-              : dataCrew.map(({idUser, idPt, name, pt}, index) => {
-                  var foundValue =
-                    checkCrew.length > 0 &&
-                    checkCrew.filter((obj) => obj.idUser === idUser);
-                  return (
-                    <TouchableOpacity
-                      disabled={
-                        foundValue.length > 0
-                          ? foundValue[0].idUser
-                            ? true
-                            : false
-                          : false
-                      }
-                      activeOpacity={0.6}
-                      onPress={() => {
-                        setCheckedCoAdmin({
-                          idUser,
-                          name,
-                          idPt,
-                        });
-                      }}
-                      key={index}>
-                      <View style={styles.listData} key={index}>
-                        <View style={{flexDirection: 'row'}}>
-                          <Text
-                            style={{
-                              color:
-                                foundValue.length > 0
-                                  ? foundValue[0].idUser
-                                    ? colors.txtGrey
-                                    : 'black'
-                                  : 'black',
-                            }}>
-                            {name}
-                          </Text>
-                        </View>
-                        <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
-                          <Text
-                            style={{
-                              fontSize: 12,
-                              color:
-                                foundValue.length > 0
-                                  ? foundValue[0].idUser
-                                    ? colors.txtGrey
-                                    : 'black'
-                                  : 'black',
-                            }}>
-                            {pt}
-                          </Text>
-                          {foundValue.length > 0 ? (
-                            foundValue[0].idUser ? (
-                              <View style={{marginRight: 30}} />
-                            ) : (
-                              <Image
-                                source={
-                                  checkedCoadmin.idUser === idUser
-                                    ? RadioChecked
-                                    : RadioUncheck
-                                }
-                                style={{height: 20, width: 20, marginLeft: 10}}
-                              />
-                            )
-                          ) : (
-                            <Image
-                              source={
-                                checkedCoadmin.idUser === idUser
-                                  ? RadioChecked
-                                  : RadioUncheck
-                              }
-                              style={{height: 20, width: 20, marginLeft: 10}}
-                            />
-                          )}
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-          </ScrollView>
+          <FlatList
+            data={searchData.length === 0 ? dataCrew : searchData}
+            renderItem={({item}) => {
+              const {idUser, name, pt, idPt} = item;
+              var foundValue =
+                checkCrew.length > 0 &&
+                checkCrew.filter((obj) => obj.idUser === idUser);
+              return (
+                <TouchableOpacity
+                  disabled={
+                    foundValue.length > 0
+                      ? foundValue[0].idUser
+                        ? true
+                        : false
+                      : false
+                  }
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    setCheckedCoAdmin({
+                      idUser,
+                      name,
+                      idPt,
+                    });
+                  }}>
+                  <View style={styles.listData}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text
+                        style={{
+                          color:
+                            foundValue.length > 0
+                              ? foundValue[0].idUser
+                                ? colors.txtGrey
+                                : 'black'
+                              : 'black',
+                        }}>
+                        {name}
+                      </Text>
+                    </View>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color:
+                            foundValue.length > 0
+                              ? foundValue[0].idUser
+                                ? colors.txtGrey
+                                : 'black'
+                              : 'black',
+                        }}>
+                        {pt}
+                      </Text>
+                      {foundValue.length > 0 ? (
+                        foundValue[0].idUser ? (
+                          <View style={{marginRight: 30}} />
+                        ) : (
+                          <Image
+                            source={
+                              checkedCoadmin.idUser === idUser
+                                ? RadioChecked
+                                : RadioUncheck
+                            }
+                            style={{height: 20, width: 20, marginLeft: 10}}
+                          />
+                        )
+                      ) : (
+                        <Image
+                          source={
+                            checkedCoadmin.idUser === idUser
+                              ? RadioChecked
+                              : RadioUncheck
+                          }
+                          style={{height: 20, width: 20, marginLeft: 10}}
+                        />
+                      )}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={handleLoadmore}
+            onEndReachedThreshold={0.01}
+            ListFooterComponent={searchData.length === 0 ? renderFooter : null}
+          />
         </View>
       </Animated.View>
       {/* End Modal Coadmin */}
@@ -902,9 +931,18 @@ const AddJobGroup = ({navigation}) => {
                 <Text style={styles.txtAddModal}>Add</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.formSearch}>
+              <TextInput
+                placeholder="Search Crew Name..."
+                onChangeText={(search) => setSearch(search)}
+                onSubmitEditing={searchName}
+              />
+              <Image source={Search} />
+            </View>
             <View
               style={{
                 ...styles.containerScrollDataModal,
+                height: windowHeight - 320,
                 borderBottomRightRadius: 0,
                 borderBottomLeftRadius: 0,
               }}>
@@ -917,64 +955,68 @@ const AddJobGroup = ({navigation}) => {
                   <Image source={Check} style={{height: 15, width: 20}} />
                 </View>
               </View>
-              <ScrollView style={styles.dataCoAdmin}>
-                {dataCrew &&
-                  dataCrew.map(({idUser, idPt, name, pt}, index) => {
-                    var foundValue =
-                      checkCrew.length > 0 &&
-                      checkCrew.filter((obj) => obj.idUser === idUser);
-                    return (
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        key={index}
-                        onPress={() => {
-                          addNewItem(idUser, name, idPt);
-                        }}
-                        disabled={
-                          checkedCoadmin.idUser == idUser ? true : false
-                        }>
-                        <View style={styles.listData} key={index}>
-                          <View style={{flexDirection: 'row'}}>
-                            <Text
-                              style={{
-                                color:
-                                  checkedCoadmin.idUser == idUser
-                                    ? colors.txtGrey
-                                    : 'black',
-                              }}>
-                              {name}
-                            </Text>
-                          </View>
-                          <View
+              <FlatList
+                data={searchData.length === 0 ? dataCrew : searchData}
+                renderItem={({item}) => {
+                  const {idUser, name, pt, idPt} = item;
+                  var foundValue =
+                    checkCrew.length > 0 &&
+                    checkCrew.filter((obj) => obj.idUser === idUser);
+                  return (
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      onPress={() => {
+                        addNewItem(idUser, name, idPt);
+                      }}
+                      disabled={checkedCoadmin.idUser == idUser ? true : false}>
+                      <View style={styles.listData}>
+                        <View style={{flexDirection: 'row'}}>
+                          <Text
                             style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
+                              color:
+                                checkedCoadmin.idUser == idUser
+                                  ? colors.txtGrey
+                                  : 'black',
                             }}>
-                            <Text
-                              style={{
-                                color:
-                                  checkedCoadmin.idUser == idUser
-                                    ? colors.txtGrey
-                                    : 'black',
-                              }}>
-                              {pt}
-                            </Text>
-                            <Image
-                              source={
-                                foundValue.length > 0
-                                  ? foundValue[0].idUser
-                                    ? CheckActive
-                                    : null
-                                  : null
-                              }
-                              style={{height: 15, width: 20, marginLeft: 10}}
-                            />
-                          </View>
+                            {name}
+                          </Text>
                         </View>
-                      </TouchableOpacity>
-                    );
-                  })}
-              </ScrollView>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              color:
+                                checkedCoadmin.idUser == idUser
+                                  ? colors.txtGrey
+                                  : 'black',
+                            }}>
+                            {pt}
+                          </Text>
+                          <Image
+                            source={
+                              foundValue.length > 0
+                                ? foundValue[0].idUser
+                                  ? CheckActive
+                                  : null
+                                : null
+                            }
+                            style={{height: 15, width: 20, marginLeft: 10}}
+                          />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+                onEndReached={handleLoadmore}
+                onEndReachedThreshold={0.01}
+                ListFooterComponent={
+                  searchData.length === 0 ? renderFooter : null
+                }
+              />
             </View>
             <View style={styles.bottomModal}>
               <View style={{flexDirection: 'row'}}>
@@ -1150,7 +1192,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 40,
     borderRadius: 25,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   headerData: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,9 +12,11 @@ import {
   Pressable,
   ToastAndroid,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Slider from 'react-native-slider';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
 import {
   ArrowDown,
@@ -41,6 +43,7 @@ import {
   Camera,
   Galery,
   StopFill,
+  Hamberger,
 } from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
@@ -49,6 +52,8 @@ import {CalendarList} from 'react-native-calendars';
 // import Slider from '@react-native-community/slider';
 import styles from './styles';
 import ImagePicker from 'react-native-image-crop-picker';
+import axios from 'axios';
+import {API_URL} from '@env';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -119,13 +124,22 @@ const AddSubJob = ({navigation}) => {
   const [modalRemind, setModalRemind] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const [checkCoassessor, setCheckCoassessor] = useState('');
-  const [checkRemind, setcheckRemind] = useState('');
   const [valueHour, setValueHour] = useState(hour);
   const [valueMinutes, setValueMinutes] = useState('0');
   const [images, setImages] = useState([]);
   const [editImage, setEditImage] = useState(false);
+  const [dataCrew, setDataCrew] = useState([]);
+  const [search, setSearch] = useState('');
+  const [searchData, setSearchData] = useState([]);
+  const [checkRemind, setCheckRemind] = useState([]);
+  const [pages, setPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   //---------------------End of State-------------------------
+
+  useEffect(() => {
+    getData();
+  }, [search]);
 
   //----------------- Start Function Here---------------------
   const setNewDaySelected = (date) => {
@@ -365,6 +379,80 @@ const AddSubJob = ({navigation}) => {
         )}
       </>
     );
+  };
+
+  const getData = () => {
+    axios
+      .get(`${API_URL}/jzl/api/api/getListUser/${pages}`)
+      .then((res) => {
+        // console.log('Ini adalah list dataCrew', res.data);
+        setDataCrew(dataCrew.concat(res.data.data));
+        setIsLoading(true);
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const searchName = () => {
+    axios
+      .get(`${API_URL}/jzl/api/api/getListUser/${search}`)
+      .then((res) => {
+        console.log(res.data.data);
+        setSearchData(res.data.data);
+        setIsLoading(true);
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const addNewItem = (idUser, name, idPt) => {
+    if (checkRemind.length < 1) {
+      setCheckRemind([
+        ...checkRemind,
+        {
+          idUser,
+          name,
+          idPt,
+        },
+      ]);
+    } else {
+      let foundValue = checkRemind.filter((obj) => obj.idUser === idUser);
+      if (foundValue.length == 0) {
+        setCheckRemind([
+          ...checkRemind,
+          {
+            idUser,
+            name,
+            idPt,
+          },
+        ]);
+      } else if (foundValue[0].idUser == idUser) {
+        const newRemind = checkRemind.filter((item) => item.idUser !== idUser);
+        setCheckRemind(newRemind);
+      }
+    }
+  };
+
+  const removeListCrew = (idUser, index) => {
+    const arr = [...checkRemind];
+    arr.splice(index, 1);
+    setCheckRemind(arr);
+  };
+
+  const handleLoadmore = () => {
+    setPages(pages + 1);
+    getData();
+    setIsLoading(true);
+  };
+
+  const renderFooter = () => {
+    return isLoading ? (
+      <View>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    ) : null;
   };
 
   const submitSubjob = () => {
@@ -792,7 +880,9 @@ const AddSubJob = ({navigation}) => {
           <Text>Add Co-Assesor</Text>
         </View>
         <View style={styles.flexView}>
-          <Text style={{color: colors.txtGrey}}>None</Text>
+          <Text style={{color: colors.txtGrey}}>
+            {checkCoassessor === '' ? 'None' : checkCoassessor.name}
+          </Text>
           <Image source={ArrowDown} style={styles.imgArrow} />
         </View>
       </TouchableOpacity>
@@ -833,27 +923,92 @@ const AddSubJob = ({navigation}) => {
             <Text>Remind Other</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image source={SwitchDefault} style={styles.switch} />
+            <Image
+              source={checkRemind.length > 0 ? SwitchActive : SwitchDefault}
+              style={styles.switch}
+            />
           </View>
         </TouchableOpacity>
         <Collapsible collapsed={collapseRemind} align="center">
-          <TouchableOpacity
-            style={{
-              marginBottom: 20,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-            onPress={() => {
-              setModalRemind(true);
-            }}>
-            <Image
-              source={Plus1}
-              style={{height: 15, width: 15, marginRight: 10}}
+          <View style={{marginTop: 10}}>
+            <FlatList
+              data={checkRemind}
+              renderItem={({item, index}) => {
+                const {idUser, name} = item;
+                return (
+                  <Swipeable
+                    renderRightActions={(progress, dragX) => {
+                      const scales = dragX.interpolate({
+                        inputRange: [0, 100],
+                        outputRange: [0, 1],
+                      });
+                      return (
+                        <TouchableOpacity
+                          activeOpacity={0.6}
+                          style={{
+                            alignItems: 'center',
+                            backgroundColor: 'red',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 80,
+                            height: '100%',
+                            transform: [{rotate: '180deg'}],
+                          }}
+                          onPress={() => {
+                            // alert(index);
+                            removeListCrew(idUser, index);
+                          }}>
+                          <Animated.Text
+                            style={{
+                              transform: [{scale: scales}],
+                              color: 'white',
+                              fontFamily: fonts.SFProDisplayHeavy,
+                              fontSize: 18,
+                            }}>
+                            Delete
+                          </Animated.Text>
+                        </TouchableOpacity>
+                      );
+                    }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        height: 50,
+                        width: '100%',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        backgroundColor: 'white',
+                        paddingHorizontal: 20,
+                      }}>
+                      <Text>{name}</Text>
+                      <Image
+                        source={Hamberger}
+                        style={{height: 20, width: 20}}
+                      />
+                    </View>
+                  </Swipeable>
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
             />
-            <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
-              Add...
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                marginBottom: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              onPress={() => {
+                setModalRemind(true);
+              }}>
+              <Image
+                source={Plus1}
+                style={{height: 15, width: 15, marginRight: 10}}
+              />
+              <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
+                Add...
+              </Text>
+            </TouchableOpacity>
+          </View>
         </Collapsible>
       </View>
 
@@ -922,18 +1077,31 @@ const AddSubJob = ({navigation}) => {
           <View style={styles.modalView}>
             {/* Header Modal */}
             <View style={styles.headerModal}>
-              <Pressable onPress={() => setModalCoAssessor(false)}>
+              <Pressable
+                onPress={() => {
+                  setModalCoAssessor(false);
+                  setCheckCoassessor('');
+                  setSearch([]);
+                }}>
                 <Image source={BackIcon} style={{height: 15, width: 20}} />
               </Pressable>
               <Text style={styles.txtTitle}>Add Co assesor</Text>
-              <Pressable>
+              <Pressable
+                onPress={() => {
+                  setModalCoAssessor(false);
+                  setSearch([]);
+                }}>
                 <Text style={styles.txtAdd}>Add</Text>
               </Pressable>
             </View>
 
             {/* Search Modal */}
             <View style={styles.searchModal}>
-              <TextInput placeholder="Search Co-Assessor Name" />
+              <TextInput
+                placeholder="Search Co-Assessor Name"
+                onChangeText={(search) => setSearch(search)}
+                onSubmitEditing={searchName}
+              />
             </View>
 
             <View style={styles.containerScrollDataModal}>
@@ -944,31 +1112,100 @@ const AddSubJob = ({navigation}) => {
                 </Text>
               </View>
               <View style={{flex: 1}}>
-                {data &&
-                  data.map(({name, idUser, pt, idPt}, index) => {
+                <FlatList
+                  data={searchData.length === 0 ? dataCrew : searchData}
+                  renderItem={({item}) => {
+                    const {idUser, name, pt, idPt} = item;
+                    var foundValue =
+                      checkRemind.length > 0 &&
+                      checkRemind.filter((obj) => obj.idUser === idUser);
                     return (
                       <Pressable
-                        style={styles.columnData}
+                        disabled={
+                          foundValue.length > 0
+                            ? foundValue[0].idUser
+                              ? true
+                              : false
+                            : false
+                        }
+                        activeOpacity={0.6}
                         onPress={() => {
-                          setCheckCoassessor(idUser);
+                          setCheckCoassessor({
+                            idUser,
+                            name,
+                            idPt,
+                          });
                         }}>
-                        <View style={styles.flexView}>
-                          <Text>{name}</Text>
-                        </View>
-                        <View style={styles.flexView}>
-                          <Text>{pt}</Text>
-                          <Image
-                            source={
-                              checkCoassessor === idUser
-                                ? RadioChecked
-                                : RadioUncheck
-                            }
-                            style={styles.iconRadio}
-                          />
+                        <View style={styles.listData}>
+                          <View style={{flexDirection: 'row'}}>
+                            <Text
+                              style={{
+                                color:
+                                  foundValue.length > 0
+                                    ? foundValue[0].idUser
+                                      ? colors.txtGrey
+                                      : 'black'
+                                    : 'black',
+                              }}>
+                              {name}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 12,
+                                color:
+                                  foundValue.length > 0
+                                    ? foundValue[0].idUser
+                                      ? colors.txtGrey
+                                      : 'black'
+                                    : 'black',
+                              }}>
+                              {pt}
+                            </Text>
+                            {foundValue.length > 0 ? (
+                              foundValue[0].idUser ? (
+                                <View style={{marginRight: 30}} />
+                              ) : (
+                                <Image
+                                  source={
+                                    checkCoassessor.idUser === idUser
+                                      ? RadioChecked
+                                      : RadioUncheck
+                                  }
+                                  style={{
+                                    height: 20,
+                                    width: 20,
+                                    marginLeft: 10,
+                                  }}
+                                />
+                              )
+                            ) : (
+                              <Image
+                                source={
+                                  checkCoassessor.idUser === idUser
+                                    ? RadioChecked
+                                    : RadioUncheck
+                                }
+                                style={{height: 20, width: 20, marginLeft: 10}}
+                              />
+                            )}
+                          </View>
                         </View>
                       </Pressable>
                     );
-                  })}
+                  }}
+                  keyExtractor={(item, index) => index.toString()}
+                  onEndReached={handleLoadmore}
+                  onEndReachedThreshold={0.01}
+                  ListFooterComponent={
+                    searchData.length === 0 ? renderFooter : null
+                  }
+                />
               </View>
               <View
                 style={{
@@ -1007,18 +1244,29 @@ const AddSubJob = ({navigation}) => {
           <View style={styles.modalView}>
             {/* Header Modal */}
             <View style={styles.headerModal}>
-              <Pressable onPress={() => setModalRemind(false)}>
+              <Pressable
+                onPress={() => {
+                  setModalRemind(false);
+                  setCheckRemind([]);
+                }}>
                 <Image source={BackIcon} style={{height: 15, width: 20}} />
               </Pressable>
               <Text style={styles.txtTitle}>Remind Who ? </Text>
-              <Pressable>
+              <Pressable
+                onPress={() => {
+                  setModalRemind(false);
+                }}>
                 <Text style={styles.txtAdd}>Add</Text>
               </Pressable>
             </View>
 
             {/* Search Modal */}
             <View style={styles.searchModal}>
-              <TextInput placeholder="Search Co-Assessor Name" />
+              <TextInput
+                placeholder="Search Crew Name..."
+                onChangeText={(search) => setSearch(search)}
+                onSubmitEditing={searchName}
+              />
             </View>
 
             <View style={styles.containerScrollDataModal}>
@@ -1032,27 +1280,70 @@ const AddSubJob = ({navigation}) => {
                 </View>
               </View>
               <View style={{flex: 1}}>
-                {data &&
-                  data.map(({name, idUser, pt, idPt}, index) => {
+                <FlatList
+                  data={searchData.length === 0 ? dataCrew : searchData}
+                  renderItem={({item}) => {
+                    const {idUser, name, pt, idPt} = item;
+                    var foundValue =
+                      checkRemind.length > 0 &&
+                      checkRemind.filter((obj) => obj.idUser === idUser);
                     return (
                       <Pressable
-                        style={styles.columnData}
+                        activeOpacity={0.6}
                         onPress={() => {
-                          setcheckRemind(idUser);
-                        }}>
-                        <View style={styles.flexView}>
-                          <Text>{name}</Text>
-                        </View>
-                        <View style={styles.flexView}>
-                          <Text>{pt}</Text>
-                          <Image
-                            source={checkRemind === idUser ? CheckActive : null}
-                            style={styles.iconCheck}
-                          />
+                          addNewItem(idUser, name, idPt);
+                        }}
+                        disabled={
+                          checkCoassessor.idUser == idUser ? true : false
+                        }>
+                        <View style={styles.listData}>
+                          <View style={{flexDirection: 'row'}}>
+                            <Text
+                              style={{
+                                color:
+                                  checkCoassessor.idUser == idUser
+                                    ? colors.txtGrey
+                                    : 'black',
+                              }}>
+                              {name}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                color:
+                                  checkCoassessor.idUser == idUser
+                                    ? colors.txtGrey
+                                    : 'black',
+                              }}>
+                              {pt}
+                            </Text>
+                            <Image
+                              source={
+                                foundValue.length > 0
+                                  ? foundValue[0].idUser
+                                    ? CheckActive
+                                    : null
+                                  : null
+                              }
+                              style={{height: 15, width: 20, marginLeft: 10}}
+                            />
+                          </View>
                         </View>
                       </Pressable>
                     );
-                  })}
+                  }}
+                  keyExtractor={(item, index) => index.toString()}
+                  onEndReached={handleLoadmore}
+                  onEndReachedThreshold={0.01}
+                  ListFooterComponent={
+                    searchData.length === 0 ? renderFooter : null
+                  }
+                />
               </View>
               <View
                 style={{
