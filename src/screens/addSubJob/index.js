@@ -54,6 +54,8 @@ import styles from './styles';
 import ImagePicker from 'react-native-image-crop-picker';
 import axios from 'axios';
 import {API_URL} from '@env';
+import {connect, useSelector} from 'react-redux';
+import {updateDetailSubjob} from '../../public/redux/ActionCreators/job';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -70,6 +72,7 @@ const nextWeek = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
 const tomorrow = new Date().getTime() + 1 * 24 * 60 * 60 * 1000;
 const today = new Date().getTime();
 
+console.log('Ini adalah Datenow', datenow);
 const monthNames = [
   'January',
   'February',
@@ -85,16 +88,66 @@ const monthNames = [
   'December',
 ];
 
-const data = [
-  {idUser: 1, name: 'Fachri', idPt: 1, pt: 'ansena'},
-  {idUser: 2, name: 'Joko', idPt: 2, pt: 'Social Lab'},
-  {idUser: 3, name: 'Tingkir', idPt: 1, pt: 'ansena'},
-  {idUser: 4, name: 'Susan', idPt: 1, pt: 'ansena'},
-  {idUser: 5, name: 'Alexander', idPt: 1, pt: 'ansena'},
-  {idUser: 6, name: 'Joseph', idPt: 1, pt: 'ansena'},
-];
+const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
+  const subJobData = useSelector((state) => state.job.subJobData);
+  const coAdminParams = route.params.coAdminName;
+  const idParams = route.params.id;
 
-const AddSubJob = ({navigation}) => {
+  useEffect(() => {
+    subJobData.map((item) => {
+      return item.id === idParams
+        ? (setDataSubjob(item),
+          setTitle(item.subjob),
+          setImages(item.img_refer),
+          setCheckRemind(item.remind),
+          setCheckCoassessor(item.assessor),
+          setSwitchPrio(item.is_priority === 1 ? true : false),
+          setSwitchDate(item.deadline != '' ? true : false),
+          setSwitchHour(item.deadline != '' ? true : false),
+          setPurpose(item.purpose),
+          setSelectedDate(item.deadline.split(' ')[0]),
+          setValueHour(
+            item.deadline === ''
+              ? hour
+              : Number(item.deadline.split(' ')[1].split(':')[0]),
+          ),
+          setNote(item.note),
+          setApproval(
+            item.approval === ''
+              ? {
+                  idUser: 1,
+                  name: 'Bernabas Aditya',
+                  status: 1,
+                }
+              : item.approval[0],
+          ),
+          setApproval2(
+            item.approval === ''
+              ? coAdminParams.length === 0
+                ? ''
+                : {...coAdminParams, status: 0}
+              : item.approval[1],
+          ),
+          console.log(item))
+        : null;
+    });
+    b;
+  }, []);
+
+  console.log('Ini co admin params', coAdminParams);
+
+  useEffect(() => {
+    if (coAdminParams.length === 0) {
+      setApproval2('');
+    } else {
+      if (subJobData.approval === '') {
+        setApproval2({...coAdminParams, status: 0});
+      }
+    }
+
+    // setApproval2({...coAdminParams, status: 0});
+  }, []);
+
   //-------------------State here---------------------
   const [animation, setAnimation] = useState(new Animated.Value(0));
   const [arrow, setArrow] = useState(false);
@@ -103,11 +156,6 @@ const AddSubJob = ({navigation}) => {
   const [collapseDeadlineHour, setCollapseDeadlineHour] = useState(true);
   const [collapseRemind, setCollapseRemind] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
-  const [dataApproval, setDataApproval] = useState([
-    {id: 1, name: 'Fachri Ghiffary'},
-    {id: 2, name: 'Joko Anwar'},
-  ]);
-
   const [daySelected, setDaySelected] = useState([]);
   const [markedDates, setMarkedDates] = useState({});
   const [month, setMonth] = useState(monthNames[new Date().getMonth()]);
@@ -127,13 +175,23 @@ const AddSubJob = ({navigation}) => {
   const [valueHour, setValueHour] = useState(hour);
   const [valueMinutes, setValueMinutes] = useState('0');
   const [images, setImages] = useState([]);
-  const [editImage, setEditImage] = useState(false);
+  const [editImage, setEditImage] = useState(true);
   const [dataCrew, setDataCrew] = useState([]);
   const [search, setSearch] = useState('');
   const [searchData, setSearchData] = useState([]);
   const [checkRemind, setCheckRemind] = useState([]);
   const [pages, setPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState('');
+  const [dataSubjob, setDataSubjob] = useState({});
+  const [purpose, setPurpose] = useState('');
+  const [note, setNote] = useState('');
+  const [approval, setApproval] = useState({
+    idUser: 1,
+    name: 'Bernabas Aditya',
+    status: 1,
+  });
+  const [approval2, setApproval2] = useState({});
 
   //---------------------End of State-------------------------
 
@@ -447,6 +505,24 @@ const AddSubJob = ({navigation}) => {
     setIsLoading(true);
   };
 
+  const handleSwitch = () => {
+    setApproval2(approval);
+    setApproval(approval2);
+  };
+  const handleSwitch1 = () => {
+    if (approval2.status === 1) {
+      setApproval(approval2);
+      setApproval2({...approval, status: 0});
+    }
+  };
+  const handleSwitch2 = () => {
+    if (approval2.status === 1) {
+      setApproval2({...approval2, status: 0});
+    } else if (approval2.status === 0) {
+      setApproval2({...approval2, status: 1});
+    }
+  };
+
   const renderFooter = () => {
     return isLoading ? (
       <View>
@@ -456,7 +532,45 @@ const AddSubJob = ({navigation}) => {
   };
 
   const submitSubjob = () => {
-    alert('Add Job');
+    const time =
+      valueHour < 10
+        ? '0' + valueHour + ': 00'
+        : `${valueHour}:${
+            valueMinutes === ''
+              ? '0'
+              : valueMinutes.toString() < 10
+              ? '0' + valueMinutes.toString()
+              : valueMinutes.toString()
+          }`;
+
+    const priority = switchPrio === false ? 0 : 1;
+    let approvalData = [approval, approval2];
+
+    const data = {
+      id: dataSubjob.id,
+      id_title: dataSubjob.id_title,
+      subjob: title,
+      code: dataSubjob.code,
+      approval: [approval, approval2],
+      remind: checkRemind.length === 0 ? '' : checkRemind,
+      note: note,
+      purpose: purpose,
+      assessor: checkCoassessor === '' ? '' : checkCoassessor,
+      deadline: switchDate ? selectedDate + ' ' + time : '',
+      deadline_revise: '',
+      is_priority: priority,
+      is_failed: '',
+      is_overdue: '',
+      img_refer: images.length === 0 ? '' : images,
+      img_request: '',
+      reported: '',
+    };
+    console.log('ini data yang dikirim ke redux ', data);
+    updateDetailSubjobRedux(data);
+    navigation.navigate('addjobgroup', {
+      subjob: title,
+      id: dataSubjob.id,
+    });
   };
 
   //-------------End Function Here-----------------
@@ -487,6 +601,31 @@ const AddSubJob = ({navigation}) => {
     transform: [{rotate: rotateInterpolate}],
   };
 
+  let renderApproval;
+  if (approval.name === 'Bernabas Aditya' && approval2.status === 0) {
+    renderApproval = <Text style={{color: colors.txtGrey}}>Only You</Text>;
+  } else if (approval.name != 'Bernabas Aditya' && approval2.status === 0) {
+    renderApproval = (
+      <Text style={{color: colors.txtGrey}}>
+        Only {approval.name.split(' ')[0]}
+      </Text>
+    );
+  } else if (approval.status === 1 && approval2.status === 1) {
+    renderApproval = (
+      <Text style={{color: colors.txtGrey}}>
+        {approval.name === 'Bernabas Aditya'
+          ? 'You'
+          : approval.name.split(' ')[0]}{' '}
+        then{' '}
+        {approval2.name === 'Bernabas Aditya'
+          ? 'You'
+          : approval2.name.split(' ')[0]}
+      </Text>
+    );
+  } else {
+    renderApproval = <Text style={{color: colors.txtGrey}}>Only You</Text>;
+  }
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -514,12 +653,16 @@ const AddSubJob = ({navigation}) => {
       {/* Code */}
       <View style={styles.code}>
         <Text style={styles.txtCode}>Code</Text>
-        <Text style={styles.txtCode}>DIDI89</Text>
+        <Text style={styles.txtCode}>{dataSubjob.code}</Text>
       </View>
 
       {/* title */}
       <View style={styles.titleinpt}>
-        <TextInput placeholder="Subjob Title" />
+        <TextInput
+          placeholder="Input Subjob"
+          value={title}
+          onChangeText={(text) => setTitle(text)}
+        />
       </View>
 
       {/* approval */}
@@ -538,6 +681,7 @@ const AddSubJob = ({navigation}) => {
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: colors.txtGrey}}>Only You</Text>
+            {/* {renderApproval} */}
             <Animated.Image
               source={ArrowDown}
               style={[
@@ -553,37 +697,75 @@ const AddSubJob = ({navigation}) => {
         </TouchableOpacity>
         <Collapsible collapsed={collapseApproval} align="center">
           <View style={styles.content}>
-            {dataApproval.length > 0 &&
-              dataApproval.map(({id, name}, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.rowDataApproval}
-                    onPress={() => {
-                      alert(id);
-                    }}>
-                    <View style={{flexDirection: 'row'}}>
-                      <View style={styles.circle}>
-                        <Text style={{fontSize: 12}}>{index + 1}</Text>
-                      </View>
-                      <Text>{name}</Text>
-                    </View>
+            <View
+              style={styles.rowDataApproval}
+              activeOpacity={0.8}
+              onPress={() => {}}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={styles.circle}>
+                  <Text style={{fontSize: 12}}>1</Text>
+                </View>
+                <Text>
+                  {approval.name === 'Bernabas Aditya' ? 'You' : approval.name}
+                </Text>
+              </View>
+              <TouchableOpacity onPress={handleSwitch1} activeOpacity={0.9}>
+                <Image source={SwitchActive} style={{height: 20, width: 40}} />
+              </TouchableOpacity>
+            </View>
+            {coAdminParams.length === 0 ? null : (
+              <View style={styles.rowDataApproval}>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={styles.circle}>
+                    <Text style={{fontSize: 12}}>2</Text>
+                  </View>
+                  <Text>
+                    {approval2.name === 'Bernabas Aditya'
+                      ? 'You'
+                      : approval2.name}
+                  </Text>
+                </View>
+                <TouchableOpacity onPress={handleSwitch2} activeOpacity={0.9}>
+                  {approval2.status == 1 ? (
                     <Image
                       source={SwitchActive}
                       style={{height: 20, width: 40}}
                     />
-                  </TouchableOpacity>
-                );
-              })}
-            <TouchableOpacity
-              style={styles.btnSwitch}
-              onPress={() => {
-                alert('tertekan');
-              }}>
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                Switch Order
-              </Text>
-            </TouchableOpacity>
+                  ) : (
+                    <Image
+                      source={SwitchDefault}
+                      style={{height: 20, width: 40}}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+            )}
+            {coAdminParams.length < 1 ? (
+              <View
+                style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
+                onPress={handleSwitch}>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                  Switch Order
+                </Text>
+              </View>
+            ) : approval2.status === 0 ? (
+              <View
+                style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
+                onPress={handleSwitch}>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                  Switch Order
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.btnSwitch}
+                onPress={handleSwitch}
+                activeOpacity={0.8}>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>
+                  Switch Order
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </Collapsible>
       </View>
@@ -592,7 +774,9 @@ const AddSubJob = ({navigation}) => {
       <View style={styles.purposeBox}>
         <TextInput
           placeholder="Purpose"
+          value={purpose}
           multiline={true}
+          onChangeText={(text) => setPurpose(text)}
           styles={{height: '100%'}}
         />
       </View>
@@ -621,12 +805,13 @@ const AddSubJob = ({navigation}) => {
           <Text style={{fontWeight: 'bold'}}>Deadline Date</Text>
         </TouchableOpacity>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: colors.txtGrey}}>None</Text>
+          <Text style={{color: colors.txtGrey}}>
+            {selectedDate == '' ? 'None' : selectedDate}
+          </Text>
           <Pressable
             onPress={() => {
               setSwitchDate(false);
               setSwitchHour(false);
-              setCollapseDeadlineHour(!collapseDeadlineHour);
             }}>
             <Image
               source={switchDate ? SwitchActive : SwitchDefault}
@@ -690,9 +875,17 @@ const AddSubJob = ({navigation}) => {
             scrollEnabled={true}
             showScrollIndicator={false}
             onDayPress={(day) => {
-              setNewDaySelected(day.dateString);
-              setSwitchDate(true);
-              setSwitchHour(true);
+              if (day.month > montNow) {
+                setNewDaySelected(day.dateString);
+                setSwitchDate(true);
+                setSwitchHour(true);
+              } else if (day.day < datenow) {
+                showToastWithGravity('Cannot choose date before now');
+              } else {
+                setNewDaySelected(day.dateString);
+                setSwitchDate(true);
+                setSwitchHour(true);
+              }
             }}
             markedDates={markedDates}
           />
@@ -789,9 +982,6 @@ const AddSubJob = ({navigation}) => {
         <Collapsible collapsed={collapseDeadlineHour}>
           <View style={styles.collapseRow}>
             <View style={styles.txtCollapseTime}>
-              {/* <Text>
-                {valueHour} : {valueMinutes}
-              </Text> */}
               <TextInput
                 style={{width: 30}}
                 value={
@@ -1057,7 +1247,12 @@ const AddSubJob = ({navigation}) => {
 
       {/* Notes */}
       <View style={styles.containerNote}>
-        <TextInput placeholder="Notes" multiline={true} />
+        <TextInput
+          placeholder="Notes"
+          multiline={true}
+          value={note}
+          onChangeText={(text) => setNote(text)}
+        />
       </View>
 
       {/* Modal */}
@@ -1403,4 +1598,10 @@ const AddSubJob = ({navigation}) => {
   );
 };
 
-export default AddSubJob;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateDetailSubjobRedux: (data) => dispatch(updateDetailSubjob(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(AddSubJob);

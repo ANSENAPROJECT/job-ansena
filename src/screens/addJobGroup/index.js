@@ -14,6 +14,7 @@ import {
   FlatList,
   ToastAndroid,
   ActivityIndicator,
+  LogBox,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import Popover, {PopoverPlacement} from 'react-native-popover-view';
@@ -41,6 +42,16 @@ import axios from 'axios';
 import Modal from 'react-native-modal';
 import {API_URL} from '@env';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import qs from 'qs';
+import {connect, useSelector} from 'react-redux';
+import {
+  addSubjob,
+  deleteAllSubJob,
+  deleteJobGroup,
+  deleteSubjob,
+  updateSubjob,
+} from '../../public/redux/ActionCreators/job';
+import {useIsFocused} from '@react-navigation/native';
 
 const windowHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -54,18 +65,46 @@ const getYear = datetime.getFullYear();
 const getMonth = datetime.getMonth() + 1;
 const getDate = datetime.getDate();
 
-const AddJobGroup = ({navigation}) => {
+const AddJobGroup = ({
+  navigation,
+  deleteJobRedux,
+  addSubJobRedux,
+  deleteAllsubJob,
+  deleteSubJobRedux,
+  updateSubjobRedux,
+  route,
+}) => {
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      route.params == undefined
+        ? ' '
+        : (setCheckId(route.params.id), setName(route.params.subjob));
+    });
+    return unsubscribe;
+  }, [navigation, isFocused]);
+
+  //Handle warning
+  useEffect(() => {
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  }, []);
+
   // handleBack
   useEffect(() => {
     const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => navigation.goBack()},
-      ]);
+      Alert.alert(
+        'Exit Add Job',
+        'By closing this page, the filled data will be deleted, are you sure?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => null,
+            style: 'cancel',
+          },
+          {text: 'YES', onPress: () => handleBack()},
+        ],
+      );
       return true;
     };
 
@@ -77,6 +116,7 @@ const AddJobGroup = ({navigation}) => {
     return () => backHandler.remove();
   }, []);
 
+  //-----------------Star State--------------------
   const [title, setTitle] = useState('New Job Group 1');
   const [arrow, setArrow] = useState(false);
   const [arrowLead, setArrowLead] = useState(false);
@@ -95,15 +135,27 @@ const AddJobGroup = ({navigation}) => {
   const [checkedCoadmin, setCheckedCoAdmin] = useState('');
   const [checkCrew, setcheckCrew] = useState([]);
   const [leader, setLeader] = useState('');
-  const [subJob, setSubJob] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [searchData, setSearchData] = useState([]);
+  const [checkSub, setCheckSub] = useState('');
+  const [name, setName] = useState('');
+  const [checkId, setCheckId] = useState('');
+
+  const jobId = useSelector((state) => state.job.jobgroup);
+  const code = useSelector((state) => state.auth.code);
+  const subJobData = useSelector((state) => state.job.subJobData);
+
+  //---------------------End State---------------------------
 
   useEffect(() => {
-    getData();
+    let mounted = true;
+    if (mounted) {
+      getData();
+    }
+    return () => (mounted = false);
   }, [search]);
 
   //Toogle Collapse
@@ -251,6 +303,87 @@ const AddJobGroup = ({navigation}) => {
 
   //End of function Modal
 
+  const handleBack = () => {
+    axios
+      .post(`${API_URL}/jzl/api/api/deleteJob/${jobId}`)
+      .then((res) => {
+        showToastMsg(`The filled has been deleted`);
+        console.log(res.data.data.message);
+        deleteJobRedux();
+        deleteAllsubJob();
+        navigation.replace('dashboard');
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const handleAddSubjob = () => {
+    axios
+      .post(`${API_URL}/jzl/api/api/saveTemplateSubjob/${jobId}/${code}`)
+      .then((res) => {
+        console.log(res.data);
+        const data = {
+          id: res.data.data.subjobId,
+          id_title: jobId,
+          subjob: '',
+          code: 'DIDI' + res.data.data.code,
+          purpose: '',
+          assessor: '',
+          deadline: '',
+          dealine_revise: '',
+          alarm: '',
+          stoppable: '',
+          token: '',
+          approval: '',
+          remind: '',
+          note: '',
+          note_report: '',
+          note_request: '',
+          note_revise: '',
+          status: '',
+          is_priority: '',
+          is_failed: '',
+          is_overdue: '',
+          img_refer: '',
+          img_request: '',
+          img_revise: '',
+          is_time: '',
+          reported: '',
+        };
+        // console.log(data);
+        addSubJobRedux(data);
+        // setSubJob([...subJob, subJob.length]);
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const handleDeleteSubjob = (id) => {
+    axios
+      .post(`${API_URL}/jzl/api/api/deleteSubjob/${id}`)
+      .then((res) => {
+        console.log(res);
+        deleteSubJobRedux(id);
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
+  const handleUpdateSubjob = (name, id) => {
+    updateSubjobRedux({
+      subjob: name,
+      id: id,
+    });
+  };
+
+  const handleInput = (id, subjob) => {
+    setCheckId(id);
+    setName(subjob);
+  };
+
   const getData = () => {
     axios
       .get(`${API_URL}/jzl/api/api/getListUser/${pages}`)
@@ -318,15 +451,21 @@ const AddJobGroup = ({navigation}) => {
     }
   };
 
-  const addSubjob = () => {
-    setSubJob([...subJob, subJob.length]);
-  };
-
   const showToastWithGravityAndOffset = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
       ToastAndroid.SHORT,
       ToastAndroid.CENTER,
+      25,
+      50,
+    );
+  };
+
+  const showToastMsg = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
       25,
       50,
     );
@@ -354,22 +493,120 @@ const AddJobGroup = ({navigation}) => {
     } else if (leader.idUser == undefined) {
       showToastWithGravityAndOffset('Leader must be fill in');
     } else {
-      showToastWithGravityAndOffset('Data success Sent');
       const dataPost = {
         title: title,
-        pt: checkCrew.map(({idPt}) => idPt),
-        crew: checkCrew.map(({idUser}) => idUser),
-        leaderId: leader.idUser,
+        pt: JSON.stringify(checkCrew.map(({idPt}) => idPt)),
+        crew: JSON.stringify(checkCrew.map(({idUser}) => idUser)),
+        leaderid: leader.idUser,
         admin: 1,
-        coAdmin: checkedCoadmin.idUser,
+        coadmin: checkedCoadmin.idUser,
         date: formatDate(`${getYear} ${getMonth} ${getDate}`),
       };
-      console.log(dataPost);
+
+      console.log(subJobData);
+
+      axios
+        .post(
+          `http://192.168.0.103/hey-buddy/jzl/api/api/saveJobGroup`,
+          qs.stringify(dataPost),
+        )
+        .then((res) => {
+          showToastWithGravityAndOffset('Data success Sent');
+          console.log(res);
+        })
+        .catch(({response}) => {
+          console.log(response);
+        });
+
+      // console.log(dataPost);
     }
   };
 
-  const goToDetail = () => {
-    setShowPopover(false);
+  const renderItem = ({item, index}) => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 14,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{marginRight: 20}}>{index + 1}. </Text>
+
+          <TextInput
+            placeholder="input Subjob"
+            value={checkId === item.id ? name : item.subjob}
+            onChangeText={(text) => setName(text)}
+            onFocus={() => handleInput(item.id, item.subjob)}
+            onEndEditing={() => {
+              handleUpdateSubjob(name, item.id);
+            }}
+          />
+        </View>
+        <Popover
+          // placement={PopoverPlacement.BOTTOM}
+          style={{borderRadius: 20, height: 50, width: 100}}
+          isVisible={checkSub === item.id ? true : false}
+          onRequestClose={() => {
+            setCheckSub();
+          }}
+          from={
+            <TouchableOpacity
+              onRequestClose={() => {
+                setCheckSub();
+              }}
+              onPress={() => {
+                setCheckSub(item.id);
+              }}>
+              <Image source={DotMenu} style={{height: 15, width: 15}} />
+            </TouchableOpacity>
+          }>
+          <View
+            style={{
+              height: 80,
+              width: 200,
+              padding: 10,
+              justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setCheckSub();
+                navigation.navigate('addsubjob', {
+                  id: item.id,
+                  coAdminName: checkedCoadmin,
+                });
+              }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: '#5cb7f8'}}>Details</Text>
+              <Image source={ArrowUp} style={{height: 20, width: 20}} />
+            </TouchableOpacity>
+            <View
+              style={{
+                borderWidth: 0.5,
+                width: '100%',
+                borderColor: '#e0dfe1',
+              }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                handleDeleteSubjob(item.id);
+                setCheckSub();
+              }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: '#e06655'}}>Delete</Text>
+              <Image source={Cross} style={{height: 20, width: 20}} />
+            </TouchableOpacity>
+          </View>
+        </Popover>
+      </View>
+    );
   };
   return (
     <>
@@ -377,10 +614,7 @@ const AddJobGroup = ({navigation}) => {
       <ScrollView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.pop();
-            }}>
+          <TouchableOpacity onPress={handleBack}>
             <Text style={styles.btnheader}>Cancel</Text>
           </TouchableOpacity>
           <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
@@ -631,11 +865,10 @@ const AddJobGroup = ({navigation}) => {
         </TouchableOpacity>
 
         {/* SubJOB */}
-        <TouchableOpacity
-          activeOpacity={0.9}
-          style={styles.subjob}
-          onPress={toogleSubJob}>
-          <View
+        <View style={styles.subjob}>
+          <TouchableOpacity
+            onPress={toogleSubJob}
+            activeOpacity={0.9}
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -650,7 +883,9 @@ const AddJobGroup = ({navigation}) => {
               <Text>Sub Job</Text>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{color: colors.txtGrey}}>None</Text>
+              <Text style={{color: colors.txtGrey}}>
+                {subJobData.length === 0 ? 'None' : subJobData.length}
+              </Text>
               <Animated.Image
                 source={ArrowDown}
                 style={[
@@ -666,91 +901,17 @@ const AddJobGroup = ({navigation}) => {
                 ]}
               />
             </View>
-          </View>
+          </TouchableOpacity>
           <Collapsible collapsed={colapseSubjob} align="center">
             <View style={styles.content}>
               <FlatList
-                data={subJob}
+                data={subJobData}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item, index}) => {
-                  return (
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 14,
-                      }}>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={{marginRight: 20}}>{index + 1}. </Text>
-                        <TextInput placeholder="Input Subjob" />
-                      </View>
-                      <Popover
-                        // placement={PopoverPlacement.BOTTOM}
-                        style={{borderRadius: 20, height: 50, width: 100}}
-                        isVisible={showPopover}
-                        onRequestClose={() => setShowPopover(false)}
-                        from={
-                          <TouchableOpacity
-                            onRequestClose={() => setShowPopover(false)}
-                            onPress={() => setShowPopover(true)}>
-                            <Image
-                              source={DotMenu}
-                              style={{height: 15, width: 15}}
-                            />
-                          </TouchableOpacity>
-                        }>
-                        <View
-                          style={{
-                            height: 80,
-                            width: 200,
-                            padding: 10,
-                            justifyContent: 'space-between',
-                          }}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              setShowPopover(false);
-                              navigation.navigate('addsubjob');
-                            }}
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}>
-                            <Text style={{color: '#5cb7f8'}}>Details</Text>
-                            <Image
-                              source={ArrowUp}
-                              style={{height: 20, width: 20}}
-                            />
-                          </TouchableOpacity>
-                          <View
-                            style={{
-                              borderWidth: 0.5,
-                              width: '100%',
-                              borderColor: '#e0dfe1',
-                            }}
-                          />
-                          <TouchableOpacity
-                            onPress={() => {
-                              alert('delete');
-                            }}
-                            style={{
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}>
-                            <Text style={{color: '#e06655'}}>Delete</Text>
-                            <Image
-                              source={Cross}
-                              style={{height: 20, width: 20}}
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </Popover>
-                    </View>
-                  );
-                }}
+                renderItem={renderItem}
               />
-              <TouchableOpacity style={styles.containerAdd} onPress={addSubjob}>
+              <TouchableOpacity
+                style={styles.containerAdd}
+                onPress={handleAddSubjob}>
                 <Image
                   source={Plus1}
                   style={{height: 15, width: 15, marginRight: 10}}
@@ -759,7 +920,7 @@ const AddJobGroup = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </Collapsible>
-        </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Start Modal Co admin*/}
@@ -1036,6 +1197,18 @@ const AddJobGroup = ({navigation}) => {
   );
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteJobRedux: () => dispatch(deleteJobGroup()),
+    deleteAllsubJob: () => dispatch(deleteAllSubJob()),
+    deleteSubJobRedux: (data) => dispatch(deleteSubjob(data)),
+    updateSubjobRedux: (data) => dispatch(updateSubjob(data)),
+    addSubJobRedux: (data) => dispatch(addSubjob(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(AddJobGroup);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -1260,5 +1433,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
-export default AddJobGroup;

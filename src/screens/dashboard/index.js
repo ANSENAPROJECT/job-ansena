@@ -30,17 +30,28 @@ import CardJob from '../../components/cardJob';
 import {logout} from '../../public/redux/ActionCreators/auth';
 import {colors} from '../../utils/colors';
 
-import {connect, useSelector} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {API_URL} from '@env';
 import Modal from 'react-native-modal';
+import {
+  addJobGroup,
+  deleteAllSubJob,
+  deleteJobGroup,
+} from '../../public/redux/ActionCreators/job';
 
-const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
+const Dashboard = ({
+  navigation,
+  logoutRedux,
+  addJobGroup,
+  deleteJobRedux,
+  deleteAllsubJob,
+}) => {
   const [possScroll, setPossScroll] = useState('');
   const [iconBell, setIconBell] = useState(true);
 
   const auth = useSelector((state) => state.auth);
-  const code = useSelector((state) => state.auth.code);
+  const name = useSelector((state) => state.auth.name);
   const idUser = useSelector((state) => state.auth.idUser);
 
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -91,6 +102,22 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
     navigation.replace('login');
   };
 
+  const handleAddJobGroup = () => {
+    deleteJobRedux();
+    deleteAllsubJob();
+    axios
+      .post(`${API_URL}/jzl/api/api/saveTemplateGroupJob/${idUser}`)
+      .then((res) => {
+        console.log('response data', res.data.data.jobId);
+        const data = res.data.data.jobId;
+        addJobGroup(data);
+        navigation.navigate('addjobgroup');
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -99,7 +126,8 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
           <Image source={Logo} style={styles.logo} />
           <View style={{flexDirection: 'row'}}>
             <Text>
-              Hello, <Text style={{fontWeight: 'bold'}}>{code}</Text>
+              Hello
+              <Text style={{fontWeight: 'bold'}}> {name.split(' ')[0]}</Text>
             </Text>
             <TouchableOpacity
               style={{marginLeft: 20}}
@@ -113,6 +141,7 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
           showsVerticalScrollIndicator={false}
           style={styles.body}
           onScroll={handleScroll}>
+          {/* Top Navigator */}
           <View style={styles.topNav}>
             <TouchableOpacity>
               <Text>Profile</Text>
@@ -230,9 +259,7 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
           <TouchableOpacity
             style={{flexDirection: 'row', alignItems: 'center'}}
             activeOpacity={0.6}
-            onPress={() => {
-              navigation.navigate('addjobgroup');
-            }}>
+            onPress={handleAddJobGroup}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image source={Plus} style={styles.plus} />
               <Text
@@ -251,6 +278,7 @@ const Dashboard = ({navigation, logoutRedux, getJobRedux}) => {
             </Text>
           </TouchableOpacity>
         </View>
+
         {modalVisible ? (
           <View
             style={{
@@ -467,6 +495,9 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
   return {
     logoutRedux: () => dispatch(logout()),
+    addJobGroup: (jobId) => dispatch(addJobGroup(jobId)),
+    deleteJobRedux: () => dispatch(deleteJobGroup()),
+    deleteAllsubJob: () => dispatch(deleteAllSubJob()),
   };
 };
 

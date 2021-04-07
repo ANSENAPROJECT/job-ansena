@@ -78,7 +78,7 @@ const Router = () => {
           options={{
             headerShown: false,
             gestureEnabled: true,
-            gestureDirection: 'vertical',
+            // gestureDirection: 'vertical',
             ...TransitionPresets.ModalSlideFromBottomIOS,
           }}
         />

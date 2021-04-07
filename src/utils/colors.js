@@ -8,4 +8,5 @@ export const colors = {
   badgeGreen: '#65b76f',
   badgeRed: '#dc3b25',
   txtGrey: '#d9d8d9',
+  btngrey: '#ebeaeb',
 };
