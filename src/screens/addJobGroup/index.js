@@ -522,92 +522,6 @@ const AddJobGroup = ({
     }
   };
 
-  const renderItem = ({item, index}) => {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: 14,
-        }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{marginRight: 20}}>{index + 1}. </Text>
-
-          <TextInput
-            placeholder="input Subjob"
-            value={checkId === item.id ? name : item.subjob}
-            onChangeText={(text) => setName(text)}
-            onFocus={() => handleInput(item.id, item.subjob)}
-            onEndEditing={() => {
-              handleUpdateSubjob(name, item.id);
-            }}
-          />
-        </View>
-        <Popover
-          // placement={PopoverPlacement.BOTTOM}
-          style={{borderRadius: 20, height: 50, width: 100}}
-          isVisible={checkSub === item.id ? true : false}
-          onRequestClose={() => {
-            setCheckSub();
-          }}
-          from={
-            <TouchableOpacity
-              onRequestClose={() => {
-                setCheckSub();
-              }}
-              onPress={() => {
-                setCheckSub(item.id);
-              }}>
-              <Image source={DotMenu} style={{height: 15, width: 15}} />
-            </TouchableOpacity>
-          }>
-          <View
-            style={{
-              height: 80,
-              width: 200,
-              padding: 10,
-              justifyContent: 'space-between',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                setCheckSub();
-                navigation.navigate('addsubjob', {
-                  id: item.id,
-                  coAdminName: checkedCoadmin,
-                });
-              }}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text style={{color: '#5cb7f8'}}>Details</Text>
-              <Image source={ArrowUp} style={{height: 20, width: 20}} />
-            </TouchableOpacity>
-            <View
-              style={{
-                borderWidth: 0.5,
-                width: '100%',
-                borderColor: '#e0dfe1',
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                handleDeleteSubjob(item.id);
-                setCheckSub();
-              }}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <Text style={{color: '#e06655'}}>Delete</Text>
-              <Image source={Cross} style={{height: 20, width: 20}} />
-            </TouchableOpacity>
-          </View>
-        </Popover>
-      </View>
-    );
-  };
   return (
     <>
       {/* The View */}
@@ -662,7 +576,9 @@ const AddJobGroup = ({
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: colors.txtGrey}}>
-              {checkedCoadmin === '' ? 'None' : checkedCoadmin.name}
+              {checkedCoadmin === ''
+                ? 'None'
+                : checkedCoadmin.name.split(' ')[0]}
             </Text>
             <Image
               source={ArrowDown}
@@ -815,7 +731,7 @@ const AddJobGroup = ({
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{color: colors.txtGrey}}>
-                {leader === '' ? 'None' : leader.name}
+                {leader === '' ? 'None' : leader.name.split(' ')[0]}
               </Text>
               <Animated.Image
                 source={ArrowDown}
@@ -865,7 +781,12 @@ const AddJobGroup = ({
         </TouchableOpacity>
 
         {/* SubJOB */}
-        <View style={styles.subjob}>
+        <View
+          activeOpacity={0.9}
+          style={{...styles.crew, borderRadius: 20, marginBottom: 30}}
+          onPress={() => {
+            toogleCrew();
+          }}>
           <TouchableOpacity
             onPress={toogleSubJob}
             activeOpacity={0.9}
@@ -902,12 +823,119 @@ const AddJobGroup = ({
               />
             </View>
           </TouchableOpacity>
-          <Collapsible collapsed={colapseSubjob} align="center">
+          <Collapsible collapsed={colapseSubjob}>
             <View style={styles.content}>
               <FlatList
                 data={subJobData}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItem}
+                renderItem={({item, index}) => {
+                  return (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingHorizontal: 14,
+                      }}>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={{marginRight: 20}}>{index + 1}. </Text>
+
+                        <TextInput
+                          placeholder="input Subjob"
+                          value={checkId === item.id ? name : item.subjob}
+                          onChangeText={(text) => setName(text)}
+                          onFocus={() => handleInput(item.id, item.subjob)}
+                          onEndEditing={() => {
+                            handleUpdateSubjob(name, item.id);
+                          }}
+                        />
+                      </View>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text style={{marginRight: 10, color: colors.txtGrey}}>
+                          {item.deadline === ''
+                            ? ''
+                            : item.deadline.split(' ')[0]}
+                        </Text>
+                        <Popover
+                          // placement={PopoverPlacement.BOTTOM}
+                          style={{
+                            borderRadius: 20,
+                            height: 50,
+                            width: 100,
+                          }}
+                          isVisible={checkSub === item.id ? true : false}
+                          onRequestClose={() => {
+                            setCheckSub();
+                          }}
+                          from={
+                            <TouchableOpacity
+                              onRequestClose={() => {
+                                setCheckSub();
+                              }}
+                              onPress={() => {
+                                setCheckSub(item.id);
+                              }}>
+                              <Image
+                                source={DotMenu}
+                                style={{height: 15, width: 15}}
+                              />
+                            </TouchableOpacity>
+                          }>
+                          <View
+                            style={{
+                              height: 80,
+                              width: 200,
+                              padding: 10,
+                              justifyContent: 'space-between',
+                            }}>
+                            <TouchableOpacity
+                              onPress={() => {
+                                setCheckSub();
+                                navigation.navigate('addsubjob', {
+                                  id: item.id,
+                                  coAdminName: checkedCoadmin,
+                                });
+                              }}
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                              }}>
+                              <Text style={{color: '#5cb7f8'}}>Details</Text>
+                              <Image
+                                source={ArrowUp}
+                                style={{height: 20, width: 20}}
+                              />
+                            </TouchableOpacity>
+                            <View
+                              style={{
+                                borderWidth: 0.5,
+                                width: '100%',
+                                borderColor: '#e0dfe1',
+                              }}
+                            />
+                            <TouchableOpacity
+                              onPress={() => {
+                                handleDeleteSubjob(item.id);
+                                setCheckSub();
+                              }}
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                              }}>
+                              <Text style={{color: '#e06655'}}>Delete</Text>
+                              <Image
+                                source={Cross}
+                                style={{height: 20, width: 20}}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </Popover>
+                      </View>
+                    </View>
+                  );
+                }}
               />
               <TouchableOpacity
                 style={styles.containerAdd}

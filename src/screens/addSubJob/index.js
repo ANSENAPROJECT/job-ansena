@@ -131,7 +131,6 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           console.log(item))
         : null;
     });
-    b;
   }, []);
 
   console.log('Ini co admin params', coAdminParams);
@@ -192,6 +191,8 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
     status: 1,
   });
   const [approval2, setApproval2] = useState({});
+  const [optionRemind, setOptionRemind] = useState('');
+  const [stopable, setStopable] = useState(false);
 
   //---------------------End of State-------------------------
 
@@ -626,6 +627,29 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
     renderApproval = <Text style={{color: colors.txtGrey}}>Only You</Text>;
   }
 
+  let valueRemindOption;
+  if (optionRemind === 1) {
+    valueRemindOption = (
+      <Text style={{color: colors.colorDetail}}>
+        15 minutes before deadline
+      </Text>
+    );
+  } else if (optionRemind === 2) {
+    valueRemindOption = (
+      <Text style={{color: colors.colorDetail}}>1 hour before deadline</Text>
+    );
+  } else if (optionRemind === 3) {
+    valueRemindOption = (
+      <Text style={{color: colors.colorDetail}}>1 day before deadline</Text>
+    );
+  } else if (optionRemind === 4) {
+    valueRemindOption = (
+      <Text style={{color: colors.colorDetail}}>From start to Finish</Text>
+    );
+  } else {
+    valueRemindOption = <Text style={{color: colors.colorDetail}}>None</Text>;
+  }
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -677,11 +701,11 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               source={CoAdmin}
               style={{height: 30, width: 30, marginRight: 20}}
             />
-            <Text>Approval</Text>
+            <Text style={styles.titleRow}>Approval</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{color: colors.txtGrey}}>Only You</Text>
-            {/* {renderApproval} */}
+            {/* <Text style={{color: colors.txtGrey}}>Only You</Text> */}
+            {renderApproval}
             <Animated.Image
               source={ArrowDown}
               style={[
@@ -802,7 +826,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             setSwitchHour(true);
           }}>
           <Image source={DeadlineDate} style={styles.imgSize} />
-          <Text style={{fontWeight: 'bold'}}>Deadline Date</Text>
+          <Text style={styles.titleRow}>Deadline Date</Text>
         </TouchableOpacity>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{color: colors.txtGrey}}>
@@ -957,7 +981,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               setSwitchHour(true);
             }}>
             <Image source={DeadlineHour} style={styles.imgSize} />
-            <Text style={{fontWeight: 'bold'}}>Deadline Hour</Text>
+            <Text style={styles.titleRow}>Deadline Hour</Text>
           </TouchableOpacity>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: colors.txtGrey}}>
@@ -1067,7 +1091,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
         }}>
         <View style={styles.flexView}>
           <Image source={Assessor} style={styles.imgSize} />
-          <Text>Add Co-Assesor</Text>
+          <Text style={styles.titleRow}>Add Co-Assesor</Text>
         </View>
         <View style={styles.flexView}>
           <Text style={{color: colors.txtGrey}}>
@@ -1086,7 +1110,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
         }}>
         <View style={styles.flexView}>
           <Image source={Prio1} style={styles.imgSize} />
-          <Text>Prioritized</Text>
+          <Text style={styles.titleRow}>Prioritized</Text>
         </View>
         <Image
           source={switchPrio ? SwitchActive : SwitchDefault}
@@ -1110,7 +1134,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               source={Remind}
               style={{height: 30, width: 30, marginRight: 20}}
             />
-            <Text>Remind Other</Text>
+            <Text style={styles.titleRow}>Remind Other</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image
@@ -1119,7 +1143,114 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             />
           </View>
         </TouchableOpacity>
-        <Collapsible collapsed={collapseRemind} align="center">
+        <Collapsible collapsed={collapseRemind}>
+          {checkRemind.length < 1 ? null : (
+            <View style={styles.containerRemindRow}>
+              {/* Remind Option */}
+              <View>
+                {/* Stopable */}
+                <View style={styles.flexRow}>
+                  <Text style={styles.titleRow}>Stopable</Text>
+                  <TouchableOpacity
+                    activeOpacity={0.6}
+                    onPress={() => {
+                      setStopable(!stopable);
+                    }}>
+                    <Image
+                      source={stopable ? SwitchActive : SwitchDefault}
+                      style={styles.switch}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    ...styles.line,
+                    width: '100%',
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                />
+                {/* Reminder Alarm */}
+                <View style={{marginBottom: 10}}>
+                  <View style={styles.flexRow}>
+                    <Text style={styles.titleRow}>Reminder Alarm</Text>
+                    {/* <Text style={{color: colors.txtGrey}}>None</Text> */}
+                    {valueRemindOption}
+                  </View>
+                  <View style={{...styles.flexRow, marginTop: 10}}>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.btnOptionRemind,
+                        backgroundColor:
+                          optionRemind === 1 ? colors.badgeBlue : 'white',
+                      }}
+                      onPress={() => {
+                        setOptionRemind(1);
+                      }}>
+                      <Text
+                        style={{
+                          ...styles.txtRemindOption,
+                          color: optionRemind === 1 ? 'white' : '#b6b6b6',
+                        }}>
+                        15 MINUTES
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.btnOptionRemind,
+                        backgroundColor:
+                          optionRemind === 2 ? colors.badgeBlue : 'white',
+                      }}
+                      onPress={() => {
+                        setOptionRemind(2);
+                      }}>
+                      <Text
+                        style={{
+                          ...styles.txtRemindOption,
+                          color: optionRemind === 2 ? 'white' : '#b6b6b6',
+                        }}>
+                        1 HOUR
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.btnOptionRemind,
+                        backgroundColor:
+                          optionRemind === 3 ? colors.badgeBlue : 'white',
+                      }}
+                      onPress={() => {
+                        setOptionRemind(3);
+                      }}>
+                      <Text
+                        style={{
+                          ...styles.txtRemindOption,
+                          color: optionRemind === 3 ? 'white' : '#b6b6b6',
+                        }}>
+                        1 DAY
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.btnOptionRemind,
+                        backgroundColor:
+                          optionRemind === 4 ? colors.badgeBlue : 'white',
+                      }}
+                      onPress={() => {
+                        setOptionRemind(4);
+                      }}>
+                      <Text
+                        style={{
+                          ...styles.txtRemindOption,
+                          color: optionRemind === 4 ? 'white' : '#b6b6b6',
+                        }}>
+                        FOLLOW
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
           <View style={{marginTop: 10}}>
             <FlatList
               data={checkRemind}
@@ -1145,7 +1276,6 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                             transform: [{rotate: '180deg'}],
                           }}
                           onPress={() => {
-                            // alert(index);
                             removeListCrew(idUser, index);
                           }}>
                           <Animated.Text

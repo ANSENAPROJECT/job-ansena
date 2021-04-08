@@ -11,6 +11,10 @@ export default StyleSheet.create({
     padding: 20,
   },
 
+  titleRow: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   // Header styles
   containerHeader: {
     flexDirection: 'row',
@@ -280,6 +284,25 @@ export default StyleSheet.create({
     height: 70,
     width: '100%',
     borderRadius: 20,
+  },
+  containerRemindRow: {
+    height: 100,
+    width: '100%',
+  },
+  flexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  txtRemindOption: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  btnOptionRemind: {
+    height: 30,
+    width: 75,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   // add Image
