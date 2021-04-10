@@ -15,6 +15,7 @@ import {
   ToastAndroid,
   ActivityIndicator,
   LogBox,
+  Pressable,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import Popover, {PopoverPlacement} from 'react-native-popover-view';
@@ -143,10 +144,13 @@ const AddJobGroup = ({
   const [checkSub, setCheckSub] = useState('');
   const [name, setName] = useState('');
   const [checkId, setCheckId] = useState('');
+  const [modalLoading, setModalLoading] = useState(false);
+  const [txtLoading, setTxtLoading] = useState('Please Wait...');
 
   const jobId = useSelector((state) => state.job.jobgroup);
   const code = useSelector((state) => state.auth.code);
   const subJobData = useSelector((state) => state.job.subJobData);
+  const userId = useSelector((state) => state.auth.idUser);
 
   //---------------------End State---------------------------
 
@@ -351,7 +355,7 @@ const AddJobGroup = ({
           is_time: '',
           reported: '',
         };
-        // console.log(data);
+        console.log(data);
         addSubJobRedux(data);
         // setSubJob([...subJob, subJob.length]);
       })
@@ -471,7 +475,10 @@ const AddJobGroup = ({
     );
   };
 
-  const postData = () => {
+  const postData = async () => {
+    console.log('Ini adalah subjob data', subJobData);
+    setModalLoading(true);
+    setTxtLoading('Please wait...');
     function formatDate(date) {
       var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -485,40 +492,126 @@ const AddJobGroup = ({
     }
 
     if (title === 'New Job Group 1' || title === '') {
+      setModalLoading(false);
       showToastWithGravityAndOffset('Title Job Group must be fill in');
     } else if (checkedCoadmin.length < 1) {
+      setModalLoading(false);
       showToastWithGravityAndOffset('Co Admin must be fill in');
     } else if (checkCrew.length < 1) {
+      setModalLoading(false);
       showToastWithGravityAndOffset('Crew must be fill in');
     } else if (leader.idUser == undefined) {
+      setModalLoading(false);
       showToastWithGravityAndOffset('Leader must be fill in');
     } else {
-      const dataPost = {
-        title: title,
-        pt: JSON.stringify(checkCrew.map(({idPt}) => idPt)),
-        crew: JSON.stringify(checkCrew.map(({idUser}) => idUser)),
-        leaderid: leader.idUser,
-        admin: 1,
-        coadmin: checkedCoadmin.idUser,
-        date: formatDate(`${getYear} ${getMonth} ${getDate}`),
-      };
+      if (subJobData.find((obj) => obj.subjob === '')) {
+        setModalLoading(false);
+        showToastWithGravityAndOffset('Field subjob must be filled in');
+      } else {
+        let idCrew = [];
+        let ptId = [];
+        for (let k = 0; k < checkCrew.length; k++) {
+          idCrew[k] = checkCrew[k].idUser;
+          ptId[k] = checkCrew[k].idPt;
+        }
+        let newIdPt = [...new Set(ptId)];
 
-      console.log(subJobData);
+        const dataPost = {
+          jobId: jobId,
+          title: title,
+          pt: newIdPt.join(','),
+          crew: idCrew.join(','),
+          leaderid: leader.idUser,
+          admin: 1,
+          coadmin: checkedCoadmin.idUser,
+          date: formatDate(`${getYear} ${getMonth} ${getDate}`),
+        };
+        console.log(dataPost);
+        await axios
+          .post(`${API_URL}/jzl/api/api/saveJobGroup`, qs.stringify(dataPost))
+          .then((res) => {
+            console.log('Ini response jobgroup', res);
+            console.log(subJobData);
+            for (let i = 0; i < subJobData.length; i++) {
+              let newRemind = [];
+              for (let j = 0; j < subJobData[i].remind.length; j++) {
+                newRemind[j] = subJobData[i].remind[j].idUser;
+              }
 
-      axios
-        .post(
-          `http://192.168.0.103/hey-buddy/jzl/api/api/saveJobGroup`,
-          qs.stringify(dataPost),
-        )
-        .then((res) => {
-          showToastWithGravityAndOffset('Data success Sent');
-          console.log(res);
-        })
-        .catch(({response}) => {
-          console.log(response);
-        });
+              let ApprovalNew;
+              if (subJobData[i].approval === '') {
+                ApprovalNew = '1';
+              } else {
+                const newApproval = subJobData[i].approval.filter((item) =>
+                  item.status == 1 ? item : null,
+                );
+                ApprovalNew = newApproval.map((item) => `${item.idUser}`);
+              }
 
-      // console.log(dataPost);
+              const data = new FormData();
+              data.append('userId', `${userId}`);
+              data.append('id', `${subJobData[i].id}`);
+              data.append('approval', `${ApprovalNew}`);
+              data.append('id_title', `${subJobData[i].id_title}`);
+              data.append('subjob', `${subJobData[i].subjob}`);
+              data.append('code', `${subJobData[i].code}`);
+              data.append('purpose', `${subJobData[i].purpose}`);
+              data.append('remind', `${newRemind}`);
+              data.append(
+                'assessor',
+                `${
+                  subJobData[i].assessor.length === 0
+                    ? ''
+                    : subJobData[i].assessor.idUser
+                }`,
+              );
+              data.append('is_priority', `${subJobData[i].is_priority}`);
+              data.append('stoppable', `${subJobData[i].stoppable}`);
+              data.append('alarm', `${subJobData[i].alarm}`);
+              data.append('deadline', `${subJobData[i].deadline}`);
+              data.append('note', `${subJobData[i].note}`);
+              subJobData[i].img_refer.length === 0
+                ? data.append('subjob', `${subJobData[i].subjob}.empty`)
+                : subJobData[i].img_refer.forEach((item) => {
+                    data.append('img[]', {
+                      name: item.uri.split('/').pop(),
+                      type: item.mime,
+                      uri: item.uri,
+                    });
+                  });
+              console.log('Ini adalah formdata', data);
+
+              const config = {
+                headers: {
+                  'Content-type': 'multipart/form-data',
+                },
+              };
+              axios
+                .post(`${API_URL}/jzl/api/api/save_subjob`, data, config)
+                .then((res) => {
+                  console.log(res);
+                  if (res.data.data.status === 413) {
+                    setModalLoading(false);
+                    setTxtLoading('File image is too large');
+                  } else {
+                    setModalLoading(false);
+                    setTxtLoading('Upload success');
+                  }
+                  // showToastWithGravityAndOffset('Success add job');
+                  // navigation.goBack();
+                })
+                .catch(({response}) => {
+                  setModalLoading(false);
+                  setTxtLoading('Upload Failed');
+                  console.log(response);
+                });
+            }
+          })
+          .catch(({response}) => {
+            setModalLoading(false);
+            console.log(response);
+          });
+      }
     }
   };
 
@@ -1221,6 +1314,30 @@ const AddJobGroup = ({
         </View>
       </Modal>
       {/* End Modal Crew */}
+
+      {/* Modal loading */}
+      <Modal
+        isVisible={modalLoading}
+        backdropOpacit={0.9}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        animationOutTiming={2000}
+        useNativeDriver={true}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View
+            style={{
+              height: 100,
+              width: 200,
+              borderRadius: 15,
+              backgroundColor: 'white',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ActivityIndicator size="large" color="blue" />
+            <Text style={{fontSize: 16, fontWeight: 'bold'}}>{txtLoading}</Text>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };

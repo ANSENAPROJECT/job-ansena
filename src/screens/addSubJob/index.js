@@ -128,12 +128,12 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 : {...coAdminParams, status: 0}
               : item.approval[1],
           ),
+          setOptionRemind(item.alarm),
+          setStopable(item.stoppable == 1 ? true : false),
           console.log(item))
         : null;
     });
   }, []);
-
-  console.log('Ini co admin params', coAdminParams);
 
   useEffect(() => {
     if (coAdminParams.length === 0) {
@@ -365,7 +365,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           ]);
         }
       })
-      .catch((e) => alert(e));
+      .catch((e) => console.log(e));
   };
 
   const deletePhoto = (uri) => {
@@ -553,6 +553,8 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
       subjob: title,
       code: dataSubjob.code,
       approval: [approval, approval2],
+      stoppable: stopable ? 1 : 0,
+      alarm: optionRemind,
       remind: checkRemind.length === 0 ? '' : checkRemind,
       note: note,
       purpose: purpose,
@@ -566,6 +568,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
       img_request: '',
       reported: '',
     };
+
     console.log('ini data yang dikirim ke redux ', data);
     updateDetailSubjobRedux(data);
     navigation.navigate('addjobgroup', {
@@ -820,22 +823,33 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           activeOpacity={0.6}
           style={{flexDirection: 'row', alignItems: 'center'}}
           onPress={() => {
-            setCollapseDeadline(!collapseDeadline);
-            setCollapseDeadlineHour(!collapseDeadlineHour);
-            setSwitchDate(true);
-            setSwitchHour(true);
+            if (switchDate === true && switchHour === true) {
+              setCollapseDeadline(!collapseDeadline);
+              setCollapseDeadlineHour(!collapseDeadlineHour);
+            } else if (switchDate === false && switchHour === false) {
+              setCollapseDeadline(!collapseDeadline);
+              setCollapseDeadlineHour(!collapseDeadlineHour);
+              setSwitchDate(true);
+              setSwitchHour(true);
+              OptionDate(today);
+            }
           }}>
           <Image source={DeadlineDate} style={styles.imgSize} />
           <Text style={styles.titleRow}>Deadline Date</Text>
         </TouchableOpacity>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{color: colors.txtGrey}}>
-            {selectedDate == '' ? 'None' : selectedDate}
+            {switchDate == false
+              ? 'None'
+              : selectedDate.split('-')[2] + ' ' + month === ''
+              ? 'None'
+              : selectedDate.split('-')[2] + ' ' + month}
           </Text>
           <Pressable
             onPress={() => {
-              setSwitchDate(false);
-              setSwitchHour(false);
+              setSwitchDate(!switchDate);
+              setSwitchHour(!switchHour);
+              OptionDate(today);
             }}>
             <Image
               source={switchDate ? SwitchActive : SwitchDefault}
@@ -985,7 +999,9 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           </TouchableOpacity>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: colors.txtGrey}}>
-              {valueHour < 10
+              {switchHour === false
+                ? 'None'
+                : valueHour < 10
                 ? '0' + valueHour + ': 00'
                 : `${valueHour}:${
                     valueMinutes === ''
@@ -995,7 +1011,11 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                       : valueMinutes.toString()
                   }`}
             </Text>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity
+              onPress={() => {
+                setSwitchDate(!switchDate);
+                setSwitchHour(!switchHour);
+              }}>
               <Image
                 source={switchHour ? SwitchActive : SwitchDefault}
                 style={{height: 23, width: 43, marginLeft: 10}}
@@ -1157,7 +1177,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                       setStopable(!stopable);
                     }}>
                     <Image
-                      source={stopable ? SwitchActive : SwitchDefault}
+                      source={stopable === true ? SwitchActive : SwitchDefault}
                       style={styles.switch}
                     />
                   </TouchableOpacity>

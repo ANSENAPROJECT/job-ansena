@@ -5,22 +5,36 @@ import {ArrowDown} from '../assets';
 import {useSelector} from 'react-redux';
 import {colors} from '../utils/colors';
 import {API_URL} from '@env';
+import {useIsFocused} from '@react-navigation/native';
 
-const CardJob = () => {
+const CardJob = ({navigation}) => {
   const idUser = useSelector((state) => state.auth.idUser);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (navigation === undefined) {
+      getData();
+    } else {
+      const unsubscribe = navigation.addListener('focus', () => {
+        getData();
+      });
+      return unsubscribe;
+    }
+  }, [navigation, isFocused]);
 
   useEffect(() => {
     getData();
     return () => {
       getData();
     };
-  }, [jobList]);
+  }, [jobList, isFocused]);
 
   const [jobList, setJobList] = useState([]);
 
   const getData = () => {
     axios
-      .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
+      .get(`http://192.168.0.101/hey-buddy/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
         // console.log(res);
         let i = '';

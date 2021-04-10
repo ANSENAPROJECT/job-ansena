@@ -60,6 +60,8 @@ const JobReducers = (prevstate = initialState, action) => {
               subjob: action.payload.subjob,
               code: action.payload.code,
               approval: action.payload.approval,
+              alarm: action.payload.alarm,
+              stoppable: action.payload.stoppable,
               remind: action.payload.remind,
               note: action.payload.note,
               purpose: action.payload.purpose,
