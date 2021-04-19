@@ -40,6 +40,26 @@ import Afternoon from './icons/afternoon.png';
 import Camera from './icons/camera.png';
 import Galery from './icons/galery.png';
 import StopFill from './icons/stopfill.png';
+import DotMenuBlue from './icons/dotmenublue.png';
+import IconGalery from './icons/iconGalery.png';
+import Star from './icons/star.png';
+import ReportActive from './icons/reporthistory.png';
+import ReportDefault from './icons/noreports.png';
+import OverdueDefault from './icons/overduegrey.png';
+import OverdueActive from './icons/overduered.png';
+import ArrowRed from './icons/arrowRed.png';
+import ReportDone from './icons/reportdone1.png';
+import ReportDone1 from './icons/reportdone.png';
+import ArrowDownWhite from './icons/arrowdownwhite.png';
+import ArrowDownBlue from './icons/arrowdownblue.png';
+import OverdueDate from './icons/overduedate.png';
+import OverdueDateWhite from './icons/overduedatewhite.png';
+import OverdueDateRed from './icons/overduered.png';
+import WaitingRevision from './icons/waitingRevision.png';
+import ArrowUpRed from './icons/arrowupred.png';
+import WaitingWhite from './icons/waitingwhite.png';
+
+import Image1 from './images/img.jpg';
 
 export {
   Logo,
@@ -84,4 +104,23 @@ export {
   Camera,
   Galery,
   StopFill,
+  DotMenuBlue,
+  IconGalery,
+  Star,
+  ReportActive,
+  ReportDefault,
+  OverdueDefault,
+  OverdueActive,
+  ArrowRed,
+  ReportDone,
+  ReportDone1,
+  ArrowDownWhite,
+  OverdueDate,
+  OverdueDateWhite,
+  ArrowDownBlue,
+  Image1,
+  WaitingRevision,
+  OverdueDateRed,
+  ArrowUpRed,
+  WaitingWhite,
 };

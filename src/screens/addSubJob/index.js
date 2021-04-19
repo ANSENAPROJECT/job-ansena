@@ -654,7 +654,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} removeClippedSubviews={true}>
       {/* Header */}
       <View style={styles.containerHeader}>
         <TouchableOpacity
