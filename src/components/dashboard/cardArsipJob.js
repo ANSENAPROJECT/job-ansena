@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
-import {ArrowDown} from '../assets';
+import {ArrowDown} from '../../assets';
 
-const CardAI = () => {
+const CardArsipJob = () => {
   return (
     <ScrollView style={styles.containerAi} nestedScrollEnabled>
-      <Text style={{fontSize: 20, marginBottom: 20}}>Ai</Text>
+      <Text style={{fontSize: 20, marginBottom: 20}}>ArsipJob</Text>
       <View style={styles.rowContainer}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Text>1. </Text>
@@ -37,7 +37,6 @@ const CardAI = () => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   containerAi: {
     minHeight: 300,
@@ -47,8 +46,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     marginTop: 25,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 20,
+    marginBottom: 80,
   },
   arrow: {
     height: 10,
@@ -68,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardAI;
+export default CardArsipJob;

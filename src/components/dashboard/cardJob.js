@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image, ScrollView} from 'react-native';
-import {ArrowDown} from '../assets';
+import {ArrowDown} from '../../assets';
 import {useSelector} from 'react-redux';
-import {colors} from '../utils/colors';
+import {colors} from '../../utils/colors';
 import {API_URL} from '@env';
 import {useIsFocused} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const CardJob = ({navigation}) => {
   const idUser = useSelector((state) => state.auth.idUser);
@@ -34,7 +35,7 @@ const CardJob = ({navigation}) => {
 
   const getData = () => {
     axios
-      .get(`http://192.168.0.101/hey-buddy/jzl/api/api/getListIndex/${idUser}`)
+      .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
         // console.log(res);
         let i = '';
@@ -58,6 +59,7 @@ const CardJob = ({navigation}) => {
           (
             {
               idJobGroup,
+              subjobId,
               subjob,
               status,
               priorityStatus,
@@ -111,6 +113,32 @@ const CardJob = ({navigation}) => {
                         ? {
                             ...styles.badgefill,
                             backgroundColor: colors.badgeBlue,
+                          }
+                        : null
+                    }
+                  />
+                );
+              } else if (status == 6) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgefill,
+                            backgroundColor: colors.badgeBlue,
+                          }
+                        : null
+                    }
+                  />
+                );
+              } else if (status == 8) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgeOutline,
+                            borderColor: colors.badgeRed,
                           }
                         : null
                     }
@@ -228,6 +256,32 @@ const CardJob = ({navigation}) => {
                     }
                   />
                 );
+              } else if (status == 6) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgefill,
+                            backgroundColor: colors.badgeGreen,
+                          }
+                        : null
+                    }
+                  />
+                );
+              } else if (status == 8) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgeOutline,
+                            borderColor: colors.badgeRed,
+                          }
+                        : null
+                    }
+                  />
+                );
               }
             } else if (isAssessor == 1) {
               if (status == 1) {
@@ -333,6 +387,32 @@ const CardJob = ({navigation}) => {
                     }
                   />
                 );
+              } else if (status == 6) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgefill,
+                            backgroundColor: colors.badgeGreen,
+                          }
+                        : null
+                    }
+                  />
+                );
+              } else if (status == 8) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgeOutline,
+                            borderColor: colors.badgeRed,
+                          }
+                        : null
+                    }
+                  />
+                );
               }
             } else {
               if (
@@ -418,12 +498,53 @@ const CardJob = ({navigation}) => {
                     }
                   />
                 );
+              } else if (status == 6) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgefill,
+                            backgroundColor: colors.badgeGreen,
+                          }
+                        : null
+                    }
+                  />
+                );
+              } else if (status == 8) {
+                badge = (
+                  <View
+                    style={
+                      status
+                        ? {
+                            ...styles.badgefill,
+                            backgroundColor: colors.badgeRed,
+                          }
+                        : null
+                    }
+                  />
+                );
               }
             }
             //End of Condition status badge
 
             return (
-              <View style={styles.rowContainer} key={index}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.rowContainer}
+                key={index}
+                onPress={() => {
+                  navigation.push(
+                    isAdmin == 1
+                      ? 'detailadmin'
+                      : isCoadmin == 1
+                      ? 'detailadmin'
+                      : isAssessor == 1
+                      ? 'detailadmin'
+                      : 'detailuser',
+                    subjobId,
+                  );
+                }}>
                 <View
                   style={{
                     flexDirection: 'row',
@@ -466,7 +587,7 @@ const CardJob = ({navigation}) => {
                   </View>
                 </View>
                 <View style={styles.underline} />
-              </View>
+              </TouchableOpacity>
             );
           },
         )}

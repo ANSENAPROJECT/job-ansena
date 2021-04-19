@@ -24,9 +24,6 @@ import {
   Prio1,
   FailedActive,
 } from '../../assets';
-import CardAI from '../../components/cardAi';
-import CardAripJob from '../../components/cardArsipJob';
-import CardJob from '../../components/cardJob';
 import {logout} from '../../public/redux/ActionCreators/auth';
 import {colors} from '../../utils/colors';
 
@@ -39,6 +36,9 @@ import {
   deleteAllSubJob,
   deleteJobGroup,
 } from '../../public/redux/ActionCreators/job';
+import CardAI from '../../components/dashboard/cardAi';
+import CardJob from '../../components/dashboard/cardJob';
+import CardArsipJob from '../../components/dashboard/cardArsipJob';
 
 const Dashboard = ({
   navigation,
@@ -53,6 +53,8 @@ const Dashboard = ({
   const auth = useSelector((state) => state.auth);
   const name = useSelector((state) => state.auth.name);
   const idUser = useSelector((state) => state.auth.idUser);
+  const isAdmin = useSelector((state) => state.auth.adminStatus);
+  const isCoAdmin = useSelector((state) => state.auth.coadminStatus);
 
   const isLogin = useSelector((state) => state.auth.isLogin);
   const [waiting, setWaiting] = useState('');
@@ -60,6 +62,23 @@ const Dashboard = ({
   const [priority, setPriority] = useState('');
   const [activeJob, setActiveJob] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const heightValue = useState(new Animated.Value(44))[0];
+
+  function extendFooter() {
+    Animated.timing(heightValue, {
+      toValue: 60,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }
+
+  function minimizeFooter() {
+    Animated.timing(heightValue, {
+      toValue: 40,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }
 
   const showToastWithGravityAndOffset = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
@@ -91,9 +110,13 @@ const Dashboard = ({
   };
 
   const handleScroll = (event) => {
-    const positionX = event.nativeEvent.contentOffset.x;
     const positionY = event.nativeEvent.contentOffset.y;
     setPossScroll(positionY);
+    if (positionY > 0) {
+      extendFooter();
+    } else {
+      minimizeFooter();
+    }
   };
 
   const handleLogout = () => {
@@ -127,7 +150,10 @@ const Dashboard = ({
           <View style={{flexDirection: 'row'}}>
             <Text>
               Hello
-              <Text style={{fontWeight: 'bold'}}> {name.split(' ')[0]}</Text>
+              <Text style={{fontWeight: 'bold'}}>
+                {' '}
+                {name === null ? null : name.split(' ')[0]}
+              </Text>
             </Text>
             <TouchableOpacity
               style={{marginLeft: 20}}
@@ -244,40 +270,46 @@ const Dashboard = ({
           </View>
 
           <CardAI />
-          <CardJob />
-          <CardAripJob />
+          <CardJob navigation={navigation} />
+          <CardArsipJob />
         </Animated.ScrollView>
 
         {/* footer */}
-        <View
-          style={{
-            ...styles.footer,
-            height: possScroll > 0 ? 60 : 44,
-            backgroundColor: possScroll > 0 ? '#f2f1f6' : colors.mainColor,
-            opacity: possScroll > 0 ? 0.9 : 1,
-          }}>
-          <TouchableOpacity
-            style={{flexDirection: 'row', alignItems: 'center'}}
-            activeOpacity={0.6}
-            onPress={handleAddJobGroup}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Image source={Plus} style={styles.plus} />
-              <Text
-                style={{
-                  color: colors.primary,
-                  fontWeight: 'bold',
-                  marginLeft: 10,
-                }}>
-                New
+        {isAdmin == true || isCoAdmin == true ? (
+          <Animated.View
+            style={{
+              ...styles.footer,
+              height: heightValue,
+              backgroundColor: possScroll > 0 ? '#f2f1f6' : colors.mainColor,
+              opacity: possScroll > 0 ? 0.9 : 1,
+            }}>
+            {isAdmin == true ? (
+              <TouchableOpacity
+                style={{flexDirection: 'row', alignItems: 'center'}}
+                activeOpacity={0.6}
+                onPress={handleAddJobGroup}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Image source={Plus} style={styles.plus} />
+                  <Text
+                    style={{
+                      color: colors.primary,
+                      fontWeight: 'bold',
+                      marginLeft: 10,
+                    }}>
+                    New
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <View />
+            )}
+            <TouchableOpacity activeOpacity={0.6}>
+              <Text style={{color: colors.primary, fontWeight: 'bold'}}>
+                View
               </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>
-              View
-            </Text>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+          </Animated.View>
+        ) : null}
 
         {modalVisible ? (
           <View

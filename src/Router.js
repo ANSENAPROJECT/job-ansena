@@ -12,8 +12,9 @@ import Splash from './screens/splash';
 import Login from './screens/auth/login';
 import Dashboard from './screens/dashboard';
 import AddJobGroup from './screens/addJobGroup';
-import TestScreen from './screens/testScreen';
 import AddSubJob from './screens/addSubJob';
+import DetailUser from './screens/detailJob/detailUser';
+import DetailAdmin from './screens/detailJob/detailAdmin';
 
 const Stack = createStackNavigator();
 
@@ -83,10 +84,23 @@ const Router = () => {
           }}
         />
         <Stack.Screen
-          name="testScreen"
-          component={TestScreen}
+          name="detailuser"
+          component={DetailUser}
           options={{
             headerShown: false,
+            gestureEnabled: true,
+            // gestureDirection: 'vertical',
+            ...TransitionPresets.ModalSlideFromBottomIOS,
+          }}
+        />
+        <Stack.Screen
+          name="detailadmin"
+          component={DetailAdmin}
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            // gestureDirection: 'vertical',
+            ...TransitionPresets.ModalSlideFromBottomIOS,
           }}
         />
       </Stack.Navigator>
