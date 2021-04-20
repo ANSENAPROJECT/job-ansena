@@ -225,7 +225,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
     const numMonth = date.split('-')[1];
     const year = date.split('-')[0];
     if (set < now) {
-      alert('Pilih Deadline tidak boleh kmren yaa boskuh');
+      showToastWithGravity('Pilih Deadline tidak boleh kmren yaa boskuh');
     } else {
       const markedDate = Object.assign({});
       markedDate[date] = {

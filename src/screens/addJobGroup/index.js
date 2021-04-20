@@ -590,15 +590,10 @@ const AddJobGroup = ({
                 .post(`${API_URL}/jzl/api/api/save_subjob`, data, config)
                 .then((res) => {
                   console.log(res);
-                  if (res.data.data.status === 413) {
-                    setModalLoading(false);
-                    setTxtLoading('File image is too large');
-                  } else {
-                    setModalLoading(false);
-                    setTxtLoading('Upload success');
-                  }
+                  setModalLoading(false);
+                  setTxtLoading('Upload success');
                   // showToastWithGravityAndOffset('Success add job');
-                  // navigation.goBack();
+                  navigation.goBack();
                 })
                 .catch(({response}) => {
                   setModalLoading(false);

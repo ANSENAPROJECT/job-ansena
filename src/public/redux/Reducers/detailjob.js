@@ -1,6 +1,8 @@
 const initialState = {
   subjob: '',
   title: '',
+  jobId: '',
+  subjobId: '',
   deadline: '',
   approval: '',
   assessor: '',
@@ -19,6 +21,8 @@ const DetailReducer = (prevState = initialState, action) => {
     case 'DETAIL_JOB':
       return {
         ...prevState,
+        jobId: action.payload.jobId,
+        subjobId: action.payload.subjobId,
         subjob: action.payload.subjob,
         title: action.payload.title,
         deadline: action.payload.deadline,

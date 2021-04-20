@@ -8,9 +8,11 @@ import {
   Image,
   BackHandler,
   Alert,
+  Pressable,
 } from 'react-native';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import ImagePicker from 'react-native-image-crop-picker';
 import {Camera, Galery} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
@@ -35,6 +37,9 @@ import CrewList from '../../components/detail/crewList';
 import Reminded from '../../components/detail/remind';
 import ReportHistory from '../../components/detail/reportHistory';
 import OverdueHistory from '../../components/detail/overdueHistory';
+import ReportAsDone from '../../components/detail/reportAsDone';
+import Overdue from '../../components/detail/overdue';
+import {addProgressReport} from '../../public/redux/ActionCreators/progressReport';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -48,15 +53,16 @@ const DetailJob = ({
   statusButtonRedux,
   timeReportRedux,
   deleteAllRedux,
+  addProgresReportRedux,
 }) => {
   const [modalupload, setModalupload] = useState(false);
   const [modaluploadOverdue, setModaluploadOverdue] = useState(false);
   const [images, setImages] = useState([]);
+  console.log(images);
 
   const idUser = useSelector((state) => state.auth.idUser);
   const status = useSelector((state) => state.detailjob.statusButton);
-
-  console.log(status);
+  const reportProgress = useSelector((state) => state.progressreport);
 
   const _ModalUpload = () => {
     setModalupload(!modalupload);
@@ -88,6 +94,8 @@ const DetailJob = ({
       .then((res) => {
         console.log('Ini dari halaman parent detail', res.data);
         const data = {
+          jobId: res.data.data.jobId,
+          subjobId: res.data.data.subjobId,
           subjob: res.data.data.subjob,
           title: res.data.data.title,
           deadline: res.data.data.deadlineView,
@@ -125,29 +133,92 @@ const DetailJob = ({
     })
       .then((img) => {
         if (images.length < 1) {
-          setImages([
-            ...images,
-            {
+          const data = {
+            image: {
               uri: img.path,
               width: img.width,
               height: img.height,
               mime: img.mime,
             },
-          ]);
+            desc: '',
+          };
+          addProgresReportRedux(data);
+          // setImages([
+          //   ...images,
+          //   {
+          //     image: {
+          //       uri: img.path,
+          //       width: img.width,
+          //       height: img.height,
+          //       mime: img.mime,
+          //     },
+          //     desc: '',
+          //   },
+          // ]);
         } else {
           // console.log('gambar sudah lebih dari 1');
-          setImages([
-            ...images,
-            {
+          // setImages([
+          //   ...images,
+          //   {
+          //     image: {
+          //       uri: img.path,
+          //       width: img.width,
+          //       height: img.height,
+          //       mime: img.mime,
+          //     },
+          //     desc: '',
+          //   },
+          // ]);
+          const data = {
+            image: {
               uri: img.path,
               width: img.width,
               height: img.height,
               mime: img.mime,
             },
-          ]);
+            desc: '',
+          };
+          addProgresReportRedux(data);
         }
       })
       .catch((e) => console.log(e));
+  };
+
+  //Galery
+  const pickMultiple = () => {
+    ImagePicker.openPicker({
+      multiple: true,
+      waitAnimationEnd: false,
+      sortOrder: 'desc',
+      includeExif: true,
+      forceJpg: true,
+    })
+      .then((img) => {
+        if (images.length < 1) {
+          setImages(
+            img.map((i) => {
+              console.log('received image', i);
+              return {
+                uri: i.path,
+                width: i.width,
+                height: i.height,
+                mime: i.mime,
+              };
+            }),
+          );
+        } else {
+          let result = img.map((i) => {
+            return {
+              uri: i.path,
+              width: i.width,
+              height: i.height,
+              mime: i.mime,
+            };
+          });
+          setImages([...images.concat(result)]);
+        }
+      })
+      .catch((e) => alert(e));
   };
 
   let StatusBtn;
@@ -170,32 +241,33 @@ const DetailJob = ({
         <Reminded />
         <ReportHistory />
         <OverdueHistory />
-        {/* {StatusBtn}
+        {StatusBtn}
         {status === 'waiting assessment' ? null : (
           <>
             <ReportAsDone _ModalUpload={_ModalUpload} />
             <Overdue _ModalUpload={_ModalUpload} />
           </>
-        )} */}
+        )}
       </ScrollView>
 
       {/* Modal */}
       <Modal isVisible={modalupload} onBackdropPress={_ModalUpload}>
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <View style={styles.containerModal}>
-            <TouchableOpacity
+            <Pressable
               style={{alignItems: 'center'}}
               activeOpacity={0.6}
-              onPress={pickSingleWithCamera}>
+              onPress={() => pickSingleWithCamera()}>
               <Image source={Camera} style={styles.imgSize} />
               <Text style={{fontFamily: fonts.SFProDisplayMedium}}>Camera</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               style={{alignItems: 'center'}}
-              activeOpacity={0.6}>
+              activeOpacity={0.6}
+              onPress={pickMultiple}>
               <Image source={Galery} style={styles.imgSize} />
               <Text style={{fontFamily: fonts.SFProDisplayMedium}}>Galery</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -211,6 +283,7 @@ const mapDispatchToProps = (dispatch) => {
     statusButtonRedux: (data) => dispatch(statusButton(data)),
     timeReportRedux: (data) => dispatch(timeReport(data)),
     deleteAllRedux: () => dispatch(deleteAll()),
+    addProgresReportRedux: (data) => dispatch(addProgressReport(data)),
   };
 };
 export default connect(null, mapDispatchToProps)(DetailJob);
