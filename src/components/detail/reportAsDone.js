@@ -124,7 +124,7 @@ const ReportAsDone = ({
         });
       });
       progressreport.forEach(({desc}) => {
-        data.append('desc', desc);
+        data.append('desc[]', desc);
       });
 
       console.log(data);
