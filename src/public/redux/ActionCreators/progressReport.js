@@ -5,6 +5,13 @@ export const addProgressReport = (data) => {
   };
 };
 
+export const addProgressReportGalery = (data) => {
+  return {
+    type: 'ADD_PROGRESS_REPORT_GALERY',
+    payload: data,
+  };
+};
+
 export const updateProgressReport = (data) => {
   return {
     type: 'UPDATE_PROGRESS_REPORT',

@@ -132,8 +132,12 @@ class Login extends Component {
           </TouchableOpacity>
         </View>
         {isLoading ? (
-          <View style={styles.btn}>
+          <View style={{...styles.btn, flexDirection: 'row'}}>
             <ActivityIndicator size="small" color="white" />
+            <Text
+              style={{fontFamily: fonts.SFProDisplayMedium, color: 'white'}}>
+              Please Wait...
+            </Text>
           </View>
         ) : (
           <TouchableOpacity

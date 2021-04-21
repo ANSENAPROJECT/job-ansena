@@ -1,8 +1,17 @@
+import axios from 'axios';
 import React, {useState} from 'react';
-import {Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Pressable,
+  ToastAndroid,
+} from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {
   ArrowDownWhite,
   ReportDone,
@@ -10,13 +19,131 @@ import {
   ArrowDownBlue,
   CoAdmin,
   Image1,
+  StopFill,
 } from '../../assets';
+import {
+  deleteProgressReport,
+  updateProgressReport,
+} from '../../public/redux/ActionCreators/progressReport';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import {API_URL} from '@env';
 
-const ReportAsDone = ({_ModalUpload}) => {
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'June',
+  'July',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+const ReportAsDone = ({
+  _ModalUpload,
+  deleteProgressRedux,
+  updateProgressRedux,
+}) => {
   const [collapse, setCollapse] = useState(true);
   const statusButton = useSelector((state) => state.detailjob.statusButton);
+  const deadline = useSelector((state) => state.detailjob.deadline);
+  const dateDeadline = deadline.length === 0 ? '' : deadline.split(' ')[0];
+  const monthDeadline =
+    deadline.length === 0 ? '' : monthNames[Number(deadline.split(' ')[1]) - 1];
+  const hourDeadline = deadline.length === 0 ? '' : deadline.split(' ')[2];
+  const deadlinedate = `${dateDeadline} ${monthDeadline} ${hourDeadline}`;
+  const progressreport = useSelector(
+    (state) => state.progressreport.img_request,
+  );
+  const [descrip, setDescrip] = useState('');
+  const [check, setCheck] = useState('');
+  const [description, setDescription] = useState('');
+  const jobId = useSelector((state) => state.detailjob.jobId);
+  const subjobId = useSelector((state) => state.detailjob.subjobId);
+
+  const showToastWithGravity = (msg) => {
+    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
+  };
+
+  const renderAsset = (image, index) => {
+    return renderImage(image, index);
+  };
+
+  const renderImage = (image, index) => {
+    return (
+      <>
+        <View>
+          <View style={{position: 'relative'}}>
+            <Image source={image} style={styles.imgStyle} />
+          </View>
+          <Pressable
+            style={{position: 'absolute', left: -5, top: -5}}
+            onPress={() => {
+              deleteProgressRedux(index);
+            }}>
+            <Image source={StopFill} style={{height: 25, width: 25}} />
+          </Pressable>
+        </View>
+      </>
+    );
+  };
+
+  const handleInput = (index, desc) => {
+    setCheck(index);
+    setDescrip(desc);
+  };
+
+  const handleUpdateDesc = (descript, image) => {
+    const data = {
+      desc: descrip,
+      image: image,
+    };
+    updateProgressRedux(data);
+  };
+
+  const handleUpload = () => {
+    if (description == '') {
+      showToastWithGravity('Field description must be filled in');
+    } else if (progressreport.length === 0) {
+      showToastWithGravity('Image must be filled in');
+    } else {
+      const data = new FormData();
+      data.append('jobId', `${jobId}`);
+      data.append('subjobId', `${subjobId}`);
+      data.append('note_report', `${description}`);
+      progressreport.forEach((item) => {
+        data.append('img_report[]', {
+          name: item.image.uri.split('/').pop(),
+          type: item.image.mime,
+          uri: item.image.uri,
+        });
+      });
+      progressreport.forEach(({desc}) => {
+        data.append('desc', desc);
+      });
+
+      console.log(data);
+      const config = {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      };
+
+      axios
+        .post(`${API_URL}/jzl/api/api/report_as_done`, data, config)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
+  };
 
   return (
     <View
@@ -28,6 +155,7 @@ const ReportAsDone = ({_ModalUpload}) => {
             : collapse
             ? 'blue'
             : 'white',
+        // backgroundColor: collapse ? 'blue' : 'white',
       }}>
       <TouchableOpacity
         disabled={statusButton === 'overdue' ? true : false}
@@ -55,26 +183,47 @@ const ReportAsDone = ({_ModalUpload}) => {
         />
       </TouchableOpacity>
       <Collapsible collapsed={collapse}>
-        <View style={{minHeight: 300, paddingHorizontal: 20}}>
+        <View style={{minHeight: 300, paddingHorizontal: 5}}>
           <View style={styles.reportTime}>
             <Text style={styles.txtCollapse}>Finish Time</Text>
-            <Text style={styles.txtCollapse}>29 Jan 09:00</Text>
+            <Text style={styles.txtCollapse}>{deadlinedate}</Text>
           </View>
           <View style={styles.containerDesc}>
-            <TextInput multiline={true} placeholder="Add Description" />
+            <TextInput
+              multiline={true}
+              placeholder="Add Description"
+              onChangeText={(text) => setDescription(text)}
+            />
           </View>
           <View style={styles.containerUpload}>
             <Text style={styles.txtImgReport}>Image Report</Text>
-            <View style={styles.imgUpload}>
-              <Image source={Image1} style={styles.imgUploadSize} />
-              <View style={styles.txtDescContainer}>
-                <TextInput
-                  style={{fontSize: 12}}
-                  placeholder="Image Description"
-                  multiline
-                />
+            {progressreport.length < 1 ? null : (
+              <View>
+                {progressreport &&
+                  progressreport.map(({image, desc}, index) => {
+                    return (
+                      <View style={styles.imgDesc} key={index}>
+                        {renderAsset(image, index)}
+                        <View style={styles.rowInput}>
+                          <TextInput
+                            multiline
+                            placeholder="Image Description"
+                            style={{maxWidth: 150}}
+                            value={check === index ? descrip : desc}
+                            onChangeText={(text) => setDescrip(text)}
+                            onEndEditing={() => {
+                              handleUpdateDesc(descrip, image);
+                            }}
+                            onFocus={() => {
+                              handleInput(index, desc);
+                            }}
+                          />
+                        </View>
+                      </View>
+                    );
+                  })}
               </View>
-            </View>
+            )}
             <TouchableOpacity
               onPress={() => {
                 _ModalUpload();
@@ -82,7 +231,10 @@ const ReportAsDone = ({_ModalUpload}) => {
               <Text style={styles.txtAdd}>Add Image...</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.btnDone} activeOpacity={0.6}>
+          <TouchableOpacity
+            style={styles.btnDone}
+            activeOpacity={0.6}
+            onPress={handleUpload}>
             <Text style={styles.txtBtn}>Report as Done</Text>
           </TouchableOpacity>
         </View>
@@ -91,7 +243,14 @@ const ReportAsDone = ({_ModalUpload}) => {
   );
 };
 
-export default ReportAsDone;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
+    updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ReportAsDone);
 
 const styles = StyleSheet.create({
   container: {
@@ -159,5 +318,15 @@ const styles = StyleSheet.create({
   txtDescContainer: {
     maxHeight: 100,
     width: 130,
+  },
+  imgDesc: {
+    height: 100,
+    flexDirection: 'row',
+    marginVertical: 10,
+  },
+  imgStyle: {height: 100, width: 100, borderRadius: 30},
+  rowInput: {
+    height: 120,
+    marginLeft: 10,
   },
 });

@@ -39,7 +39,10 @@ import ReportHistory from '../../components/detail/reportHistory';
 import OverdueHistory from '../../components/detail/overdueHistory';
 import ReportAsDone from '../../components/detail/reportAsDone';
 import Overdue from '../../components/detail/overdue';
-import {addProgressReport} from '../../public/redux/ActionCreators/progressReport';
+import {
+  addProgressReport,
+  addProgressReportGalery,
+} from '../../public/redux/ActionCreators/progressReport';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -54,15 +57,16 @@ const DetailJob = ({
   timeReportRedux,
   deleteAllRedux,
   addProgresReportRedux,
+  addProgressReportGaleryRedux,
 }) => {
   const [modalupload, setModalupload] = useState(false);
   const [modaluploadOverdue, setModaluploadOverdue] = useState(false);
   const [images, setImages] = useState([]);
-  console.log(images);
 
   const idUser = useSelector((state) => state.auth.idUser);
   const status = useSelector((state) => state.detailjob.statusButton);
   const reportProgress = useSelector((state) => state.progressreport);
+  console.log(reportProgress);
 
   const _ModalUpload = () => {
     setModalupload(!modalupload);
@@ -143,32 +147,7 @@ const DetailJob = ({
             desc: '',
           };
           addProgresReportRedux(data);
-          // setImages([
-          //   ...images,
-          //   {
-          //     image: {
-          //       uri: img.path,
-          //       width: img.width,
-          //       height: img.height,
-          //       mime: img.mime,
-          //     },
-          //     desc: '',
-          //   },
-          // ]);
         } else {
-          // console.log('gambar sudah lebih dari 1');
-          // setImages([
-          //   ...images,
-          //   {
-          //     image: {
-          //       uri: img.path,
-          //       width: img.width,
-          //       height: img.height,
-          //       mime: img.mime,
-          //     },
-          //     desc: '',
-          //   },
-          // ]);
           const data = {
             image: {
               uri: img.path,
@@ -195,30 +174,36 @@ const DetailJob = ({
     })
       .then((img) => {
         if (images.length < 1) {
-          setImages(
-            img.map((i) => {
-              console.log('received image', i);
-              return {
+          // addProgresReportRedux();
+          let data = img.map((i) => {
+            return {
+              image: {
                 uri: i.path,
                 width: i.width,
                 height: i.height,
                 mime: i.mime,
-              };
-            }),
-          );
-        } else {
-          let result = img.map((i) => {
-            return {
-              uri: i.path,
-              width: i.width,
-              height: i.height,
-              mime: i.mime,
+              },
+              desc: '',
             };
           });
-          setImages([...images.concat(result)]);
+          addProgressReportGaleryRedux(data);
+        } else {
+          let data = img.map((i) => {
+            console.log(i);
+            return {
+              image: {
+                uri: i.path,
+                width: i.width,
+                height: i.height,
+                mime: i.mime,
+              },
+              desc: '',
+            };
+          });
+          addProgressReportGaleryRedux(data);
         }
       })
-      .catch((e) => alert(e));
+      .catch((e) => console.log(e));
   };
 
   let StatusBtn;
@@ -284,6 +269,8 @@ const mapDispatchToProps = (dispatch) => {
     timeReportRedux: (data) => dispatch(timeReport(data)),
     deleteAllRedux: () => dispatch(deleteAll()),
     addProgresReportRedux: (data) => dispatch(addProgressReport(data)),
+    addProgressReportGaleryRedux: (data) =>
+      dispatch(addProgressReportGalery(data)),
   };
 };
 export default connect(null, mapDispatchToProps)(DetailJob);

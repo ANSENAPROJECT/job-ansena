@@ -9,6 +9,11 @@ const ProgressReportReducer = (prevState = initialState, action) => {
         ...prevState,
         img_request: [...prevState.img_request, action.payload],
       };
+    case 'ADD_PROGRESS_REPORT_GALERY':
+      return {
+        ...prevState,
+        img_request: [...prevState.img_request.concat(action.payload)],
+      };
     case 'UPDATE_PROGRESS_REPORT':
       const updateReport = prevState.img_request.map((item) => {
         return item.image === action.payload.image

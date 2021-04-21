@@ -87,7 +87,6 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
   );
   const jobId = useSelector((state) => state.detailjob.jobId);
   const subjobId = useSelector((state) => state.detailjob.subjobId);
-  console.log(jobId, subjobId);
   const [descrip, setDescrip] = useState('');
   const [check, setCheck] = useState('');
   const [reason, setReason] = useState('');
@@ -243,10 +242,11 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
         });
       });
       progressreport.forEach(({desc}) => {
-        data.append('desc_request', desc);
+        data.append('desc_request[]', desc);
       });
 
       console.log(data);
+
       const config = {
         headers: {
           'Content-type': 'multipart/form-data',
@@ -627,7 +627,7 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
                 {progressreport &&
                   progressreport.map(({image, desc}, index) => {
                     return (
-                      <View style={styles.imgDesc} key={image.uri}>
+                      <View style={styles.imgDesc} key={index}>
                         {renderAsset(image, index)}
                         <View style={styles.rowInput}>
                           <TextInput
