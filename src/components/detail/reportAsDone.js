@@ -8,6 +8,7 @@ import {
   View,
   Pressable,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -28,6 +29,11 @@ import {
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
+import {
+  reportHistory,
+  reportHistoryDone,
+  statusButton,
+} from '../../public/redux/ActionCreators/detailjob';
 
 const monthNames = [
   'Jan',
@@ -48,7 +54,10 @@ const ReportAsDone = ({
   _ModalUpload,
   deleteProgressRedux,
   updateProgressRedux,
+  reportHistoryRedux,
+  statusButtonRedux,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [collapse, setCollapse] = useState(true);
   const statusButton = useSelector((state) => state.detailjob.statusButton);
   const deadline = useSelector((state) => state.detailjob.deadline);
@@ -65,6 +74,7 @@ const ReportAsDone = ({
   const [description, setDescription] = useState('');
   const jobId = useSelector((state) => state.detailjob.jobId);
   const subjobId = useSelector((state) => state.detailjob.subjobId);
+  const userId = useSelector((state) => state.auth.idUser);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -115,6 +125,7 @@ const ReportAsDone = ({
       const data = new FormData();
       data.append('jobId', `${jobId}`);
       data.append('subjobId', `${subjobId}`);
+      data.append('userId', `${userId}`);
       data.append('note_report', `${description}`);
       progressreport.forEach((item) => {
         data.append('img_report[]', {
@@ -138,6 +149,9 @@ const ReportAsDone = ({
         .post(`${API_URL}/jzl/api/api/report_as_done`, data, config)
         .then((res) => {
           console.log(res);
+          setIsLoading(false);
+          reportHistoryRedux(res.data.data.reportHistory);
+          statusButtonRedux(res.data.data.statusButton);
         })
         .catch((err) => {
           console.log(err.message);
@@ -231,12 +245,24 @@ const ReportAsDone = ({
               <Text style={styles.txtAdd}>Add Image...</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.btnDone}
-            activeOpacity={0.6}
-            onPress={handleUpload}>
-            <Text style={styles.txtBtn}>Report as Done</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <TouchableOpacity style={styles.btnDone}>
+              <ActivityIndicator size="small" color="white" />
+              <Text style={{...styles.txtBtn, marginLeft: 10}}>
+                Please Wait ...
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.btnDone}
+              activeOpacity={0.6}
+              onPress={() => {
+                handleUpload();
+                setIsLoading(true);
+              }}>
+              <Text style={styles.txtBtn}>Report as Done</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </Collapsible>
     </View>
@@ -247,6 +273,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
+    reportHistoryRedux: (data) => dispatch(reportHistoryDone(data)),
+    statusButtonRedux: (data) => dispatch(statusButton(data)),
   };
 };
 
@@ -298,12 +326,13 @@ const styles = StyleSheet.create({
     color: colors.colorReportAcive,
   },
   btnDone: {
-    height: 30,
+    height: 40,
     backgroundColor: colors.colorReportAcive,
-    borderRadius: 15,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 20,
+    flexDirection: 'row',
   },
   txtBtn: {
     fontFamily: fonts.SFProDisplayMedium,

@@ -43,6 +43,16 @@ const DetailReducer = (prevState = initialState, action) => {
         ...prevState,
         overdueHistory: action.payload,
       };
+    case 'REPORT_HISTORY_DONE':
+      return {
+        ...prevState,
+        reportHistory: [...prevState.reportHistory.concat(action.payload)],
+      };
+    case 'PROPOSE_OVERDUE_HISTORY':
+      return {
+        ...prevState,
+        overdueHistory: [...prevState.overdueHistory.concat(action.payload)],
+      };
 
     case 'STATUS_BUTTON':
       return {

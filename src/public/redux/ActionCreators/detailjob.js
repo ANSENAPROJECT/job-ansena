@@ -19,6 +19,20 @@ export const overdueHistory = (data) => {
   };
 };
 
+export const reportHistoryDone = (data) => {
+  return {
+    type: 'REPORT_HISTORY_DONE',
+    payload: data,
+  };
+};
+
+export const proposeOverdueHistory = (data) => {
+  return {
+    type: 'PROPOSE_OVERDUE_HISTORY',
+    payload: data,
+  };
+};
+
 export const timeReport = (data) => {
   return {
     type: 'TIME_REPORT',

@@ -7,6 +7,7 @@ import {
   View,
   Dimensions,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import Slider from 'react-native-slider';
 import Collapsible from 'react-native-collapsible';
@@ -34,6 +35,10 @@ import {
 } from '../../public/redux/ActionCreators/progressReport';
 import axios from 'axios';
 import {API_URL} from '@env';
+import {
+  proposeOverdueHistory,
+  statusButton,
+} from '../../public/redux/ActionCreators/detailjob';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -65,7 +70,14 @@ const monthNames = [
   'December',
 ];
 
-const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
+const Overdue = ({
+  _ModalUpload,
+  deleteProgressRedux,
+  updateProgressRedux,
+  proposeOverdueHistoryRedux,
+  statusButtonRedux,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [collapse, setCollapse] = useState(true);
   const [deadlineCollape, setDeadlineCollape] = useState(true);
   const [hourCollapse, setHourCollapse] = useState(true);
@@ -90,6 +102,7 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
   const [descrip, setDescrip] = useState('');
   const [check, setCheck] = useState('');
   const [reason, setReason] = useState('');
+  const userId = useSelector((state) => state.auth.idUser);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -232,6 +245,7 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
       const data = new FormData();
       data.append('jobId', `${jobId}`);
       data.append('subjobId', `${subjobId}`);
+      data.append('userId', `${userId}`);
       data.append('note_request', `${reason}`);
       data.append('deadline', `${deadline}`);
       progressreport.forEach((item) => {
@@ -256,6 +270,9 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
         .post(`${API_URL}/jzl/api/api/request_deadline`, data, config)
         .then((res) => {
           console.log(res);
+          setIsLoading(false);
+          proposeOverdueHistoryRedux(res.data.data.overdueHistory);
+          statusButtonRedux(res.data.data.statusButton);
         })
         .catch((err) => {
           console.log(err.message);
@@ -661,14 +678,24 @@ const Overdue = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
           </View>
 
           {/* btn propose deadline */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.btnPropose}
-            onPress={() => {
-              handleupload();
-            }}>
-            <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
-          </TouchableOpacity>
+          {!isLoading ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.btnPropose}
+              onPress={() => {
+                handleupload();
+                setIsLoading(false);
+              }}>
+              <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.btnPropose}>
+              <ActivityIndicator size="small" color="white" />
+              <Text style={{...styles.txtBtnPropose, marginLeft: 10}}>
+                Please Wait
+              </Text>
+            </View>
+          )}
         </View>
       </Collapsible>
     </View>
@@ -679,6 +706,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
+    statusButtonRedux: (data) => dispatch(statusButton(data)),
+    proposeOverdueHistoryRedux: (data) => dispatch(proposeOverdueHistory(data)),
   };
 };
 
@@ -829,6 +858,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   imgDesc: {
     height: 100,

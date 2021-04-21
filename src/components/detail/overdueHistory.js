@@ -56,6 +56,7 @@ const OverdueHistory = () => {
       <Collapsible collapsed={collapse}>
         <View style={{minHeight: 70}}>
           <FlatList
+            style={{minHeight: 100}}
             data={overdueHistory}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginTop: 10,
+    marginBottom: 10,
   },
   line: {
     height: 2,
@@ -131,6 +133,7 @@ const styles = StyleSheet.create({
     width: 250,
     alignSelf: 'center',
     marginTop: 10,
+    marginBottom: 10,
   },
   arrowStyle: {height: 10, width: 15, marginLeft: 10},
   collapseLeft: {color: 'red', fontFamily: fonts.SFProDisplaySemiBold},
