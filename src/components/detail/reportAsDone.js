@@ -30,7 +30,6 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
 import {
-  reportHistory,
   reportHistoryDone,
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
@@ -150,7 +149,7 @@ const ReportAsDone = ({
         .then((res) => {
           console.log(res);
           setIsLoading(false);
-          reportHistoryRedux(res.data.data.reportHistory);
+          reportHistoryRedux(res.data.data.reportHistoryDone);
           statusButtonRedux(res.data.data.statusButton);
         })
         .catch((err) => {
