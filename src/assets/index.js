@@ -58,6 +58,9 @@ import OverdueDateRed from './icons/overduered.png';
 import WaitingRevision from './icons/waitingRevision.png';
 import ArrowUpRed from './icons/arrowupred.png';
 import WaitingWhite from './icons/waitingwhite.png';
+import ReviseGrey from './icons/revise-grey.png';
+import Revise from './icons/revise.png';
+import Showlatest from './icons/showlatest.png';
 
 import Image1 from './images/img.jpg';
 
@@ -123,4 +126,7 @@ export {
   OverdueDateRed,
   ArrowUpRed,
   WaitingWhite,
+  ReviseGrey,
+  Revise,
+  Showlatest,
 };

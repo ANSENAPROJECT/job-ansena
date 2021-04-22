@@ -2,11 +2,23 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import {ArrowDown, Image1, Subjob} from '../../assets';
+import {
+  ArrowDown,
+  ArrowDownBlue,
+  ArrowDownWhite,
+  Image1,
+  Star,
+  Subjob,
+} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import Approval from './subjobComponents/approval';
+import CoAssessor from './subjobComponents/coAssessor';
+import Crew from './subjobComponents/crew';
+import DuplicateJob from './subjobComponents/duplicateJob';
 import ImageGalery from './subjobComponents/imageGalery';
 import Purpose from './subjobComponents/purpose';
+import Remind from './subjobComponents/remind';
 
 const SubjobDetail = () => {
   const [collapse, setCollapse] = useState(true);
@@ -27,6 +39,11 @@ const SubjobDetail = () => {
         <View style={styles.containerCollapse}>
           <Purpose />
           <ImageGalery />
+          <Crew />
+          <Remind />
+          <CoAssessor />
+          <Approval />
+          <DuplicateJob />
         </View>
       </Collapsible>
     </View>

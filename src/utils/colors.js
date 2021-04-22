@@ -9,6 +9,7 @@ export const colors = {
   badgeRed: '#dc3b25',
   txtGrey: '#d9d8d9',
   btngrey: '#ebeaeb',
+  yellow: '#f4af3e',
   colorDetail: '#d9d8d9',
   colorReportDeactive: '#d6d6dc',
   colorReportAcive: '#3fa2f8',

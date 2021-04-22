@@ -54,9 +54,9 @@ const OverdueHistory = () => {
         </View>
       </TouchableOpacity>
       <Collapsible collapsed={collapse}>
-        <View style={{minHeight: 70}}>
+        <View style={{minHeight: 60}}>
           <FlatList
-            style={{minHeight: 100}}
+            style={{minHeight: 60}}
             data={overdueHistory}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item, index}) => {
