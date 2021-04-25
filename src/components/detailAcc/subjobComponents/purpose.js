@@ -1,13 +1,15 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import {fonts} from '../../../utils/fonts';
 
 const Purpose = () => {
+  const purpose = useSelector((state) => state.detailjob.purpose);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Purpose</Text>
-      <Text style={styles.rowTxt}>- Menjadi pelopor packaging yoi</Text>
+      <Text style={styles.rowTxt}>{purpose}</Text>
     </View>
   );
 };

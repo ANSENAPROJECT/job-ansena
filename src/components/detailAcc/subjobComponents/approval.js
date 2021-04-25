@@ -1,13 +1,15 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import {fonts} from '../../../utils/fonts';
 
 const Approval = () => {
+  const approvalList = useSelector((state) => state.detailjob.approval);
   return (
     <View style={styles.container}>
       <Text style={styles.txt}>Approval</Text>
-      <Text style={styles.txt}>Bernabas, Then Gisel</Text>
+      <Text style={styles.txt}>{approvalList}</Text>
     </View>
   );
 };

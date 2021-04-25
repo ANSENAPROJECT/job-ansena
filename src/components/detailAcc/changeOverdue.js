@@ -1,47 +1,30 @@
 import React, {useState} from 'react';
 import {
-  Image,
-  ToastAndroid,
   StyleSheet,
   Text,
   View,
-  Dimensions,
+  Image,
+  TextInput,
+  ToastAndroid,
   Pressable,
-  ActivityIndicator,
 } from 'react-native';
-import Slider from 'react-native-slider';
 import Collapsible from 'react-native-collapsible';
-import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
-import {CalendarList} from 'react-native-calendars';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
-  OverdueDateWhite,
-  ArrowDownWhite,
-  OverdueDateRed,
-  ArrowUpRed,
-  SwitchDefault,
-  Morning,
-  Daylight,
   Afternoon,
+  ArrowDownWhite,
+  ArrowUpRed,
+  ChangeOverdueRed,
+  ChangeOverdueWhite,
+  Daylight,
+  Morning,
   SwitchActive,
-  Image1,
-  StopFill,
+  SwitchDefault,
 } from '../../assets';
-import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
-import {connect, useSelector} from 'react-redux';
-import {
-  deleteProgressReport,
-  updateProgressReport,
-} from '../../public/redux/ActionCreators/progressReport';
-import axios from 'axios';
-import {API_URL} from '@env';
-import {
-  proposeOverdueHistory,
-  statusButton,
-} from '../../public/redux/ActionCreators/detailjob';
-
-const deviceWidth = Dimensions.get('window').width;
-const deviceHeight = Dimensions.get('window').height;
+import {fonts} from '../../utils/fonts';
+import Slider from 'react-native-slider';
+import {CalendarList} from 'react-native-calendars';
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -70,15 +53,9 @@ const monthNames = [
   'December',
 ];
 
-const Overdue = ({
-  _ModalUpload,
-  deleteProgressRedux,
-  updateProgressRedux,
-  proposeOverdueHistoryRedux,
-  statusButtonRedux,
-}) => {
-  const [isLoading, setIsLoading] = useState(false);
+const ChangeOverdue = () => {
   const [collapse, setCollapse] = useState(true);
+  const [notes, setNotes] = useState('');
   const [deadlineCollape, setDeadlineCollape] = useState(true);
   const [hourCollapse, setHourCollapse] = useState(true);
   const [markedDates, setMarkedDates] = useState({});
@@ -92,17 +69,6 @@ const Overdue = ({
   );
   const [month, setMonth] = useState(monthNames[new Date().getMonth()]);
   const [option, setOption] = useState('');
-
-  const statusButton = useSelector((state) => state.detailjob.statusButton);
-  const progressreport = useSelector(
-    (state) => state.progressreport.img_request,
-  );
-  const jobId = useSelector((state) => state.detailjob.jobId);
-  const subjobId = useSelector((state) => state.detailjob.subjobId);
-  const [descrip, setDescrip] = useState('');
-  const [check, setCheck] = useState('');
-  const [reason, setReason] = useState('');
-  const userId = useSelector((state) => state.auth.idUser);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -186,43 +152,7 @@ const Overdue = ({
     setNewDaySelected(`${Y}-${M}-${D}`);
   };
 
-  const renderAsset = (image, index) => {
-    return renderImage(image, index);
-  };
-
-  const renderImage = (image, index) => {
-    return (
-      <>
-        <View>
-          <View style={{position: 'relative'}}>
-            <Image source={image} style={styles.imgStyle} />
-          </View>
-          <Pressable
-            style={{position: 'absolute', left: -5, top: -5}}
-            onPress={() => {
-              deleteProgressRedux(index);
-            }}>
-            <Image source={StopFill} style={{height: 25, width: 25}} />
-          </Pressable>
-        </View>
-      </>
-    );
-  };
-
-  const handleUpdateDesc = (descript, image) => {
-    const data = {
-      desc: descrip,
-      image: image,
-    };
-    updateProgressRedux(data);
-  };
-
-  const handleInput = (index, desc) => {
-    setCheck(index);
-    setDescrip(desc);
-  };
-
-  const handleupload = () => {
+  const submitChangeOverdue = () => {
     const time =
       valueHour < 10
         ? '0' + valueHour + ':00'
@@ -234,49 +164,16 @@ const Overdue = ({
               : valueMinutes.toString()
           }`;
     const deadline = `${selectedDate} ${time}`;
-
-    if (reason === '') {
-      showToastWithGravity('Field reason must be filled in');
+    if (notes === '') {
+      showToastWithGravity('Notes must be filled in');
     } else if (switchDate === false) {
       showToastWithGravity('The date must be selected');
-    } else if (progressreport.length < 1) {
-      showToastWithGravity('Image must be filled in');
     } else {
-      const data = new FormData();
-      data.append('jobId', `${jobId}`);
-      data.append('subjobId', `${subjobId}`);
-      data.append('userId', `${userId}`);
-      data.append('note_request', `${reason}`);
-      data.append('deadline', `${deadline}`);
-      progressreport.forEach((item) => {
-        data.append('img_request[]', {
-          name: item.image.uri.split('/').pop(),
-          type: item.image.mime,
-          uri: item.image.uri,
-        });
-      });
-      progressreport.forEach(({desc}) => {
-        data.append('desc_request[]', desc);
-      });
-
-      console.log(data);
-
-      const config = {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
+      const data = {
+        notes: notes,
+        deadline: deadline,
       };
-      axios
-        .post(`${API_URL}/jzl/api/api/request_deadline`, data, config)
-        .then((res) => {
-          console.log(res);
-          setIsLoading(false);
-          proposeOverdueHistoryRedux(res.data.data.overdueHistory);
-          statusButtonRedux(res.data.data.statusButton);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
+      console.log(data);
     }
   };
 
@@ -284,43 +181,39 @@ const Overdue = ({
     <View
       style={{
         ...styles.container,
-        backgroundColor:
-          statusButton === 'active user'
-            ? colors.btngrey
-            : collapse
-            ? 'red'
-            : 'white',
+        backgroundColor: collapse ? 'red' : 'white',
       }}>
       <TouchableOpacity
-        disabled={statusButton === 'active user' ? true : false}
-        style={styles.btnContainer}
+        style={styles.btnTitle}
         onPress={() => {
           setCollapse(!collapse);
         }}>
-        <View style={styles.left}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image
-            source={collapse ? OverdueDateWhite : OverdueDateRed}
-            style={styles.iconImg}
+            source={collapse ? ChangeOverdueWhite : ChangeOverdueRed}
+            style={styles.imgSize}
           />
-          <Text style={{...styles.txtTitle, color: collapse ? 'white' : 'red'}}>
-            Propose Overdue Deadline
+          <Text
+            style={{
+              fontFamily: fonts.SFProDisplayMedium,
+              color: collapse ? 'white' : 'red',
+            }}>
+            Change Overdue Deadline
           </Text>
         </View>
         <Image
           source={collapse ? ArrowDownWhite : ArrowUpRed}
-          style={styles.iconArrow}
+          style={styles.arrowIcon}
         />
       </TouchableOpacity>
       <Collapsible collapsed={collapse}>
-        <View style={{minHeight: 500, paddingBottom: 15}}>
-          {/* Add Reason */}
-          <View style={styles.addReasenStyle}>
+        <View style={{minHeight: 200, marginTop: 20}}>
+          <View style={styles.inputRow}>
             <TextInput
-              editable
-              placeholder="Add Reason"
               multiline
-              value={reason}
-              onChangeText={(text) => setReason(text)}
+              placeholder="Add Notes"
+              value={notes}
+              onChangeText={(text) => setNotes(text)}
             />
           </View>
 
@@ -633,128 +526,53 @@ const Overdue = ({
             </Collapsible>
           </View>
 
-          {/* Progress Report */}
-          <View style={styles.containerProgress}>
-            <Text
-              style={{...styles.txtTitle, color: '#616161', marginBottom: 10}}>
-              Progress Report
-            </Text>
-            {progressreport.length < 1 ? null : (
-              <View>
-                {progressreport &&
-                  progressreport.map(({image, desc}, index) => {
-                    return (
-                      <View style={styles.imgDesc} key={index}>
-                        {renderAsset(image, index)}
-                        <View style={styles.rowInput}>
-                          <TextInput
-                            multiline
-                            placeholder="Image Description"
-                            style={{maxWidth: 150}}
-                            value={check === index ? descrip : desc}
-                            onChangeText={(text) => setDescrip(text)}
-                            onEndEditing={() => {
-                              handleUpdateDesc(descrip, image);
-                            }}
-                            onFocus={() => {
-                              handleInput(index, desc);
-                            }}
-                          />
-                        </View>
-                      </View>
-                    );
-                  })}
-              </View>
-            )}
-
-            <TouchableOpacity
-              onPress={() => {
-                _ModalUpload();
-              }}>
-              <Text style={{...styles.txtTitle, color: colors.badgeBlue}}>
-                Add Image...
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* btn propose deadline */}
-          {!isLoading ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.btnPropose}
-              onPress={() => {
-                handleupload();
-                setIsLoading(false);
-              }}>
-              <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.btnPropose}>
-              <ActivityIndicator size="small" color="white" />
-              <Text style={{...styles.txtBtnPropose, marginLeft: 10}}>
-                Please Wait
-              </Text>
-            </View>
-          )}
+          {/* submit */}
+          <TouchableOpacity
+            style={styles.submitBtn}
+            activeOpacity={0.8}
+            onPress={() => {
+              submitChangeOverdue();
+            }}>
+            <Text style={styles.txtSubmit}>Change Overdue Deadline</Text>
+          </TouchableOpacity>
         </View>
       </Collapsible>
     </View>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
-    updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
-    statusButtonRedux: (data) => dispatch(statusButton(data)),
-    proposeOverdueHistoryRedux: (data) => dispatch(proposeOverdueHistory(data)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(Overdue);
+export default ChangeOverdue;
 
 const styles = StyleSheet.create({
   container: {
     minHeight: 60,
     borderRadius: 15,
+    paddingBottom: 20,
+    marginTop: 20,
     paddingHorizontal: 20,
-    marginBottom: 30,
+    marginBottom: 20,
   },
-  btnContainer: {
+  btnTitle: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 15,
   },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconImg: {
+  imgSize: {
     height: 30,
     width: 30,
     marginRight: 10,
   },
-  txtTitle: {
-    fontFamily: fonts.SFProDisplayMedium,
-  },
-  iconArrow: {
+  arrowIcon: {
     height: 10,
     width: 15,
   },
-  addReasenStyle: {
-    marginTop: 20,
+  inputRow: {
     height: 150,
-    backgroundColor: '#f2f1f6',
     borderRadius: 15,
-    paddingVertical: 10,
+    backgroundColor: colors.mainColor,
     paddingHorizontal: 20,
-  },
-  btndeadline: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: 20,
+    paddingVertical: 10,
   },
   containerDeadline: {
     minHeight: 60,
@@ -793,6 +611,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  btndeadline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
   },
   txtSide: {
     fontFamily: fonts.SFProDisplayMedium,
@@ -838,36 +662,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
   },
-  containerProgress: {
-    minHeight: 80,
-    marginTop: 20,
-    backgroundColor: '#f2f1f6',
-    borderRadius: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    justifyContent: 'space-between',
-  },
-  txtBtnPropose: {
-    fontFamily: fonts.SFProDisplayMedium,
-    color: 'white',
-  },
-  btnPropose: {
+  submitBtn: {
     marginTop: 20,
     height: 40,
-    borderRadius: 20,
     backgroundColor: 'red',
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
-  imgDesc: {
-    height: 100,
-    flexDirection: 'row',
-    marginVertical: 10,
-  },
-  imgStyle: {height: 100, width: 100, borderRadius: 30},
-  rowInput: {
-    height: 120,
-    marginLeft: 10,
+  txtSubmit: {
+    fontFamily: fonts.SFProDisplayMedium,
+    color: 'white',
   },
 });

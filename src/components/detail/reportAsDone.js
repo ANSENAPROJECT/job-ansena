@@ -149,7 +149,7 @@ const ReportAsDone = ({
         .then((res) => {
           console.log(res);
           setIsLoading(false);
-          reportHistoryRedux(res.data.data.reportHistoryDone);
+          reportHistoryRedux(res.data.data.reportHistory);
           statusButtonRedux(res.data.data.statusButton);
         })
         .catch((err) => {

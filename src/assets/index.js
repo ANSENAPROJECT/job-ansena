@@ -61,6 +61,9 @@ import WaitingWhite from './icons/waitingwhite.png';
 import ReviseGrey from './icons/revise-grey.png';
 import Revise from './icons/revise.png';
 import Showlatest from './icons/showlatest.png';
+import AcceptOverdue from './icons/acceptoverdue.png';
+import ChangeOverdueRed from './icons/changeoverdueRed.png';
+import ChangeOverdueWhite from './icons/changeoverdueWhite.png';
 
 import Image1 from './images/img.jpg';
 
@@ -129,4 +132,7 @@ export {
   ReviseGrey,
   Revise,
   Showlatest,
+  AcceptOverdue,
+  ChangeOverdueRed,
+  ChangeOverdueWhite,
 };

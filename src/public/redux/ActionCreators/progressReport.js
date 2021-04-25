@@ -25,3 +25,9 @@ export const deleteProgressReport = (data) => {
     payload: data,
   };
 };
+
+export const deleteProgress = () => {
+  return {
+    type: 'DELETE_PROGRESS',
+  };
+};

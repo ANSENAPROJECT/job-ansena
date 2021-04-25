@@ -1,13 +1,16 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import {colors} from '../../../utils/colors';
 import {fonts} from '../../../utils/fonts';
 
 const CoAssessor = () => {
+  const assessor = useSelector((state) => state.detailjob.assessor);
+  const name = useSelector((state) => state.auth.name);
   return (
     <View style={styles.container}>
       <Text style={styles.txt}>Co-Assessor</Text>
-      <Text style={styles.txt}>You</Text>
+      <Text style={styles.txt}>{assessor === name ? 'You' : assessor}</Text>
     </View>
   );
 };

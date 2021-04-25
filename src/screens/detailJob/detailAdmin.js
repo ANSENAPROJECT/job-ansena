@@ -37,7 +37,17 @@ import LatestReport from '../../components/detailAcc/latesReport';
 import MarkAsDone from '../../components/detailAcc/markAsDone';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
-import {Camera, Galery} from '../../assets';
+import {
+  ArrowDown,
+  Camera,
+  Galery,
+  OverdueDate,
+  OverdueDateRed,
+} from '../../assets';
+import OverduePropose from '../../components/detailAcc/overduePropose';
+import AcceptOverdueBtn from '../../components/detailAcc/acceptOverdue';
+import ChangeOverdue from '../../components/detailAcc/changeOverdue';
+import ButtonStatus from '../../components/detail/btnStatus';
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
@@ -58,6 +68,8 @@ const DetailAdmin = ({
   const [images, setImages] = useState([]);
   const status = useSelector((state) => state.detailjob.statusButton);
   const reportProgress = useSelector((state) => state.progressreport);
+
+  console.log('Ini ada di detail admin : ', status);
 
   useEffect(() => {
     getData();
@@ -83,7 +95,7 @@ const DetailAdmin = ({
     axios
       .get(`${API_URL}/jzl/api/api/detail_subjob/${id}/${idUser}`)
       .then((res) => {
-        console.log('Ini dari halaman parent detail', res.data);
+        console.log('Ini dari halaman parent  : ', res.data);
         const data = {
           jobId: res.data.data.jobId,
           subjobId: res.data.data.subjobId,
@@ -96,6 +108,12 @@ const DetailAdmin = ({
           image: res.data.data.image,
           crew: res.data.data.crew,
           remind: res.data.data.remind,
+          noteRequest: res.data.data.noteRequest,
+          noteReport: res.data.data.noteRequest,
+          deadlineOverdue: res.data.data.deadlineOverdue,
+          imgRequest: res.data.data.imgRequest,
+          imgReport: res.data.data.imgReport,
+          timeReport: res.data.data.timeReport,
         };
 
         const reportHistory = res.data.data.reportHistory;
@@ -197,6 +215,30 @@ const DetailAdmin = ({
       .catch((e) => console.log(e));
   };
 
+  let btnStatus;
+  if (status === 'waiting report') {
+    btnStatus = (
+      <>
+        <LatestReport />
+        <ButtonStatus status={status} />
+      </>
+    );
+  } else if (status === 'waiting approval') {
+    btnStatus = (
+      <>
+        <LatestReport />
+        <ButtonStatus status={status} />
+      </>
+    );
+  } else if (status === 'waiting revision report') {
+    btnStatus = (
+      <>
+        <LatestReport />
+        <ButtonStatus status={status} />
+      </>
+    );
+  }
+
   return (
     <>
       <ScrollView style={styles.container}>
@@ -205,9 +247,23 @@ const DetailAdmin = ({
         <SubjobDetail />
         <ReportHistory />
         <OverdueHistory />
-        <LatestReport />
-        <MarkAsDone />
-        <Revise _ModalUpload={_ModalUpload} />
+        {btnStatus}
+
+        {status === 'active admin' ? (
+          <>
+            <LatestReport />
+            <MarkAsDone />
+            <Revise _ModalUpload={_ModalUpload} />
+          </>
+        ) : status === 'active admin overdue' ? (
+          <>
+            <OverduePropose />
+            <AcceptOverdueBtn />
+            <ChangeOverdue />
+          </>
+        ) : status === 'subjob done' ? (
+          <ButtonStatus status="Subjob Done" />
+        ) : null}
       </ScrollView>
 
       <Modal isVisible={modalupload} onBackdropPress={_ModalUpload}>

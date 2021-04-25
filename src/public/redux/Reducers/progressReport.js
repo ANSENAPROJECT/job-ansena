@@ -9,6 +9,11 @@ const ProgressReportReducer = (prevState = initialState, action) => {
         ...prevState,
         img_request: [...prevState.img_request, action.payload],
       };
+    case 'DELETE_PROGRESS':
+      return {
+        ...prevState,
+        img_request: [],
+      };
     case 'ADD_PROGRESS_REPORT_GALERY':
       return {
         ...prevState,

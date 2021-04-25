@@ -135,7 +135,11 @@ class Login extends Component {
           <View style={{...styles.btn, flexDirection: 'row'}}>
             <ActivityIndicator size="small" color="white" />
             <Text
-              style={{fontFamily: fonts.SFProDisplayMedium, color: 'white'}}>
+              style={{
+                fontFamily: fonts.SFProDisplayMedium,
+                color: 'white',
+                marginLeft: 10,
+              }}>
               Please Wait...
             </Text>
           </View>

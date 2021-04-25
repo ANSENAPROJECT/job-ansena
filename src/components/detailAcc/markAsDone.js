@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ReportDone} from '../../assets';
+import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 
 const MarkAsDone = () => {
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
   container: {
     height: 60,
     borderRadius: 15,
-    backgroundColor: 'blue',
+    backgroundColor: colors.colorReportAcive,
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',

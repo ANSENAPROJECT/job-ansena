@@ -15,6 +15,7 @@ import AddJobGroup from './screens/addJobGroup';
 import AddSubJob from './screens/addSubJob';
 import DetailUser from './screens/detailJob/detailUser';
 import DetailAdmin from './screens/detailJob/detailAdmin';
+import ViewJob from './screens/viewJob';
 
 const Stack = createStackNavigator();
 
@@ -101,6 +102,16 @@ const Router = () => {
             gestureEnabled: true,
             // gestureDirection: 'vertical',
             ...TransitionPresets.ModalSlideFromBottomIOS,
+          }}
+        />
+        <Stack.Screen
+          name="viewjob"
+          component={ViewJob}
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            gestureDirection: 'horizontal',
+            ...TransitionPresets.SlideFromRightIOS,
           }}
         />
       </Stack.Navigator>

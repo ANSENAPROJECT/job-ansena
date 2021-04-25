@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector} from 'react-redux';
 import {ArrowDown, ReportActive, ReportDefault} from '../../assets';
 import {fonts} from '../../utils/fonts';
@@ -9,7 +9,7 @@ import {fonts} from '../../utils/fonts';
 const ReportHistory = () => {
   const [collapse, setCollapse] = useState(true);
   const reportHistory = useSelector((state) => state.detailjob.reportHistory);
-
+  console.log(reportHistory);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -42,30 +42,29 @@ const ReportHistory = () => {
       </TouchableOpacity>
       <Collapsible collapsed={collapse}>
         <View style={styles.containerCollapse}>
-          <FlatList
-            keyExtractor={(item, index) => index.toString()}
-            data={reportHistory}
-            renderItem={({item, index}) => {
-              return (
-                <View style={styles.rowCollapse}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={{...styles.txtReport, marginRight: 20}}>
-                      {index + 1}
-                    </Text>
-                    <Text
-                      style={styles.txtReportDetail}
-                      ellipsizeMode="tail"
-                      numberOfLines={1}>
-                      {item.status}
+          <ScrollView>
+            {reportHistory &&
+              reportHistory.map(({status, deadline}, index) => {
+                return (
+                  <View style={styles.rowCollapse} key={index}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <Text style={{...styles.txtReport, marginRight: 20}}>
+                        {index + 1}
+                      </Text>
+                      <Text
+                        style={styles.txtReportDetail}
+                        ellipsizeMode="tail"
+                        numberOfLines={1}>
+                        {status}
+                      </Text>
+                    </View>
+                    <Text style={{...styles.txtReport, marginRight: 15}}>
+                      {deadline}
                     </Text>
                   </View>
-                  <Text style={{...styles.txtReport, marginRight: 15}}>
-                    {item.deadline}
-                  </Text>
-                </View>
-              );
-            }}
-          />
+                );
+              })}
+          </ScrollView>
         </View>
       </Collapsible>
     </View>
@@ -121,5 +120,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 10,
   },
 });

@@ -2,12 +2,16 @@ import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 import {ArrowDown, Image1, Showlatest} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 
 const LatestReport = () => {
   const [collapse, setCollapse] = useState(true);
+  const noteReport = useSelector((state) => state.detailjob.noteReport);
+  const imgReport = useSelector((state) => state.detailjob.imgReport);
+  const timeReport = useSelector((state) => state.detailjob.timeReport);
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -28,32 +32,28 @@ const LatestReport = () => {
         <View style={{paddingVertical: 10}}>
           <View style={styles.rowHeader}>
             <Text>Finish Time</Text>
-            <Text>29 Jan 09:00</Text>
+            <Text>{timeReport}</Text>
           </View>
           <View style={styles.containerDesc}>
-            <Text>Membeli Packing merek exo di pasar legi</Text>
+            <Text>{noteReport}</Text>
           </View>
           <View style={styles.containerGalery}>
             <Text style={styles.imgRowHeader}>Image Galery</Text>
-            <View style={styles.rowGalery}>
-              <Image source={Image1} style={styles.imgGalerySize} />
-              <View style={{flex: 1}}>
-                <Text>
-                  List harga packing terbaru Februari 2021.- Sudah termasuk beli
-                  olshop - Sudah termasuk ongkir
-                </Text>
-              </View>
-            </View>
-            <View style={styles.line} />
-            <View style={styles.rowGalery}>
-              <Image source={Image1} style={styles.imgGalerySize} />
-              <View style={{flex: 1}}>
-                <Text>
-                  List harga packing terbaru Februari 2021.- Sudah termasuk beli
-                  olshop - Sudah termasuk ongkir
-                </Text>
-              </View>
-            </View>
+            {imgReport &&
+              imgReport.map(({desc, img}, index) => {
+                let HTTP_URI = {uri: img};
+                return (
+                  <>
+                    <View style={styles.rowGalery} key={index} key={index}>
+                      <Image source={HTTP_URI} style={styles.imgGalerySize} />
+                      <View style={{flex: 1}}>
+                        <Text>{desc}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.line} />
+                  </>
+                );
+              })}
           </View>
         </View>
       </Collapsible>
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     paddingBottom: 10,
+    marginBottom: 20,
   },
   btn: {
     flexDirection: 'row',

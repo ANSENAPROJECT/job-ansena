@@ -13,7 +13,15 @@ const initialState = {
   reportHistory: [],
   overdueHistory: [],
   timeReport: '',
+  noteRequest: '',
+  noteReport: '',
   statusButton: '',
+  deadlineOverdue: '',
+  imgRequest: '',
+  imgReport: '',
+  noteRevise: '',
+  imgRevise: [],
+  timeReport: '',
 };
 
 const DetailReducer = (prevState = initialState, action) => {
@@ -32,6 +40,14 @@ const DetailReducer = (prevState = initialState, action) => {
         image: action.payload.image,
         crew: action.payload.crew,
         remind: action.payload.remind,
+        noteRequest: action.payload.noteRequest,
+        noteReport: action.payload.noteReport,
+        deadlineOverdue: action.payload.deadlineOverdue,
+        imgRequest: action.payload.imgRequest,
+        imgReport: action.payload.imgReport,
+        noteRevise: action.payload.noteRevise,
+        imgRevise: action.payload.imgRevise,
+        timeReport: action.payload.timeReport,
       };
     case 'REPORT_HISTORY':
       return {

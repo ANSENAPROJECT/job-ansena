@@ -43,6 +43,7 @@ import {
   addProgressReport,
   addProgressReportGalery,
 } from '../../public/redux/ActionCreators/progressReport';
+import RevisianNote from '../../components/detail/revisianNote';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -66,7 +67,7 @@ const DetailJob = ({
   const idUser = useSelector((state) => state.auth.idUser);
   const status = useSelector((state) => state.detailjob.statusButton);
   const reportProgress = useSelector((state) => state.progressreport);
-  console.log(reportProgress);
+  const imgRevise = useSelector((state) => state.detailjob.imgRevise);
 
   const _ModalUpload = () => {
     setModalupload(!modalupload);
@@ -96,7 +97,10 @@ const DetailJob = ({
     axios
       .get(`${API_URL}/jzl/api/api/detail_subjob/${id}/${idUser}`)
       .then((res) => {
-        console.log('Ini dari halaman parent detail', res.data);
+        // console.log(
+        //   'Ini dari halaman parent detail',
+        //   res.data.data.imgRevise.length,
+        // );
         const data = {
           jobId: res.data.data.jobId,
           subjobId: res.data.data.subjobId,
@@ -109,6 +113,8 @@ const DetailJob = ({
           image: res.data.data.image,
           crew: res.data.data.crew,
           remind: res.data.data.remind,
+          noteRevise: res.data.data.noteRevise,
+          imgRevise: res.data.data.imgRevise,
         };
 
         const reportHistory = res.data.data.reportHistory;
@@ -213,6 +219,13 @@ const DetailJob = ({
     StatusBtn = null;
   }
 
+  // let imgListRevise;
+  // if (imgRevise.length === 0) {
+  //   imgListRevise = null;
+  // } else {
+  //   imgListRevise = <RevisianNote />;
+  // }
+
   return (
     <>
       <ScrollView style={styles.container}>
@@ -220,6 +233,7 @@ const DetailJob = ({
         <HeaderTitle />
         <Approval />
         <CoAssessor />
+        {/* {imgListRevise} */}
         <Purpose />
         <ImageGalery />
         <CrewList />

@@ -303,7 +303,11 @@ const Dashboard = ({
             ) : (
               <View />
             )}
-            <TouchableOpacity activeOpacity={0.6}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => {
+                navigation.navigate('viewjob');
+              }}>
               <Text style={{color: colors.primary, fontWeight: 'bold'}}>
                 View
               </Text>
