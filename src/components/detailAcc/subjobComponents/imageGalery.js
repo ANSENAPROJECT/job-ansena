@@ -14,6 +14,7 @@ const ImageGalery = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
+        disabled={image.length === 0 ? true : false}
         onPress={() => {
           setCollapse(!collapse);
         }}

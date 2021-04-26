@@ -25,6 +25,14 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Slider from 'react-native-slider';
 import {CalendarList} from 'react-native-calendars';
+import axios from 'axios';
+import qs from 'qs';
+import {connect, useSelector} from 'react-redux';
+import {API_URL} from '@env';
+import {
+  overdueHistory,
+  statusButton,
+} from '../../public/redux/ActionCreators/detailjob';
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -53,7 +61,7 @@ const monthNames = [
   'December',
 ];
 
-const ChangeOverdue = () => {
+const ChangeOverdue = ({statusButtonRedux, overdueHistoryRedux}) => {
   const [collapse, setCollapse] = useState(true);
   const [notes, setNotes] = useState('');
   const [deadlineCollape, setDeadlineCollape] = useState(true);
@@ -69,6 +77,8 @@ const ChangeOverdue = () => {
   );
   const [month, setMonth] = useState(monthNames[new Date().getMonth()]);
   const [option, setOption] = useState('');
+  const userId = useSelector((state) => state.auth.idUser);
+  const subjobId = useSelector((state) => state.detailjob.subjobId);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -172,8 +182,19 @@ const ChangeOverdue = () => {
       const data = {
         notes: notes,
         deadline: deadline,
+        userId,
+        subjobId,
       };
-      console.log(data);
+      axios
+        .post(`${API_URL}/jzl/api/api/change_overdue`, qs.stringify(data))
+        .then((res) => {
+          console.log(res);
+          statusButtonRedux(res.data.statusButton);
+          overdueHistoryRedux(res.data.overdueHistory);
+        })
+        .catch(({response}) => {
+          console.log(response);
+        });
     }
   };
 
@@ -541,7 +562,14 @@ const ChangeOverdue = () => {
   );
 };
 
-export default ChangeOverdue;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusButtonRedux: (data) => dispatch(statusButton(data)),
+    overdueHistoryRedux: (data) => dispatch(overdueHistory(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ChangeOverdue);
 
 const styles = StyleSheet.create({
   container: {

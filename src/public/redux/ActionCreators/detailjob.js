@@ -47,6 +47,13 @@ export const statusButton = (data) => {
   };
 };
 
+export const listRevise = (data) => {
+  return {
+    type: 'LIST_REVISE',
+    payload: data,
+  };
+};
+
 export const deleteAll = () => {
   return {
     type: 'DELETE_ALL',

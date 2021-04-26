@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   rowGalery: {marginTop: 10, flexDirection: 'row'},
   line: {
     marginVertical: 20,
-    height: 2,
+    height: 1,
     backgroundColor: 'grey',
     borderRadius: 10,
   },

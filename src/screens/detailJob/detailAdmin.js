@@ -237,6 +237,13 @@ const DetailAdmin = ({
         <ButtonStatus status={status} />
       </>
     );
+  } else if (status === 'waiting revision reported') {
+    btnStatus = (
+      <>
+        <LatestReport />
+        <ButtonStatus status={status} />
+      </>
+    );
   }
 
   return (

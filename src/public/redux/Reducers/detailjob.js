@@ -46,7 +46,6 @@ const DetailReducer = (prevState = initialState, action) => {
         imgRequest: action.payload.imgRequest,
         imgReport: action.payload.imgReport,
         noteRevise: action.payload.noteRevise,
-        imgRevise: action.payload.imgRevise,
         timeReport: action.payload.timeReport,
       };
     case 'REPORT_HISTORY':
@@ -81,6 +80,13 @@ const DetailReducer = (prevState = initialState, action) => {
       return {
         ...prevState,
         timeReport: action.payload,
+      };
+
+    case 'LIST_REVISE':
+      console.log('Ini ada di reducers', action.payload);
+      return {
+        ...prevState,
+        imgRevise: action.payload,
       };
     case 'DELETE_ALL':
       return {

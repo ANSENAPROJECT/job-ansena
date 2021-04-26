@@ -30,6 +30,12 @@ import {
   deleteProgressReport,
   updateProgressReport,
 } from '../../public/redux/ActionCreators/progressReport';
+import axios from 'axios';
+import {API_URL} from '@env';
+import {
+  reportHistory,
+  statusButton,
+} from '../../public/redux/ActionCreators/detailjob';
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -58,7 +64,13 @@ const monthNames = [
   'December',
 ];
 
-const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
+const Revise = ({
+  _ModalUpload,
+  deleteProgressRedux,
+  updateProgressRedux,
+  statusButtonRedux,
+  reportHistoryRedux,
+}) => {
   const [collapse, setCollapse] = useState(true);
   const [deadlineCollape, setDeadlineCollape] = useState(true);
   const [hourCollapse, setHourCollapse] = useState(true);
@@ -75,7 +87,10 @@ const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
   const [option, setOption] = useState('');
   const [descrip, setDescrip] = useState('');
   const [check, setCheck] = useState('');
-  const [reason, setReason] = useState('');
+  const [description, setDescription] = useState('');
+  const subjobId = useSelector((state) => state.detailjob.subjobId);
+  const jobId = useSelector((state) => state.detailjob.jobId);
+  const userId = useSelector((state) => state.auth.idUser);
 
   const progressreport = useSelector(
     (state) => state.progressreport.img_request,
@@ -199,6 +214,60 @@ const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
     setDescrip(desc);
   };
 
+  const submitRevise = () => {
+    const time =
+      valueHour < 10
+        ? '0' + valueHour + ':00'
+        : `${valueHour}:${
+            valueMinutes === ''
+              ? '0'
+              : valueMinutes.toString() < 10
+              ? '0' + valueMinutes.toString()
+              : valueMinutes.toString()
+          }`;
+    const deadline = `${selectedDate} ${time}`;
+    if (description === '') {
+      showToastWithGravity('Field Description must be filled in');
+    } else if (switchDate === false) {
+      showToastWithGravity('Deadline must be selected');
+    } else if (progressreport.length === 0) {
+      showToastWithGravity('Image notes must be filled in');
+    } else {
+      const data = new FormData();
+      data.append('jobId', `${jobId}`);
+      data.append('subjobId', `${subjobId}`);
+      data.append('userId', `${userId}`);
+      data.append('note_revise', `${description}`);
+      data.append('deadline', `${deadline}`);
+      progressreport.forEach((item) => {
+        data.append('img_revise[]', {
+          name: item.image.uri.split('/').pop(),
+          type: item.image.mime,
+          uri: item.image.uri,
+        });
+      });
+      progressreport.forEach(({desc}) => {
+        data.append('desc_revise[]', desc);
+      });
+      const config = {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      };
+      console.log(data);
+      axios
+        .post(`${API_URL}/jzl/api/api/revise`, data, config)
+        .then((res) => {
+          console.log(res);
+          statusButtonRedux(res.data.statusButton);
+          reportHistoryRedux(res.data.reportHistory);
+        })
+        .catch(({response}) => {
+          console.log(response);
+        });
+    }
+  };
+
   return (
     <View
       style={{
@@ -234,7 +303,12 @@ const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
               paddingVertical: 10,
               paddingHorizontal: 20,
             }}>
-            <TextInput multiline placeholder="Input Description" />
+            <TextInput
+              multiline
+              placeholder="Input Description"
+              value={description}
+              onChangeText={(text) => setDescription(text)}
+            />
           </View>
 
           {/* Calender Picker */}
@@ -580,6 +654,7 @@ const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
             )}
 
             <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => {
                 _ModalUpload();
               }}>
@@ -588,6 +663,9 @@ const Revise = ({_ModalUpload, deleteProgressRedux, updateProgressRedux}) => {
               </Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity style={styles.btnRevision} onPress={submitRevise}>
+            <Text style={styles.txtBtnRevision}>Request Revision</Text>
+          </TouchableOpacity>
         </View>
       </Collapsible>
     </View>
@@ -598,6 +676,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
+    statusButtonRedux: (data) => dispatch(statusButton(data)),
+    reportHistoryRedux: (data) => dispatch(reportHistory(data)),
   };
 };
 
@@ -752,4 +832,13 @@ const styles = StyleSheet.create({
     height: 120,
     marginLeft: 10,
   },
+  btnRevision: {
+    marginTop: 20,
+    height: 30,
+    borderRadius: 20,
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  txtBtnRevision: {fontFamily: fonts.SFProDisplayMedium, color: 'white'},
 });

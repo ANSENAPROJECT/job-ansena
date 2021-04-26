@@ -36,6 +36,7 @@ import {
 import axios from 'axios';
 import {API_URL} from '@env';
 import {
+  overdueHistory,
   proposeOverdueHistory,
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
@@ -74,7 +75,7 @@ const Overdue = ({
   _ModalUpload,
   deleteProgressRedux,
   updateProgressRedux,
-  proposeOverdueHistoryRedux,
+  overdueHistoryRedux,
   statusButtonRedux,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -271,7 +272,7 @@ const Overdue = ({
         .then((res) => {
           console.log(res);
           setIsLoading(false);
-          proposeOverdueHistoryRedux(res.data.data.overdueHistory);
+          overdueHistoryRedux(res.data.data.overdueHistory);
           statusButtonRedux(res.data.data.statusButton);
         })
         .catch((err) => {
@@ -707,7 +708,7 @@ const mapDispatchToProps = (dispatch) => {
     deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
     statusButtonRedux: (data) => dispatch(statusButton(data)),
-    proposeOverdueHistoryRedux: (data) => dispatch(proposeOverdueHistory(data)),
+    overdueHistoryRedux: (data) => dispatch(overdueHistory(data)),
   };
 };
 

@@ -21,6 +21,7 @@ import {connect, useSelector} from 'react-redux';
 import {
   deleteAll,
   detailJob,
+  listRevise,
   overdueHistory,
   reportHistory,
   statusButton,
@@ -59,6 +60,7 @@ const DetailJob = ({
   deleteAllRedux,
   addProgresReportRedux,
   addProgressReportGaleryRedux,
+  listReviseRedux,
 }) => {
   const [modalupload, setModalupload] = useState(false);
   const [modaluploadOverdue, setModaluploadOverdue] = useState(false);
@@ -67,7 +69,8 @@ const DetailJob = ({
   const idUser = useSelector((state) => state.auth.idUser);
   const status = useSelector((state) => state.detailjob.statusButton);
   const reportProgress = useSelector((state) => state.progressreport);
-  const imgRevise = useSelector((state) => state.detailjob.imgRevise);
+  const listRevise = useSelector((state) => state.detailjob.imgRevise);
+  console.log('Ini dari redux', listRevise);
 
   const _ModalUpload = () => {
     setModalupload(!modalupload);
@@ -97,10 +100,7 @@ const DetailJob = ({
     axios
       .get(`${API_URL}/jzl/api/api/detail_subjob/${id}/${idUser}`)
       .then((res) => {
-        // console.log(
-        //   'Ini dari halaman parent detail',
-        //   res.data.data.imgRevise.length,
-        // );
+        console.log('Ini dari halaman parent detail', res);
         const data = {
           jobId: res.data.data.jobId,
           subjobId: res.data.data.subjobId,
@@ -114,21 +114,21 @@ const DetailJob = ({
           crew: res.data.data.crew,
           remind: res.data.data.remind,
           noteRevise: res.data.data.noteRevise,
-          imgRevise: res.data.data.imgRevise,
         };
-
+        const listRevise = res.data.data.imgRevise;
         const reportHistory = res.data.data.reportHistory;
         const overdueHistory = res.data.data.overdueHistory;
         const timeReport = res.data.data.timeReport;
         const statusButton = res.data.data.statusButton;
+        listReviseRedux(listRevise);
         detailJobRedux(data);
         reportHistoryRedux(reportHistory);
         overdueHistoryRedux(overdueHistory);
         timeReportRedux(timeReport);
         statusButtonRedux(statusButton);
       })
-      .catch(({response}) => {
-        console.log('Ini response', response);
+      .catch((err) => {
+        console.log('Ini response', err);
       });
   };
 
@@ -219,13 +219,6 @@ const DetailJob = ({
     StatusBtn = null;
   }
 
-  // let imgListRevise;
-  // if (imgRevise.length === 0) {
-  //   imgListRevise = null;
-  // } else {
-  //   imgListRevise = <RevisianNote />;
-  // }
-
   return (
     <>
       <ScrollView style={styles.container}>
@@ -233,7 +226,7 @@ const DetailJob = ({
         <HeaderTitle />
         <Approval />
         <CoAssessor />
-        {/* {imgListRevise} */}
+        {listRevise.length == 0 ? null : <RevisianNote />}
         <Purpose />
         <ImageGalery />
         <CrewList />
@@ -285,6 +278,7 @@ const mapDispatchToProps = (dispatch) => {
     addProgresReportRedux: (data) => dispatch(addProgressReport(data)),
     addProgressReportGaleryRedux: (data) =>
       dispatch(addProgressReportGalery(data)),
+    listReviseRedux: (data) => dispatch(listRevise(data)),
   };
 };
 export default connect(null, mapDispatchToProps)(DetailJob);

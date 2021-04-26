@@ -6,11 +6,13 @@ import {useSelector} from 'react-redux';
 import {ArrowDown, Image1} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import {API_URL} from '@env';
 
 const RevisianNote = () => {
   const [collapse, setCollapse] = useState(true);
   const noteRevise = useSelector((state) => state.detailjob.noteRevise);
   const imgRevise = useSelector((state) => state.detailjob.imgRevise);
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -30,13 +32,14 @@ const RevisianNote = () => {
           </View>
           {imgRevise &&
             imgRevise.map(({img, desc}, index) => {
-              let HTTP_URI = {uri: img};
+              console.log(img);
+              let Image_Http_URL = {uri: `${API_URL}/${img}`};
               return (
                 <View
                   style={{flexDirection: 'row', alignItems: 'center'}}
                   key={index}>
                   <Image
-                    source={HTTP_URI}
+                    source={Image_Http_URL}
                     style={{height: 100, width: 100, borderRadius: 20}}
                   />
                   <View style={{height: 100, marginLeft: 10}}>
