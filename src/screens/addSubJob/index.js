@@ -839,6 +839,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 setSwitchDate(true);
                 setSwitchHour(true);
                 OptionDate(today);
+                setOption('today');
               }
             }}>
             <Image source={DeadlineDate} style={styles.imgSize} />
@@ -927,9 +928,17 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 } else if (day.day < datenow) {
                   showToastWithGravity('Cannot choose date before now');
                 } else {
-                  setNewDaySelected(day.dateString);
-                  setSwitchDate(true);
-                  setSwitchHour(true);
+                  if (day.day > datenow) {
+                    setValueHour(9);
+                    setNewDaySelected(day.dateString);
+                    setSwitchDate(true);
+                    setSwitchHour(true);
+                  } else {
+                    setValueHour(hour);
+                    setNewDaySelected(day.dateString);
+                    setSwitchDate(true);
+                    setSwitchHour(true);
+                  }
                 }
               }}
               markedDates={markedDates}
@@ -954,7 +963,12 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                   setOption('today');
                   OptionDate(today);
                 }}>
-                <Text>Today</Text>
+                <Text
+                  style={{
+                    color: option === 'today' ? 'white' : colors.badgeBlue,
+                  }}>
+                  Today
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
@@ -966,7 +980,12 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                   setOption('tomorrow');
                   OptionDate(tomorrow);
                 }}>
-                <Text>Tomorrow</Text>
+                <Text
+                  style={{
+                    color: option === 'tomorrow' ? 'white' : colors.badgeBlue,
+                  }}>
+                  Tomorrow
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.option}
@@ -979,7 +998,12 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                   setOption('nextWeek');
                   OptionDate(nextWeek);
                 }}>
-                <Text>Next Week</Text>
+                <Text
+                  style={{
+                    color: option === 'nextWeek' ? 'white' : colors.badgeBlue,
+                  }}>
+                  Next Week
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
