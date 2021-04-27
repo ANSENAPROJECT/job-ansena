@@ -13,8 +13,9 @@ export default StyleSheet.create({
 
   titleRow: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: fonts.SFProDisplayMedium,
   },
+
   // Header styles
   containerHeader: {
     flexDirection: 'row',
@@ -261,7 +262,6 @@ export default StyleSheet.create({
   },
   containerNote: {
     height: 200,
-    width: deviceWidth - 40,
     backgroundColor: 'white',
     marginBottom: 30,
     borderRadius: 20,

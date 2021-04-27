@@ -97,7 +97,8 @@ class Login extends Component {
             style={{
               textAlign: 'justify',
               fontSize: 12,
-              fontFamily: fonts.SFProDisplayBoldItalic,
+              fontFamily: fonts.SFProDisplayBold,
+              color: 'grey',
             }}>
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
@@ -180,7 +181,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: fonts.SFProDisplayBold,
+    color: 'grey',
   },
   formInput: {
     height: 44,
@@ -190,7 +192,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'space-between',
     alignItems: 'center',
-
     alignSelf: 'center',
     flexDirection: 'row',
   },

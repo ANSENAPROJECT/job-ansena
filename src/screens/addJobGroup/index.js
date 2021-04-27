@@ -671,7 +671,7 @@ const AddJobGroup = ({
             <Image
               source={ArrowDown}
               style={{
-                height: 15,
+                height: 10,
                 width: 15,
                 transform: [{rotate: '270deg'}],
                 marginLeft: 10,
@@ -709,7 +709,7 @@ const AddJobGroup = ({
                 source={ArrowDown}
                 style={[
                   {
-                    height: 15,
+                    height: 10,
                     width: 15,
                     marginLeft: 10,
                   },
@@ -825,7 +825,7 @@ const AddJobGroup = ({
                 source={ArrowDown}
                 style={[
                   {
-                    height: 15,
+                    height: 10,
                     width: 15,
                     transform: arrow
                       ? [{rotate: '180deg'}]
@@ -899,7 +899,7 @@ const AddJobGroup = ({
                 source={ArrowDown}
                 style={[
                   {
-                    height: 15,
+                    height: 10,
                     width: 15,
                     transform: arrow
                       ? [{rotate: '180deg'}]
@@ -1362,7 +1362,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnheader: {
-    fontFamily: fonts.SFProDisplayThin,
+    fontFamily: fonts.SFProDisplayMedium,
     fontSize: 14,
     color: colors.badgeRed,
   },

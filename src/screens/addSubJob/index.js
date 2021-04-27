@@ -56,6 +56,7 @@ import axios from 'axios';
 import {API_URL} from '@env';
 import {connect, useSelector} from 'react-redux';
 import {updateDetailSubjob} from '../../public/redux/ActionCreators/job';
+import {KeyboardAvoidingView} from 'react-native';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -654,757 +655,769 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
   }
 
   return (
-    <ScrollView style={styles.container} removeClippedSubviews={true}>
-      {/* Header */}
-      <View style={styles.containerHeader}>
-        <TouchableOpacity
-          style={styles.left}
-          onPress={() => {
-            navigation.pop();
-          }}>
-          <Image source={BackIcon} style={styles.imgHeader} />
-          <Text style={styles.txtColorBlue}>New Job 1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.center}>
-          <Text style={styles.titletxt}>Add Sub Job</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.right}
-          onPress={() => {
-            submitSubjob();
-          }}>
-          <Text style={styles.txtColorBlue}>Add</Text>
-        </TouchableOpacity>
-      </View>
+    <ScrollView removeClippedSubviews={true}>
+      <ScrollView style={styles.container} nestedScrollEnabled={true}>
+        {/* Header */}
+        <View style={styles.containerHeader}>
+          <TouchableOpacity
+            style={styles.left}
+            onPress={() => {
+              navigation.pop();
+            }}>
+            <Image source={BackIcon} style={styles.imgHeader} />
+            <Text style={styles.txtColorBlue}>New Job 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.center}>
+            <Text style={styles.titletxt}>Add Sub Job</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.right}
+            onPress={() => {
+              submitSubjob();
+            }}>
+            <Text style={styles.txtColorBlue}>Add</Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* Code */}
-      <View style={styles.code}>
-        <Text style={styles.txtCode}>Code</Text>
-        <Text style={styles.txtCode}>{dataSubjob.code}</Text>
-      </View>
+        {/* Code */}
+        <View style={styles.code}>
+          <Text style={styles.txtCode}>Code</Text>
+          <Text style={styles.txtCode}>{dataSubjob.code}</Text>
+        </View>
 
-      {/* title */}
-      <View style={styles.titleinpt}>
-        <TextInput
-          placeholder="Input Subjob"
-          value={title}
-          onChangeText={(text) => setTitle(text)}
-        />
-      </View>
+        {/* title */}
+        <View style={styles.titleinpt}>
+          <TextInput
+            placeholder="Input Subjob"
+            value={title}
+            onChangeText={(text) => setTitle(text)}
+          />
+        </View>
 
-      {/* approval */}
-      <View style={styles.containerApproval}>
-        <TouchableOpacity
-          style={styles.rowApproval}
-          onPress={() => {
-            toogleApproval();
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image
-              source={CoAdmin}
-              style={{height: 30, width: 30, marginRight: 20}}
-            />
-            <Text style={styles.titleRow}>Approval</Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* <Text style={{color: colors.txtGrey}}>Only You</Text> */}
-            {renderApproval}
-            <Animated.Image
-              source={ArrowDown}
-              style={[
-                {
-                  height: 15,
-                  width: 15,
-                  marginLeft: 10,
-                },
-                animatedStyle,
-              ]}
-            />
-          </View>
-        </TouchableOpacity>
-        <Collapsible collapsed={collapseApproval} align="center">
-          <View style={styles.content}>
-            <View
-              style={styles.rowDataApproval}
-              activeOpacity={0.8}
-              onPress={() => {}}>
-              <View style={{flexDirection: 'row'}}>
-                <View style={styles.circle}>
-                  <Text style={{fontSize: 12}}>1</Text>
-                </View>
-                <Text>
-                  {approval.name === 'Bernabas Aditya' ? 'You' : approval.name}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={handleSwitch1} activeOpacity={0.9}>
-                <Image source={SwitchActive} style={{height: 20, width: 40}} />
-              </TouchableOpacity>
+        {/* approval */}
+        <View style={styles.containerApproval}>
+          <TouchableOpacity
+            style={styles.rowApproval}
+            onPress={() => {
+              toogleApproval();
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={CoAdmin}
+                style={{height: 30, width: 30, marginRight: 20}}
+              />
+              <Text style={styles.titleRow}>Approval</Text>
             </View>
-            {coAdminParams.length === 0 ? null : (
-              <View style={styles.rowDataApproval}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {/* <Text style={{color: colors.txtGrey}}>Only You</Text> */}
+              {renderApproval}
+              <Animated.Image
+                source={ArrowDown}
+                style={[
+                  {
+                    height: 15,
+                    width: 15,
+                    marginLeft: 10,
+                  },
+                  animatedStyle,
+                ]}
+              />
+            </View>
+          </TouchableOpacity>
+          <Collapsible collapsed={collapseApproval} align="center">
+            <View style={styles.content}>
+              <View
+                style={styles.rowDataApproval}
+                activeOpacity={0.8}
+                onPress={() => {}}>
                 <View style={{flexDirection: 'row'}}>
                   <View style={styles.circle}>
-                    <Text style={{fontSize: 12}}>2</Text>
+                    <Text style={{fontSize: 12}}>1</Text>
                   </View>
                   <Text>
-                    {approval2.name === 'Bernabas Aditya'
+                    {approval.name === 'Bernabas Aditya'
                       ? 'You'
-                      : approval2.name}
+                      : approval.name}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={handleSwitch2} activeOpacity={0.9}>
-                  {approval2.status == 1 ? (
-                    <Image
-                      source={SwitchActive}
-                      style={{height: 20, width: 40}}
-                    />
-                  ) : (
-                    <Image
-                      source={SwitchDefault}
-                      style={{height: 20, width: 40}}
-                    />
-                  )}
+                <TouchableOpacity onPress={handleSwitch1} activeOpacity={0.9}>
+                  <Image
+                    source={SwitchActive}
+                    style={{height: 20, width: 40}}
+                  />
                 </TouchableOpacity>
               </View>
-            )}
-            {coAdminParams.length < 1 ? (
-              <View
-                style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
-                onPress={handleSwitch}>
-                <Text style={{color: 'white', fontWeight: 'bold'}}>
-                  Switch Order
-                </Text>
-              </View>
-            ) : approval2.status === 0 ? (
-              <View
-                style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
-                onPress={handleSwitch}>
-                <Text style={{color: 'white', fontWeight: 'bold'}}>
-                  Switch Order
-                </Text>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={styles.btnSwitch}
-                onPress={handleSwitch}
-                activeOpacity={0.8}>
-                <Text style={{color: 'white', fontWeight: 'bold'}}>
-                  Switch Order
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </Collapsible>
-      </View>
-
-      {/* Purpose */}
-      <View style={styles.purposeBox}>
-        <TextInput
-          placeholder="Purpose"
-          value={purpose}
-          multiline={true}
-          onChangeText={(text) => setPurpose(text)}
-          styles={{height: '100%'}}
-        />
-      </View>
-
-      {/* Deadline Date*/}
-      <View
-        style={{
-          ...styles.deadline,
-          marginTop: 20,
-          borderTopRightRadius: 20,
-          borderTopLeftRadius: 20,
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          style={{flexDirection: 'row', alignItems: 'center'}}
-          onPress={() => {
-            if (switchDate === true && switchHour === true) {
-              setCollapseDeadline(!collapseDeadline);
-              setCollapseDeadlineHour(!collapseDeadlineHour);
-            } else if (switchDate === false && switchHour === false) {
-              setCollapseDeadline(!collapseDeadline);
-              setCollapseDeadlineHour(!collapseDeadlineHour);
-              setSwitchDate(true);
-              setSwitchHour(true);
-              OptionDate(today);
-            }
-          }}>
-          <Image source={DeadlineDate} style={styles.imgSize} />
-          <Text style={styles.titleRow}>Deadline Date</Text>
-        </TouchableOpacity>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: colors.txtGrey}}>
-            {switchDate == false
-              ? 'None'
-              : selectedDate.split('-')[2] + ' ' + month === ''
-              ? 'None'
-              : selectedDate.split('-')[2] + ' ' + month}
-          </Text>
-          <Pressable
-            onPress={() => {
-              setSwitchDate(!switchDate);
-              setSwitchHour(!switchHour);
-              OptionDate(today);
-            }}>
-            <Image
-              source={switchDate ? SwitchActive : SwitchDefault}
-              style={{height: 23, width: 43, marginLeft: 10}}
-            />
-          </Pressable>
-        </View>
-      </View>
-      <Collapsible collapsed={collapseDeadline}>
-        <View style={styles.containerCalendar}>
-          <CalendarList
-            theme={{
-              width: 250,
-              backgroundColor: 'transparent',
-              textDayHeaderFontWeight: '100',
-              calendarBackground: 'transparent',
-              textDayFontSize: 14,
-              textMonthFontSize: 14,
-              dayTextColor: 'black',
-              headerTextColor: 'black',
-              textDayHeaderFontSize: 20,
-              justifyContent: 'center',
-              textDayHeaderFontSize: 14,
-              selectedDayBackgroundColor: '#40a1f8',
-              'stylesheet.day.basic': {
-                base: {
-                  width: 30,
-                  height: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                },
-              },
-              'stylesheet.calendar.header': {
-                header: {
-                  height: 0,
-                  opacity: 0,
-                },
-                dayHeader: {
-                  marginTop: 2,
-                  marginBottom: 7,
-                  width: 30,
-                  textAlign: 'center',
-                  fontSize: 12,
-                  color: 'black',
-                },
-              },
-              justifyContent: 'center',
-            }}
-            style={{
-              borderRadius: 20,
-              alignSelf: 'center',
-              width: 220,
-              height: 150,
-              borderRadius: 20,
-              backgroundColor: '#f2f3f7',
-            }}
-            horizontal={true}
-            calendarWidth={230}
-            pastScrollRange={0}
-            futureScrollRange={1}
-            scrollEnabled={true}
-            showScrollIndicator={false}
-            onDayPress={(day) => {
-              if (day.month > montNow) {
-                setNewDaySelected(day.dateString);
-                setSwitchDate(true);
-                setSwitchHour(true);
-              } else if (day.day < datenow) {
-                showToastWithGravity('Cannot choose date before now');
-              } else {
-                setNewDaySelected(day.dateString);
-                setSwitchDate(true);
-                setSwitchHour(true);
-              }
-            }}
-            markedDates={markedDates}
-          />
-          <View style={styles.sideCalender}>
-            <View>
-              <View style={styles.btn}>
-                <Text>{month}</Text>
-              </View>
-              <View style={styles.btn}>
-                <Text>{year}</Text>
-              </View>
-            </View>
-            <TouchableOpacity
-              style={{
-                ...styles.option,
-                marginTop: 20,
-                backgroundColor:
-                  option === 'today' ? colors.badgeBlue : 'white',
-              }}
-              onPress={() => {
-                setOption('today');
-                OptionDate(today);
-              }}>
-              <Text>Today</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                ...styles.option,
-                backgroundColor:
-                  option === 'tomorrow' ? colors.badgeBlue : 'white',
-              }}
-              onPress={() => {
-                setOption('tomorrow');
-                OptionDate(tomorrow);
-              }}>
-              <Text>Tomorrow</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.option}
-              style={{
-                ...styles.option,
-                backgroundColor:
-                  option === 'nextWeek' ? colors.badgeBlue : 'white',
-              }}
-              onPress={() => {
-                setOption('nextWeek');
-                OptionDate(nextWeek);
-              }}>
-              <Text>Next Week</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Collapsible>
-
-      {/* Deadline Hour */}
-      <View
-        style={{
-          ...styles.deadline,
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
-          marginBottom: 30,
-        }}>
-        <View style={styles.line} />
-        <View style={styles.btnDeadline}>
-          <TouchableOpacity
-            style={{flexDirection: 'row', alignItems: 'center'}}
-            onPress={() => {
-              setCollapseDeadlineHour(!collapseDeadlineHour);
-              setSwitchHour(true);
-            }}>
-            <Image source={DeadlineHour} style={styles.imgSize} />
-            <Text style={styles.titleRow}>Deadline Hour</Text>
-          </TouchableOpacity>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{color: colors.txtGrey}}>
-              {switchHour === false
-                ? 'None'
-                : valueHour < 10
-                ? '0' + valueHour + ': 00'
-                : `${valueHour}:${
-                    valueMinutes === ''
-                      ? '0'
-                      : valueMinutes.toString() < 10
-                      ? '0' + valueMinutes.toString()
-                      : valueMinutes.toString()
-                  }`}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setSwitchDate(!switchDate);
-                setSwitchHour(!switchHour);
-              }}>
-              <Image
-                source={switchHour ? SwitchActive : SwitchDefault}
-                style={{height: 23, width: 43, marginLeft: 10}}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Collapsible collapsed={collapseDeadlineHour}>
-          <View style={styles.collapseRow}>
-            <View style={styles.txtCollapseTime}>
-              <TextInput
-                style={{width: 30}}
-                value={
-                  valueHour.toString() < 10
-                    ? '0' + valueHour.toString()
-                    : valueHour.toString()
-                }
-                onChangeText={(valueHour) => {
-                  console.log(Number(valueHour));
-                  console.log(valueHour);
-                  if (valueHour > 17) {
-                    showToastWithGravity('ga boleh lebih dari jam 5');
-                    setValueHour(17);
-                  } else {
-                    setValueHour(Number(valueHour));
-                  }
-                }}
-                onEndEditing={() => {
-                  if (Number(valueHour) < 9) {
-                    showToastWithGravity('jam harus lebih dari jam 9');
-                    setValueHour(9);
-                  }
-                }}
-                keyboardType="number-pad"
-              />
-              <View style={{height: 15, borderWidth: 0.5}} />
-              <TextInput
-                style={{width: 30}}
-                placeholder="00"
-                value={
-                  valueMinutes.toString() < 10
-                    ? '0' + valueMinutes.toString()
-                    : valueMinutes.toString()
-                }
-                onChangeText={(valueMinutes) => {
-                  if (valueHour === 17 && valueMinutes > 0) {
-                    showToastWithGravity('dah jam 5 bos');
-                  } else {
-                    setValueMinutes(Number(valueMinutes));
-                  }
-                }}
-                onEndEditing={() => {
-                  if (Number(valueMinutes) === 60) {
-                    showToastWithGravity('menit tidak boleh 60');
-                    setValueMinutes(59);
-                  }
-                }}
-                keyboardType="number-pad"
-              />
-            </View>
-            <View style={styles.rowSlider}>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Image source={Morning} style={{height: 14, width: 14}} />
-                <Image source={Daylight} style={{height: 14, width: 14}} />
-                <Image source={Afternoon} style={{height: 14, width: 14}} />
-              </View>
-              <Slider
-                value={valueHour}
-                onValueChange={(value) => {
-                  handleSlider(value);
-                }}
-                step={0.5}
-                minimumValue={9}
-                maximumValue={17}
-                style={styles.containerSlider}
-                trackStyle={styles.track}
-                thumbStyle={styles.thumb}
-                minimumTrackTintColor="#31a4db"
-                thumbTouchSize={{width: 50, height: 40}}
-              />
-            </View>
-          </View>
-        </Collapsible>
-      </View>
-
-      {/* add Co assesor */}
-      <TouchableOpacity
-        style={styles.continerAddCoAssessor}
-        activeOpacity={0.6}
-        onPress={() => {
-          setModalCoAssessor(true);
-        }}>
-        <View style={styles.flexView}>
-          <Image source={Assessor} style={styles.imgSize} />
-          <Text style={styles.titleRow}>Add Co-Assesor</Text>
-        </View>
-        <View style={styles.flexView}>
-          <Text style={{color: colors.txtGrey}}>
-            {checkCoassessor === '' ? 'None' : checkCoassessor.name}
-          </Text>
-          <Image source={ArrowDown} style={styles.imgArrow} />
-        </View>
-      </TouchableOpacity>
-
-      {/* Prioritize */}
-      <TouchableOpacity
-        style={styles.continerAddCoAssessor}
-        activeOpacity={0.6}
-        onPress={() => {
-          setSwitchPrio(!switchPrio);
-        }}>
-        <View style={styles.flexView}>
-          <Image source={Prio1} style={styles.imgSize} />
-          <Text style={styles.titleRow}>Prioritized</Text>
-        </View>
-        <Image
-          source={switchPrio ? SwitchActive : SwitchDefault}
-          style={styles.switch}
-        />
-      </TouchableOpacity>
-
-      {/* Remind Other */}
-      <View style={styles.containerRemind}>
-        <TouchableOpacity
-          style={styles.rowReminder}
-          onPress={() => {
-            toogleRemind();
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={Remind}
-              style={{height: 30, width: 30, marginRight: 20}}
-            />
-            <Text style={styles.titleRow}>Remind Other</Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image
-              source={checkRemind.length > 0 ? SwitchActive : SwitchDefault}
-              style={styles.switch}
-            />
-          </View>
-        </TouchableOpacity>
-        <Collapsible collapsed={collapseRemind}>
-          {checkRemind.length < 1 ? null : (
-            <View style={styles.containerRemindRow}>
-              {/* Remind Option */}
-              <View>
-                {/* Stopable */}
-                <View style={styles.flexRow}>
-                  <Text style={styles.titleRow}>Stopable</Text>
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    onPress={() => {
-                      setStopable(!stopable);
-                    }}>
-                    <Image
-                      source={stopable === true ? SwitchActive : SwitchDefault}
-                      style={styles.switch}
-                    />
+              {coAdminParams.length === 0 ? null : (
+                <View style={styles.rowDataApproval}>
+                  <View style={{flexDirection: 'row'}}>
+                    <View style={styles.circle}>
+                      <Text style={{fontSize: 12}}>2</Text>
+                    </View>
+                    <Text>
+                      {approval2.name === 'Bernabas Aditya'
+                        ? 'You'
+                        : approval2.name}
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={handleSwitch2} activeOpacity={0.9}>
+                    {approval2.status == 1 ? (
+                      <Image
+                        source={SwitchActive}
+                        style={{height: 20, width: 40}}
+                      />
+                    ) : (
+                      <Image
+                        source={SwitchDefault}
+                        style={{height: 20, width: 40}}
+                      />
+                    )}
                   </TouchableOpacity>
                 </View>
+              )}
+              {coAdminParams.length < 1 ? (
                 <View
-                  style={{
-                    ...styles.line,
-                    width: '100%',
-                    marginTop: 10,
-                    marginBottom: 10,
-                  }}
-                />
-                {/* Reminder Alarm */}
-                <View style={{marginBottom: 10}}>
-                  <View style={styles.flexRow}>
-                    <Text style={styles.titleRow}>Reminder Alarm</Text>
-                    {/* <Text style={{color: colors.txtGrey}}>None</Text> */}
-                    {valueRemindOption}
-                  </View>
-                  <View style={{...styles.flexRow, marginTop: 10}}>
-                    <TouchableOpacity
-                      style={{
-                        ...styles.btnOptionRemind,
-                        backgroundColor:
-                          optionRemind === 1 ? colors.badgeBlue : 'white',
-                      }}
-                      onPress={() => {
-                        setOptionRemind(1);
-                      }}>
-                      <Text
-                        style={{
-                          ...styles.txtRemindOption,
-                          color: optionRemind === 1 ? 'white' : '#b6b6b6',
-                        }}>
-                        15 MINUTES
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        ...styles.btnOptionRemind,
-                        backgroundColor:
-                          optionRemind === 2 ? colors.badgeBlue : 'white',
-                      }}
-                      onPress={() => {
-                        setOptionRemind(2);
-                      }}>
-                      <Text
-                        style={{
-                          ...styles.txtRemindOption,
-                          color: optionRemind === 2 ? 'white' : '#b6b6b6',
-                        }}>
-                        1 HOUR
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        ...styles.btnOptionRemind,
-                        backgroundColor:
-                          optionRemind === 3 ? colors.badgeBlue : 'white',
-                      }}
-                      onPress={() => {
-                        setOptionRemind(3);
-                      }}>
-                      <Text
-                        style={{
-                          ...styles.txtRemindOption,
-                          color: optionRemind === 3 ? 'white' : '#b6b6b6',
-                        }}>
-                        1 DAY
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={{
-                        ...styles.btnOptionRemind,
-                        backgroundColor:
-                          optionRemind === 4 ? colors.badgeBlue : 'white',
-                      }}
-                      onPress={() => {
-                        setOptionRemind(4);
-                      }}>
-                      <Text
-                        style={{
-                          ...styles.txtRemindOption,
-                          color: optionRemind === 4 ? 'white' : '#b6b6b6',
-                        }}>
-                        FOLLOW
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                  style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
+                  onPress={handleSwitch}>
+                  <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    Switch Order
+                  </Text>
                 </View>
-              </View>
+              ) : approval2.status === 0 ? (
+                <View
+                  style={{...styles.btnSwitch, backgroundColor: colors.txtGrey}}
+                  onPress={handleSwitch}>
+                  <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    Switch Order
+                  </Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  style={styles.btnSwitch}
+                  onPress={handleSwitch}
+                  activeOpacity={0.8}>
+                  <Text style={{color: 'white', fontWeight: 'bold'}}>
+                    Switch Order
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
-          )}
-          <View style={{marginTop: 10}}>
-            <FlatList
-              data={checkRemind}
-              renderItem={({item, index}) => {
-                const {idUser, name} = item;
-                return (
-                  <Swipeable
-                    renderRightActions={(progress, dragX) => {
-                      const scales = dragX.interpolate({
-                        inputRange: [0, 100],
-                        outputRange: [0, 1],
-                      });
-                      return (
-                        <TouchableOpacity
-                          activeOpacity={0.6}
-                          style={{
-                            alignItems: 'center',
-                            backgroundColor: 'red',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: 80,
-                            height: '100%',
-                            transform: [{rotate: '180deg'}],
-                          }}
-                          onPress={() => {
-                            removeListCrew(idUser, index);
-                          }}>
-                          <Animated.Text
-                            style={{
-                              transform: [{scale: scales}],
-                              color: 'white',
-                              fontFamily: fonts.SFProDisplayHeavy,
-                              fontSize: 18,
-                            }}>
-                            Delete
-                          </Animated.Text>
-                        </TouchableOpacity>
-                      );
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        height: 50,
-                        width: '100%',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        backgroundColor: 'white',
-                        paddingHorizontal: 20,
-                      }}>
-                      <Text>{name}</Text>
-                      <Image
-                        source={Hamberger}
-                        style={{height: 20, width: 20}}
-                      />
-                    </View>
-                  </Swipeable>
-                );
-              }}
-              keyExtractor={(item, index) => index.toString()}
-            />
-            <TouchableOpacity
-              style={{
-                marginBottom: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-              onPress={() => {
-                setModalRemind(true);
-              }}>
-              <Image
-                source={Plus1}
-                style={{height: 15, width: 15, marginRight: 10}}
-              />
-              <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
-                Add...
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Collapsible>
-      </View>
+          </Collapsible>
+        </View>
 
-      {/* Add Image */}
-      <View style={styles.containerAddImage}>
+        {/* Purpose */}
+        <View style={styles.purposeBox}>
+          <TextInput
+            placeholder="Purpose"
+            value={purpose}
+            multiline={true}
+            onChangeText={(text) => setPurpose(text)}
+            styles={{height: '100%'}}
+          />
+        </View>
+
+        {/* Deadline Date*/}
         <View
           style={{
-            flexDirection: 'row',
+            ...styles.deadline,
+            marginTop: 20,
+            borderTopRightRadius: 20,
+            borderTopLeftRadius: 20,
             justifyContent: 'space-between',
+            flexDirection: 'row',
             alignItems: 'center',
           }}>
           <TouchableOpacity
+            activeOpacity={0.6}
+            style={{flexDirection: 'row', alignItems: 'center'}}
             onPress={() => {
-              setModalCamera(true);
+              if (switchDate === true && switchHour === true) {
+                setCollapseDeadline(!collapseDeadline);
+                setCollapseDeadlineHour(!collapseDeadlineHour);
+              } else if (switchDate === false && switchHour === false) {
+                setCollapseDeadline(!collapseDeadline);
+                setCollapseDeadlineHour(!collapseDeadlineHour);
+                setSwitchDate(true);
+                setSwitchHour(true);
+                OptionDate(today);
+              }
             }}>
-            <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
-              Add Image...
-            </Text>
+            <Image source={DeadlineDate} style={styles.imgSize} />
+            <Text style={styles.titleRow}>Deadline Date</Text>
           </TouchableOpacity>
-          {images.length < 1 ? null : (
-            <TouchableOpacity onPress={() => setEditImage(!editImage)}>
-              {editImage ? (
-                <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
-                  Edit
-                </Text>
-              ) : (
-                <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
-                  Done
-                </Text>
-              )}
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{color: colors.txtGrey}}>
+              {switchDate == false
+                ? 'None'
+                : selectedDate.split('-')[2] + ' ' + month === ''
+                ? 'None'
+                : selectedDate.split('-')[2] + ' ' + month}
+            </Text>
+            <Pressable
+              onPress={() => {
+                setSwitchDate(!switchDate);
+                setSwitchHour(!switchHour);
+                OptionDate(today);
+              }}>
+              <Image
+                source={switchDate ? SwitchActive : SwitchDefault}
+                style={{height: 23, width: 43, marginLeft: 10}}
+              />
+            </Pressable>
+          </View>
+        </View>
+        <Collapsible collapsed={collapseDeadline}>
+          <View style={styles.containerCalendar}>
+            <CalendarList
+              theme={{
+                width: 250,
+                backgroundColor: 'transparent',
+                textDayHeaderFontWeight: '100',
+                calendarBackground: 'transparent',
+                textDayFontSize: 14,
+                textMonthFontSize: 14,
+                dayTextColor: 'black',
+                headerTextColor: 'black',
+                textDayHeaderFontSize: 20,
+                justifyContent: 'center',
+                textDayHeaderFontSize: 14,
+                selectedDayBackgroundColor: '#40a1f8',
+                'stylesheet.day.basic': {
+                  base: {
+                    width: 30,
+                    height: 30,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  },
+                },
+                'stylesheet.calendar.header': {
+                  header: {
+                    height: 0,
+                    opacity: 0,
+                  },
+                  dayHeader: {
+                    marginTop: 2,
+                    marginBottom: 7,
+                    width: 30,
+                    textAlign: 'center',
+                    fontSize: 12,
+                    color: 'black',
+                  },
+                },
+                justifyContent: 'center',
+              }}
+              style={{
+                borderRadius: 20,
+                alignSelf: 'center',
+                width: 220,
+                height: 150,
+                borderRadius: 20,
+                backgroundColor: '#f2f3f7',
+              }}
+              horizontal={true}
+              calendarWidth={230}
+              pastScrollRange={0}
+              futureScrollRange={1}
+              scrollEnabled={true}
+              showScrollIndicator={false}
+              onDayPress={(day) => {
+                if (day.month > montNow) {
+                  setNewDaySelected(day.dateString);
+                  setSwitchDate(true);
+                  setSwitchHour(true);
+                } else if (day.day < datenow) {
+                  showToastWithGravity('Cannot choose date before now');
+                } else {
+                  setNewDaySelected(day.dateString);
+                  setSwitchDate(true);
+                  setSwitchHour(true);
+                }
+              }}
+              markedDates={markedDates}
+            />
+            <View style={styles.sideCalender}>
+              <View>
+                <View style={styles.btn}>
+                  <Text>{month}</Text>
+                </View>
+                <View style={styles.btn}>
+                  <Text>{year}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={{
+                  ...styles.option,
+                  marginTop: 20,
+                  backgroundColor:
+                    option === 'today' ? colors.badgeBlue : 'white',
+                }}
+                onPress={() => {
+                  setOption('today');
+                  OptionDate(today);
+                }}>
+                <Text>Today</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  ...styles.option,
+                  backgroundColor:
+                    option === 'tomorrow' ? colors.badgeBlue : 'white',
+                }}
+                onPress={() => {
+                  setOption('tomorrow');
+                  OptionDate(tomorrow);
+                }}>
+                <Text>Tomorrow</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.option}
+                style={{
+                  ...styles.option,
+                  backgroundColor:
+                    option === 'nextWeek' ? colors.badgeBlue : 'white',
+                }}
+                onPress={() => {
+                  setOption('nextWeek');
+                  OptionDate(nextWeek);
+                }}>
+                <Text>Next Week</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Collapsible>
+
+        {/* Deadline Hour */}
+        <View
+          style={{
+            ...styles.deadline,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            marginBottom: 30,
+          }}>
+          <View style={styles.line} />
+          <View style={styles.btnDeadline}>
+            <TouchableOpacity
+              style={{flexDirection: 'row', alignItems: 'center'}}
+              onPress={() => {
+                setCollapseDeadlineHour(!collapseDeadlineHour);
+                setSwitchHour(true);
+              }}>
+              <Image source={DeadlineHour} style={styles.imgSize} />
+              <Text style={styles.titleRow}>Deadline Hour</Text>
             </TouchableOpacity>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{color: colors.txtGrey}}>
+                {switchHour === false
+                  ? 'None'
+                  : valueHour < 10
+                  ? '0' + valueHour + ':00'
+                  : `${valueHour}:${
+                      valueMinutes === ''
+                        ? '0'
+                        : valueMinutes.toString() < 10
+                        ? '0' + valueMinutes.toString()
+                        : valueMinutes.toString()
+                    }`}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setSwitchDate(!switchDate);
+                  setSwitchHour(!switchHour);
+                }}>
+                <Image
+                  source={switchHour ? SwitchActive : SwitchDefault}
+                  style={{height: 23, width: 43, marginLeft: 10}}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Collapsible collapsed={collapseDeadlineHour}>
+            <View style={styles.collapseRow}>
+              <View style={styles.txtCollapseTime}>
+                <TextInput
+                  style={{width: 30}}
+                  value={
+                    valueHour.toString() < 10
+                      ? '0' + valueHour.toString()
+                      : valueHour.toString()
+                  }
+                  onChangeText={(valueHour) => {
+                    console.log(Number(valueHour));
+                    console.log(valueHour);
+                    if (valueHour > 17) {
+                      showToastWithGravity('ga boleh lebih dari jam 5');
+                      setValueHour(17);
+                    } else {
+                      setValueHour(Number(valueHour));
+                    }
+                  }}
+                  onEndEditing={() => {
+                    if (Number(valueHour) < 9) {
+                      showToastWithGravity('jam harus lebih dari jam 9');
+                      setValueHour(9);
+                    }
+                  }}
+                  keyboardType="number-pad"
+                />
+                <View style={{height: 15, borderWidth: 0.5}} />
+                <TextInput
+                  style={{width: 30}}
+                  placeholder="00"
+                  value={
+                    valueMinutes.toString() < 10
+                      ? '0' + valueMinutes.toString()
+                      : valueMinutes.toString()
+                  }
+                  onChangeText={(valueMinutes) => {
+                    if (valueHour === 17 && valueMinutes > 0) {
+                      showToastWithGravity('dah jam 5 bos');
+                    } else {
+                      setValueMinutes(Number(valueMinutes));
+                    }
+                  }}
+                  onEndEditing={() => {
+                    if (Number(valueMinutes) === 60) {
+                      showToastWithGravity('menit tidak boleh 60');
+                      setValueMinutes(59);
+                    }
+                  }}
+                  keyboardType="number-pad"
+                />
+              </View>
+              <View style={styles.rowSlider}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Image source={Morning} style={{height: 14, width: 14}} />
+                  <Image source={Daylight} style={{height: 14, width: 14}} />
+                  <Image source={Afternoon} style={{height: 14, width: 14}} />
+                </View>
+                <Slider
+                  value={valueHour}
+                  onValueChange={(value) => {
+                    handleSlider(value);
+                  }}
+                  step={0.5}
+                  minimumValue={9}
+                  maximumValue={17}
+                  style={styles.containerSlider}
+                  trackStyle={styles.track}
+                  thumbStyle={styles.thumb}
+                  minimumTrackTintColor="#31a4db"
+                  thumbTouchSize={{width: 50, height: 40}}
+                />
+              </View>
+            </View>
+          </Collapsible>
+        </View>
+
+        {/* add Co assesor */}
+        <TouchableOpacity
+          style={styles.continerAddCoAssessor}
+          activeOpacity={0.6}
+          onPress={() => {
+            setModalCoAssessor(true);
+          }}>
+          <View style={styles.flexView}>
+            <Image source={Assessor} style={styles.imgSize} />
+            <Text style={styles.titleRow}>Add Co-Assesor</Text>
+          </View>
+          <View style={styles.flexView}>
+            <Text style={{color: colors.txtGrey}}>
+              {checkCoassessor === '' ? 'None' : checkCoassessor.name}
+            </Text>
+            <Image source={ArrowDown} style={styles.imgArrow} />
+          </View>
+        </TouchableOpacity>
+
+        {/* Prioritize */}
+        <TouchableOpacity
+          style={styles.continerAddCoAssessor}
+          activeOpacity={0.6}
+          onPress={() => {
+            setSwitchPrio(!switchPrio);
+          }}>
+          <View style={styles.flexView}>
+            <Image source={Prio1} style={styles.imgSize} />
+            <Text style={styles.titleRow}>Prioritized</Text>
+          </View>
+          <Image
+            source={switchPrio ? SwitchActive : SwitchDefault}
+            style={styles.switch}
+          />
+        </TouchableOpacity>
+
+        {/* Remind Other */}
+        <View style={styles.containerRemind}>
+          <TouchableOpacity
+            style={styles.rowReminder}
+            onPress={() => {
+              toogleRemind();
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Image
+                source={Remind}
+                style={{height: 30, width: 30, marginRight: 20}}
+              />
+              <Text style={styles.titleRow}>Remind Other</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={checkRemind.length > 0 ? SwitchActive : SwitchDefault}
+                style={styles.switch}
+              />
+            </View>
+          </TouchableOpacity>
+          <Collapsible collapsed={collapseRemind}>
+            {checkRemind.length < 1 ? null : (
+              <View style={styles.containerRemindRow}>
+                {/* Remind Option */}
+                <View>
+                  {/* Stopable */}
+                  <View style={styles.flexRow}>
+                    <Text style={styles.titleRow}>Stopable</Text>
+                    <TouchableOpacity
+                      activeOpacity={0.6}
+                      onPress={() => {
+                        setStopable(!stopable);
+                      }}>
+                      <Image
+                        source={
+                          stopable === true ? SwitchActive : SwitchDefault
+                        }
+                        style={styles.switch}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      ...styles.line,
+                      width: '100%',
+                      marginTop: 10,
+                      marginBottom: 10,
+                    }}
+                  />
+                  {/* Reminder Alarm */}
+                  <View style={{marginBottom: 10}}>
+                    <View style={styles.flexRow}>
+                      <Text style={styles.titleRow}>Reminder Alarm</Text>
+                      {/* <Text style={{color: colors.txtGrey}}>None</Text> */}
+                      {valueRemindOption}
+                    </View>
+                    <View style={{...styles.flexRow, marginTop: 10}}>
+                      <TouchableOpacity
+                        style={{
+                          ...styles.btnOptionRemind,
+                          backgroundColor:
+                            optionRemind === 1 ? colors.badgeBlue : 'white',
+                        }}
+                        onPress={() => {
+                          setOptionRemind(1);
+                        }}>
+                        <Text
+                          style={{
+                            ...styles.txtRemindOption,
+                            color: optionRemind === 1 ? 'white' : '#b6b6b6',
+                          }}>
+                          15 MINUTES
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          ...styles.btnOptionRemind,
+                          backgroundColor:
+                            optionRemind === 2 ? colors.badgeBlue : 'white',
+                        }}
+                        onPress={() => {
+                          setOptionRemind(2);
+                        }}>
+                        <Text
+                          style={{
+                            ...styles.txtRemindOption,
+                            color: optionRemind === 2 ? 'white' : '#b6b6b6',
+                          }}>
+                          1 HOUR
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          ...styles.btnOptionRemind,
+                          backgroundColor:
+                            optionRemind === 3 ? colors.badgeBlue : 'white',
+                        }}
+                        onPress={() => {
+                          setOptionRemind(3);
+                        }}>
+                        <Text
+                          style={{
+                            ...styles.txtRemindOption,
+                            color: optionRemind === 3 ? 'white' : '#b6b6b6',
+                          }}>
+                          1 DAY
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={{
+                          ...styles.btnOptionRemind,
+                          backgroundColor:
+                            optionRemind === 4 ? colors.badgeBlue : 'white',
+                        }}
+                        onPress={() => {
+                          setOptionRemind(4);
+                        }}>
+                        <Text
+                          style={{
+                            ...styles.txtRemindOption,
+                            color: optionRemind === 4 ? 'white' : '#b6b6b6',
+                          }}>
+                          FOLLOW
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+            <View style={{marginTop: 10}}>
+              <FlatList
+                data={checkRemind}
+                renderItem={({item, index}) => {
+                  const {idUser, name} = item;
+                  return (
+                    <Swipeable
+                      renderRightActions={(progress, dragX) => {
+                        const scales = dragX.interpolate({
+                          inputRange: [0, 100],
+                          outputRange: [0, 1],
+                        });
+                        return (
+                          <TouchableOpacity
+                            activeOpacity={0.6}
+                            style={{
+                              alignItems: 'center',
+                              backgroundColor: 'red',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: 80,
+                              height: '100%',
+                              transform: [{rotate: '180deg'}],
+                            }}
+                            onPress={() => {
+                              removeListCrew(idUser, index);
+                            }}>
+                            <Animated.Text
+                              style={{
+                                transform: [{scale: scales}],
+                                color: 'white',
+                                fontFamily: fonts.SFProDisplayHeavy,
+                                fontSize: 18,
+                              }}>
+                              Delete
+                            </Animated.Text>
+                          </TouchableOpacity>
+                        );
+                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          height: 50,
+                          width: '100%',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          backgroundColor: 'white',
+                          paddingHorizontal: 20,
+                        }}>
+                        <Text>{name}</Text>
+                        <Image
+                          source={Hamberger}
+                          style={{height: 20, width: 20}}
+                        />
+                      </View>
+                    </Swipeable>
+                  );
+                }}
+                keyExtractor={(item, index) => index.toString()}
+              />
+              <TouchableOpacity
+                style={{
+                  marginBottom: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  setModalRemind(true);
+                }}>
+                <Image
+                  source={Plus1}
+                  style={{height: 15, width: 15, marginRight: 10}}
+                />
+                <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
+                  Add...
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Collapsible>
+        </View>
+
+        {/* Add Image */}
+        <View style={styles.containerAddImage}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setModalCamera(true);
+              }}>
+              <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
+                Add Image...
+              </Text>
+            </TouchableOpacity>
+            {images.length < 1 ? null : (
+              <TouchableOpacity onPress={() => setEditImage(!editImage)}>
+                {editImage ? (
+                  <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
+                    Edit
+                  </Text>
+                ) : (
+                  <Text style={{color: colors.badgeBlue, fontWeight: 'bold'}}>
+                    Done
+                  </Text>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+          {images.length < 1 ? null : (
+            <ScrollView style={styles.rowImage} horizontal={true}>
+              {images
+                ? images.map((i) => (
+                    <View style={{alignSelf: 'center'}} key={i.uri}>
+                      {renderAsset(i)}
+                    </View>
+                  ))
+                : null}
+            </ScrollView>
           )}
         </View>
-        {images.length < 1 ? null : (
-          <ScrollView style={styles.rowImage} horizontal={true}>
-            {images
-              ? images.map((i) => (
-                  <View style={{alignSelf: 'center'}} key={i.uri}>
-                    {renderAsset(i)}
-                  </View>
-                ))
-              : null}
-          </ScrollView>
-        )}
-      </View>
 
-      {/* Notes */}
-      <View style={styles.containerNote}>
-        <TextInput
-          placeholder="Notes"
-          multiline={true}
-          value={note}
-          onChangeText={(text) => setNote(text)}
-        />
-      </View>
-
+        {/* Notes */}
+        <View style={styles.containerNote}>
+          <TextInput
+            blurOnSubmit={false}
+            placeholder="Notes"
+            value={note}
+            multiline={true}
+            onChangeText={(text) => setNote(text)}
+          />
+        </View>
+      </ScrollView>
       {/* Modal */}
       <Modal
         transparent={true}
