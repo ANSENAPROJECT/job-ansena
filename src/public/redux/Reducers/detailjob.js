@@ -83,7 +83,6 @@ const DetailReducer = (prevState = initialState, action) => {
       };
 
     case 'LIST_REVISE':
-      console.log('Ini ada di reducers', action.payload);
       return {
         ...prevState,
         imgRevise: action.payload,

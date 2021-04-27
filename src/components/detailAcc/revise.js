@@ -859,6 +859,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   txtBtnRevision: {fontFamily: fonts.SFProDisplayMedium, color: 'white'},
 });

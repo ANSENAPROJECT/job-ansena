@@ -681,7 +681,7 @@ const Overdue = ({
             <View style={styles.btnPropose}>
               <ActivityIndicator size="small" color="white" />
               <Text style={{...styles.txtBtnPropose, marginLeft: 10}}>
-                Please Wait
+                Please Wait...
               </Text>
             </View>
           ) : (

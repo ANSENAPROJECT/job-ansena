@@ -25,7 +25,7 @@ const LatestReport = () => {
           <Text>Show Latest Report</Text>
         </View>
         <View style={styles.flexRow}>
-          <View style={styles.dot} />
+          {imgReport === 0 ? null : <View style={styles.dot} />}
           <Image source={ArrowDown} style={styles.arrowImg} />
         </View>
       </TouchableOpacity>
