@@ -138,15 +138,6 @@ export default StyleSheet.create({
   },
 
   // Deadline
-  containerDeadline: {
-    ...styles.deadline,
-    marginTop: 20,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   deadline: {
     minHeight: 70,
     width: '100%',

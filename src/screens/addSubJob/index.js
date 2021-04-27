@@ -809,7 +809,16 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
       </View>
 
       {/* Deadline Date*/}
-      <View style={styles.containerDeadline}>
+      <View
+        style={{
+          ...styles.deadline,
+          marginTop: 20,
+          borderTopRightRadius: 20,
+          borderTopLeftRadius: 20,
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
         <TouchableOpacity
           activeOpacity={0.6}
           style={{flexDirection: 'row', alignItems: 'center'}}
