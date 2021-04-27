@@ -6,6 +6,7 @@ import {useSelector} from 'react-redux';
 import {ArrowDown, Image1, Showlatest} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import {API_URL} from '@env';
 
 const LatestReport = () => {
   const [collapse, setCollapse] = useState(true);
@@ -41,11 +42,14 @@ const LatestReport = () => {
             <Text style={styles.imgRowHeader}>Image Galery</Text>
             {imgReport &&
               imgReport.map(({desc, img}, index) => {
-                let HTTP_URI = {uri: img};
+                let Image_Http_URL = {uri: `${API_URL}/${img}`};
                 return (
                   <>
                     <View style={styles.rowGalery} key={index} key={index}>
-                      <Image source={HTTP_URI} style={styles.imgGalerySize} />
+                      <Image
+                        source={Image_Http_URL}
+                        style={styles.imgGalerySize}
+                      />
                       <View style={{flex: 1}}>
                         <Text>{desc}</Text>
                       </View>

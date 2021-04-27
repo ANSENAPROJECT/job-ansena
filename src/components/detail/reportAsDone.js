@@ -23,6 +23,7 @@ import {
   StopFill,
 } from '../../assets';
 import {
+  deleteProgress,
   deleteProgressReport,
   updateProgressReport,
 } from '../../public/redux/ActionCreators/progressReport';
@@ -30,7 +31,7 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
 import {
-  reportHistoryDone,
+  reportHistory,
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
 
@@ -55,6 +56,7 @@ const ReportAsDone = ({
   updateProgressRedux,
   reportHistoryRedux,
   statusButtonRedux,
+  deleteAllProgressRedux,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [collapse, setCollapse] = useState(true);
@@ -151,6 +153,7 @@ const ReportAsDone = ({
           setIsLoading(false);
           reportHistoryRedux(res.data.data.reportHistory);
           statusButtonRedux(res.data.data.statusButton);
+          deleteAllProgressRedux();
         })
         .catch((err) => {
           console.log(err.message);
@@ -272,8 +275,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     deleteProgressRedux: (data) => dispatch(deleteProgressReport(data)),
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
-    reportHistoryRedux: (data) => dispatch(reportHistoryDone(data)),
+    reportHistoryRedux: (data) => dispatch(reportHistory(data)),
     statusButtonRedux: (data) => dispatch(statusButton(data)),
+    deleteAllProgressRedux: () => dispatch(deleteProgress()),
   };
 };
 

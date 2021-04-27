@@ -44,7 +44,13 @@ const ImageGalery = () => {
             {image &&
               image.map((item, index) => {
                 let Image_Http_URL = {uri: `${API_URL}/${item}`};
-                return <Image source={Image_Http_URL} style={styles.imgSize} />;
+                return (
+                  <Image
+                    source={Image_Http_URL}
+                    style={styles.imgSize}
+                    key={index}
+                  />
+                );
               })}
             {/* <Image source={Image1} style={styles.imgSize} />
             <Image source={Image1} style={styles.imgSize} />

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View, ToastAndroid} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {connect, useSelector} from 'react-redux';
 import {ReportDone} from '../../assets';
@@ -17,8 +17,15 @@ const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
   const subjobId = useSelector((state) => state.detailjob.subjobId);
   const idUser = useSelector((state) => state.auth.idUser);
 
-  // console.log(subjobId, idUser);
-
+  const showToast = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
   const data = {
     subjobId,
     userId: idUser,
@@ -31,6 +38,7 @@ const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
         console.log('INi adalah response', res.data.statusButton);
         statusButtonRedux(res.data.statusButton);
         statusReportHistoryRedux(res.data.reportHistory);
+        showToast('Submit Done !');
       })
       .catch(({response}) => {
         console.log(response);

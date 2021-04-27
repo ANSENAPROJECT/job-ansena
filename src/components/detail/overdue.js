@@ -563,8 +563,6 @@ const Overdue = ({
                         : valueHour.toString()
                     }
                     onChangeText={(valueHour) => {
-                      // console.log(Number(valueHour));
-                      // console.log(valueHour);
                       if (valueHour > 17) {
                         showToastWithGravity('ga boleh lebih dari jam 5');
                         setValueHour(17);
@@ -680,22 +678,22 @@ const Overdue = ({
 
           {/* btn propose deadline */}
           {!isLoading ? (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.btnPropose}
-              onPress={() => {
-                handleupload();
-                setIsLoading(false);
-              }}>
-              <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
-            </TouchableOpacity>
-          ) : (
             <View style={styles.btnPropose}>
               <ActivityIndicator size="small" color="white" />
               <Text style={{...styles.txtBtnPropose, marginLeft: 10}}>
                 Please Wait
               </Text>
             </View>
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.btnPropose}
+              onPress={() => {
+                handleupload();
+                setIsLoading(true);
+              }}>
+              <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
+            </TouchableOpacity>
           )}
         </View>
       </Collapsible>

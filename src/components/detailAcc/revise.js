@@ -27,6 +27,7 @@ import Slider from 'react-native-slider';
 import {CalendarList} from 'react-native-calendars';
 import {connect, useSelector} from 'react-redux';
 import {
+  deleteProgress,
   deleteProgressReport,
   updateProgressReport,
 } from '../../public/redux/ActionCreators/progressReport';
@@ -36,6 +37,7 @@ import {
   reportHistory,
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
+import {ActivityIndicator} from 'react-native';
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -70,6 +72,7 @@ const Revise = ({
   updateProgressRedux,
   statusButtonRedux,
   reportHistoryRedux,
+  deleteAllProgressRedux,
 }) => {
   const [collapse, setCollapse] = useState(true);
   const [deadlineCollape, setDeadlineCollape] = useState(true);
@@ -91,6 +94,7 @@ const Revise = ({
   const subjobId = useSelector((state) => state.detailjob.subjobId);
   const jobId = useSelector((state) => state.detailjob.jobId);
   const userId = useSelector((state) => state.auth.idUser);
+  const [isLoading, setIsLoading] = useState(false);
 
   const progressreport = useSelector(
     (state) => state.progressreport.img_request,
@@ -261,6 +265,7 @@ const Revise = ({
           console.log(res);
           statusButtonRedux(res.data.statusButton);
           reportHistoryRedux(res.data.reportHistory);
+          deleteAllProgressRedux();
         })
         .catch(({response}) => {
           console.log(response);
@@ -663,9 +668,23 @@ const Revise = ({
               </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.btnRevision} onPress={submitRevise}>
-            <Text style={styles.txtBtnRevision}>Request Revision</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <View style={styles.btnRevision}>
+              <ActivityIndicator size="large" color="white" />
+              <Text style={{...styles.txtBtnRevision, marginLeft: 10}}>
+                Please Wait ...
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.btnRevision}
+              onPress={() => {
+                submitRevise();
+                setIsLoading(true);
+              }}>
+              <Text style={styles.txtBtnRevision}>Request Revision</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </Collapsible>
     </View>
@@ -678,6 +697,7 @@ const mapDispatchToProps = (dispatch) => {
     updateProgressRedux: (data) => dispatch(updateProgressReport(data)),
     statusButtonRedux: (data) => dispatch(statusButton(data)),
     reportHistoryRedux: (data) => dispatch(reportHistory(data)),
+    deleteAllProgressRedux: () => dispatch(deleteProgress()),
   };
 };
 

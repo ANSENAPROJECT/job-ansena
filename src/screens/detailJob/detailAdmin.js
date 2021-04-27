@@ -109,7 +109,7 @@ const DetailAdmin = ({
           crew: res.data.data.crew,
           remind: res.data.data.remind,
           noteRequest: res.data.data.noteRequest,
-          noteReport: res.data.data.noteRequest,
+          noteReport: res.data.data.noteReport,
           deadlineOverdue: res.data.data.deadlineOverdue,
           imgRequest: res.data.data.imgRequest,
           imgReport: res.data.data.imgReport,

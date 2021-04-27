@@ -33,10 +33,10 @@ const Crew = () => {
       <Collapsible collapsed={collapse}>
         <View style={styles.containerCollapse}>
           {crewList &&
-            crewList.map(({status, name}) => {
+            crewList.map(({status, name}, index) => {
               return (
                 <>
-                  <View style={styles.rowFlex}>
+                  <View style={styles.rowFlex} key={index}>
                     {status === 0 ? (
                       <Image style={styles.imgSize} />
                     ) : (
