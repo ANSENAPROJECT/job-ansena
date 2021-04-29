@@ -67,7 +67,7 @@ const ViewJob = ({navigation}) => {
   function extendInput() {
     Animated.timing(widthValue, {
       toValue: deviceWidth - 40,
-      duration: 1000,
+      duration: 300,
       useNativeDriver: false,
     }).start();
   }
@@ -75,22 +75,21 @@ const ViewJob = ({navigation}) => {
   function minimizeInput() {
     Animated.timing(widthValue, {
       toValue: deviceWidth - 100,
-      duration: 1000,
+      duration: 300,
       useNativeDriver: false,
     }).start();
   }
 
   const handleEnd = () => {
     setIsFocused(false);
-    if (isFocused === false) {
-      minimizeInput();
-    } else {
+    if (isFocused) {
       extendInput();
     }
   };
+
   const handleOnFocus = () => {
     setIsFocused(!isFocused);
-    if (!isFocused === false) {
+    if (isFocused) {
       extendInput();
     } else {
       minimizeInput();
@@ -624,8 +623,8 @@ const ViewJob = ({navigation}) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              setIsFocused(false);
               Keyboard.dismiss();
+              handleEnd();
             }}>
             <Text style={styles.cancleStyle}>Cancel</Text>
           </TouchableOpacity>
