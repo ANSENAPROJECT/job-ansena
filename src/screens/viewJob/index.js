@@ -278,6 +278,7 @@ const ViewJob = ({navigation}) => {
               </View>
               <View style={styles.inputMinMax}>
                 <TextInput
+                  keyboardType="number-pad"
                   placeholder="Min"
                   style={{
                     fontSize: 10,
@@ -287,6 +288,7 @@ const ViewJob = ({navigation}) => {
               <Text style={{fontSize: 10, marginLeft: 5}}>To</Text>
               <View style={styles.inputMinMax}>
                 <TextInput
+                  keyboardType="number-pad"
                   placeholder="Max"
                   style={{fontSize: 10, width: '100%'}}
                 />
@@ -417,66 +419,73 @@ const ViewJob = ({navigation}) => {
           {/* coadmin */}
           <View style={{...styles.flexRow, marginTop: 10}}>
             <Text style={{fontSize: 12}}>CO-ADMIN</Text>
-            <View style={styles.columnCoadmin}>
-              <Text style={{fontSize: 12}}>None</Text>
-              <Popover
-                placement={PopoverPlacement.BOTTOM}
-                popoverStyle={styles.containerPopCoadmin}
-                from={
-                  <TouchableOpacity>
-                    <Image source={ArrowDown} style={{height: 5, width: 10}} />
-                  </TouchableOpacity>
-                }>
-                <View style={styles.containerBoxPop}>
-                  <View style={styles.formSearch}>
-                    <TextInput placeholder="Search" />
-                    <Image source={Search} styl={{height: 10, width: 10}} />
-                  </View>
-                  <FlatList
-                    data={listData}
-                    renderItem={({item}) => {
-                      return (
+
+            <Popover
+              placement={PopoverPlacement.BOTTOM}
+              popoverStyle={styles.containerPopCoadmin}
+              from={
+                <TouchableOpacity style={styles.btnLeader}>
+                  <Text style={{fontSize: 10}}>NONE</Text>
+                  <Image source={ArrowDown} style={{height: 5, width: 10}} />
+                </TouchableOpacity>
+              }>
+              <View style={styles.containerBoxPop}>
+                <View style={styles.formSearch}>
+                  <TextInput placeholder="Search" />
+                  <Image source={Search} styl={{height: 10, width: 10}} />
+                </View>
+                <FlatList
+                  data={listData}
+                  renderItem={({item}) => {
+                    return (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginBottom: 10,
+                          justifyContent: 'space-between',
+                          marginHorizontal: 10,
+                        }}>
+                        <Text style={{fontFamily: fonts.SFProDisplayMedium}}>
+                          {item.name}
+                        </Text>
                         <View
                           style={{
                             flexDirection: 'row',
-                            marginBottom: 10,
-                            justifyContent: 'space-between',
-                            marginHorizontal: 10,
+                            alignItems: 'center',
                           }}>
-                          <Text style={{fontFamily: fonts.SFProDisplayMedium}}>
-                            {item.name}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}>
-                            <Text>PT.A</Text>
-                            <Image
-                              source={RadioUncheck}
-                              style={{height: 15, width: 15, marginLeft: 10}}
-                            />
-                          </View>
+                          <Text>PT.A</Text>
+                          <Image
+                            source={RadioUncheck}
+                            style={{height: 15, width: 15, marginLeft: 10}}
+                          />
                         </View>
-                      );
-                    }}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
-                </View>
-              </Popover>
-            </View>
+                      </View>
+                    );
+                  }}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </Popover>
           </View>
 
           {/* Crew */}
           <View style={{...styles.flexRow, marginTop: 10}}>
             <Text style={{fontSize: 12}}>CREW</Text>
             <View style={styles.crewRowContainer}>
-              <View style={styles.inputMinMax}>
-                <TextInput placeholder="Min" style={{fontSize: 10}} />
+              <View style={{...styles.inputMinMax, marginLeft: 0}}>
+                <TextInput
+                  keyboardType="number-pad"
+                  placeholder="Min"
+                  style={{fontSize: 10}}
+                />
               </View>
               <Text style={{fontSize: 10, marginLeft: 10}}>To</Text>
               <View style={styles.inputMinMax}>
-                <TextInput placeholder="Max" style={{fontSize: 10}} />
+                <TextInput
+                  keyboardType="number-pad"
+                  placeholder="Max"
+                  style={{fontSize: 10}}
+                />
               </View>
               <Popover
                 popoverStyle={styles.containerPopCoadmin}
@@ -513,7 +522,7 @@ const ViewJob = ({navigation}) => {
                             }}>
                             <Image
                               source={CheckActive}
-                              style={{height: 15, width: 15, marginLeft: 10}}
+                              style={{height: 10, width: 15, marginLeft: 10}}
                             />
                           </View>
                         </View>
@@ -564,7 +573,7 @@ const ViewJob = ({navigation}) => {
                           }}>
                           <Image
                             source={CheckActive}
-                            style={{height: 15, width: 15, marginLeft: 10}}
+                            style={{height: 10, width: 15, marginLeft: 10}}
                           />
                         </View>
                       </View>
@@ -718,6 +727,7 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     backgroundColor: colors.mainColor,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 5,
