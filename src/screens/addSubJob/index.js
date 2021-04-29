@@ -715,7 +715,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 source={ArrowDown}
                 style={[
                   {
-                    height: 15,
+                    height: 10,
                     width: 15,
                     marginLeft: 10,
                   },

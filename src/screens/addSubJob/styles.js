@@ -250,7 +250,7 @@ export default StyleSheet.create({
   },
   imgArrow: {
     transform: [{rotate: '270deg'}],
-    height: 15,
+    height: 10,
     width: 15,
     marginLeft: 10,
   },

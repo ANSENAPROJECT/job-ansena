@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
   },
   arrow: {
     height: 10,
-    width: 10,
+    width: 15,
     transform: [{rotate: '270deg'}],
     marginLeft: 10,
   },
