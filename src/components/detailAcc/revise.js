@@ -103,6 +103,9 @@ const Revise = ({
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
   };
+  const showToast = (msg) => {
+    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
+  };
 
   const handleSlider = (value) => {
     // console.log(value);
@@ -266,9 +269,11 @@ const Revise = ({
           statusButtonRedux(res.data.statusButton);
           reportHistoryRedux(res.data.reportHistory);
           deleteAllProgressRedux();
+          showToast('Change Overdue Success');
         })
         .catch(({response}) => {
           console.log(response);
+          showToast('Change Overdue Failed');
         });
     }
   };
@@ -670,7 +675,7 @@ const Revise = ({
           </View>
           {isLoading ? (
             <View style={styles.btnRevision}>
-              <ActivityIndicator size="large" color="white" />
+              <ActivityIndicator size="small" color="white" />
               <Text style={{...styles.txtBtnRevision, marginLeft: 10}}>
                 Please Wait ...
               </Text>

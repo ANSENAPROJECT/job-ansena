@@ -252,6 +252,7 @@ const ChangeOverdue = ({statusButtonRedux, overdueHistoryRedux}) => {
                     setSwitchDate(true);
                     setSwitchHour(true);
                     OptionDate(today);
+                    setValueHour(hour > 17 ? 17 : hour < 9 ? 9 : hour);
                   }
                 }}>
                 <Text style={{...styles.txtTitle, color: '#616161'}}>
