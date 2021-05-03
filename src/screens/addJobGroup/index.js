@@ -117,7 +117,7 @@ const AddJobGroup = ({
     return () => backHandler.remove();
   }, []);
 
-  //-----------------Star State--------------------
+  //-----------------Start State--------------------
   const [title, setTitle] = useState('New Job Group 1');
   const [arrow, setArrow] = useState(false);
   const [arrowLead, setArrowLead] = useState(false);
@@ -494,9 +494,6 @@ const AddJobGroup = ({
     if (title === 'New Job Group 1' || title === '') {
       setModalLoading(false);
       showToastWithGravityAndOffset('Title Job Group must be fill in');
-    } else if (checkedCoadmin.length < 1) {
-      setModalLoading(false);
-      showToastWithGravityAndOffset('Co Admin must be fill in');
     } else if (checkCrew.length < 1) {
       setModalLoading(false);
       showToastWithGravityAndOffset('Crew must be fill in');
@@ -524,7 +521,6 @@ const AddJobGroup = ({
           leaderid: leader.idUser,
           admin: 1,
           coadmin: checkedCoadmin.idUser,
-          date: formatDate(`${getYear} ${getMonth} ${getDate}`),
         };
         console.log(dataPost);
         await axios

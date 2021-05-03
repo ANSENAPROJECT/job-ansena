@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 import {
   ArrowDown,
   ArrowDownBlue,
@@ -28,6 +29,8 @@ const ActiveJobs = () => {
   const [collapse, setCollapse] = useState(true);
   const [collapseChild, setCollapseChild] = useState(true);
   const [collapseDeactive, setCollapseDeactive] = useState(true);
+  const [checkCollapse, setCheckCollapse] = useState('');
+  const activeJob = useSelector((state) => state.viewjob.activeJobGroup);
   return (
     <>
       <TouchableOpacity
@@ -42,144 +45,207 @@ const ActiveJobs = () => {
         <View
           style={{minHeight: 40, marginTop: 10}}
           showsVerticalScrollIndicator={false}>
-          <View style={styles.containerCollapse}>
-            <TouchableOpacity
-              style={styles.titleCollapse}
-              onPress={() => {
-                setCollapseChild(!collapseChild);
-              }}>
-              <Text style={{fontFamily: fonts.SFProDisplayBold}}>Tim CEO</Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text
-                  style={{
-                    fontFamily: fonts.SFProDisplayMedium,
-                    color: colors.badgeBlue,
-                  }}>
-                  active
-                </Text>
-                <Image source={ArrowDown} style={styles.iconArrowChild} />
-              </View>
-            </TouchableOpacity>
-            <Collapsible collapsed={collapseChild}>
-              <View style={{minHeight: 200, backgroundColor: 'white'}}>
-                {/* Header */}
-                <View style={styles.headerCollapse}>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Image source={Subjob} style={styles.imgSize} />
-                    <Text style={styles.txtTitleCollapse}>Sub Jobs</Text>
-                  </View>
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style={styles.txtTitleRight}>3 (2 active)</Text>
-                    <Image
-                      source={ArrowDownBlue}
-                      style={styles.iconArrowRight}
-                    />
-                  </View>
-                </View>
-                {/* Body */}
-                <View style={{marginTop: 20}}>
-                  <View style={{...styles.flexJustify, marginBottom: 20}}>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={DateStart} style={styles.imgSize} />
-                      <Text>29 Jan 2021</Text>
-                    </View>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={CoAdminView} style={styles.imgSize} />
-                      <Text>Gisela</Text>
-                    </View>
-                  </View>
-                  <View style={{...styles.flexJustify, marginBottom: 20}}>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={DeadlineStart} style={styles.imgSize} />
-                      <Text>From 29 Jan</Text>
-                    </View>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={DeadlineEnd} style={styles.imgSize} />
-                      <Text>Until 6 Feb</Text>
-                    </View>
-                  </View>
-                  <View style={{...styles.flexJustify, marginBottom: 20}}>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={CrewView} style={styles.imgSize} />
-                      <Text>3 Crew</Text>
-                    </View>
-                    <View style={{...styles.flexRow, flex: 1}}>
-                      <Image source={LeaderView} style={styles.imgSize} />
-                      <Text>Angga</Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Bottom */}
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={{
-                    ...styles.btnBottom,
-                    backgroundColor: colors.colorReportAcive,
-                    alignItems: 'center',
-                  }}>
-                  <Text style={{...styles.txtWhite, color: 'white'}}>
-                    Duplicate Job Group
-                  </Text>
-                  <Image
-                    source={ArrowDownWhite}
-                    style={{
-                      ...styles.iconArrowChild,
-                      transform: [{rotate: '-90deg'}],
-                    }}
-                  />
-                </TouchableOpacity>
-
-                <View
-                  style={{
-                    ...styles.btnDeactive,
-                    backgroundColor: collapseDeactive
-                      ? 'red'
-                      : colors.mainColor,
-                  }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setCollapseDeactive(!collapseDeactive);
-                    }}
-                    activeOpacity={0.8}
-                    style={{
-                      ...styles.flexJustify,
-                      marginTop: 5,
-                    }}>
-                    <Text
-                      style={{
-                        ...styles.txtWhite,
-                        color: collapseDeactive ? 'white' : 'red',
+          {activeJob &&
+            activeJob.map(
+              ({
+                coadmin,
+                create,
+                crew,
+                dateEnd,
+                dateStart,
+                jobId,
+                leader,
+                status,
+                subjob,
+                title,
+              }, index) => {
+                return (
+                  <View style={styles.containerCollapse} key={index}>
+                    <TouchableOpacity
+                      style={styles.titleCollapse}
+                      onPress={() => {
+                        setCollapseChild(!collapseChild);
+                        if (collapseChild === true) {
+                          setCheckCollapse(jobId);
+                        } else {
+                          setCheckCollapse('');
+                        }
                       }}>
-                      Deactive Job Group
-                    </Text>
-                    <Image
-                      source={collapseDeactive ? ArrowDownWhite : ArrowUpRed}
-                      style={{
-                        ...styles.iconArrowChild,
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Collapsible collapsed={collapseDeactive}>
-                    <View style={styles.containerCollapseDeactive}>
-                      <View style={styles.formInput}>
-                        <TextInput placeholder="Deactivate Notes" multiline />
-                      </View>
-                      <TouchableOpacity style={styles.submitDeactive}>
+                      <Text style={{fontFamily: fonts.SFProDisplayBold}}>
+                        {title}
+                      </Text>
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text
                           style={{
-                            color: 'white',
                             fontFamily: fonts.SFProDisplayMedium,
+                            color: colors.badgeBlue,
                           }}>
-                          Deactivate Job Group
+                          active
                         </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </Collapsible>
-                </View>
-              </View>
-            </Collapsible>
-          </View>
+                        <Image
+                          source={ArrowDown}
+                          style={styles.iconArrowChild}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    <Collapsible
+                      collapsed={checkCollapse == jobId ? false : true}>
+                      <View style={{minHeight: 200, backgroundColor: 'white'}}>
+                        {/* Header */}
+                        <View style={styles.headerCollapse}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Image source={Subjob} style={styles.imgSize} />
+                            <Text style={styles.txtTitleCollapse}>
+                              Sub Jobs
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Text style={styles.txtTitleRight}>{subjob}</Text>
+                            <Image
+                              source={ArrowDownBlue}
+                              style={styles.iconArrowRight}
+                            />
+                          </View>
+                        </View>
+                        {/* Body */}
+                        <View style={{marginTop: 20}}>
+                          <View
+                            style={{...styles.flexJustify, marginBottom: 20}}>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image
+                                source={DateStart}
+                                style={styles.imgSize}
+                              />
+                              <Text>{create}</Text>
+                            </View>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image
+                                source={CoAdminView}
+                                style={styles.imgSize}
+                              />
+                              <Text>{coadmin}</Text>
+                            </View>
+                          </View>
+                          <View
+                            style={{...styles.flexJustify, marginBottom: 20}}>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image
+                                source={DeadlineStart}
+                                style={styles.imgSize}
+                              />
+                              <Text>{dateStart}</Text>
+                            </View>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image
+                                source={DeadlineEnd}
+                                style={styles.imgSize}
+                              />
+                              <Text>Until {dateEnd}</Text>
+                            </View>
+                          </View>
+                          <View
+                            style={{...styles.flexJustify, marginBottom: 20}}>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image source={CrewView} style={styles.imgSize} />
+                              <Text>{crew}</Text>
+                            </View>
+                            <View style={{...styles.flexRow, flex: 1}}>
+                              <Image
+                                source={LeaderView}
+                                style={styles.imgSize}
+                              />
+                              <Text>{leader}</Text>
+                            </View>
+                          </View>
+                        </View>
+
+                        {/* Bottom */}
+                        <TouchableOpacity
+                          activeOpacity={0.8}
+                          style={{
+                            ...styles.btnBottom,
+                            backgroundColor: colors.colorReportAcive,
+                            alignItems: 'center',
+                          }}>
+                          <Text style={{...styles.txtWhite, color: 'white'}}>
+                            Duplicate Job Group
+                          </Text>
+                          <Image
+                            source={ArrowDownWhite}
+                            style={{
+                              ...styles.iconArrowChild,
+                              transform: [{rotate: '-90deg'}],
+                            }}
+                          />
+                        </TouchableOpacity>
+
+                        <View
+                          style={{
+                            ...styles.btnDeactive,
+                            backgroundColor: collapseDeactive
+                              ? 'red'
+                              : colors.mainColor,
+                          }}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setCollapseDeactive(!collapseDeactive);
+                            }}
+                            activeOpacity={0.8}
+                            style={{
+                              ...styles.flexJustify,
+                              marginTop: 5,
+                            }}>
+                            <Text
+                              style={{
+                                ...styles.txtWhite,
+                                color: collapseDeactive ? 'white' : 'red',
+                              }}>
+                              Deactive Job Group
+                            </Text>
+                            <Image
+                              source={
+                                collapseDeactive ? ArrowDownWhite : ArrowUpRed
+                              }
+                              style={{
+                                ...styles.iconArrowChild,
+                              }}
+                            />
+                          </TouchableOpacity>
+                          <Collapsible collapsed={collapseDeactive}>
+                            <View style={styles.containerCollapseDeactive}>
+                              <View style={styles.formInput}>
+                                <TextInput
+                                  placeholder="Deactivate Notes"
+                                  multiline
+                                />
+                              </View>
+                              <TouchableOpacity style={styles.submitDeactive}>
+                                <Text
+                                  style={{
+                                    color: 'white',
+                                    fontFamily: fonts.SFProDisplayMedium,
+                                  }}>
+                                  Deactivate Job Group
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </Collapsible>
+                        </View>
+                      </View>
+                    </Collapsible>
+                  </View>
+                );
+              },
+            )}
         </View>
       </Collapsible>
     </>
