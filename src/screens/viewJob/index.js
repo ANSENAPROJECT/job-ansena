@@ -94,7 +94,7 @@ const ViewJob = ({
   const [pages, setPages] = useState(1);
   const [search, setSearch] = useState('');
   const [searchData, setSearchData] = useState([]);
-  const [filter, setFilter] = useState('');
+  const [sort, setSort] = useState('');
   const [initialFilter, setInitialFilter] = useState(2);
 
   // Deadline Start
@@ -106,6 +106,7 @@ const ViewJob = ({
   const [yearStart, setYearStart] = useState(yearNow);
   const [switchDateStart, setSwitchDateStart] = useState(false);
   const [placeHolderDateStart, setPlaceHolderDateStart] = useState('');
+  const [showPopDeadlineStart, setShowPopDeadlineStart] = useState(false);
 
   // Deadline End
   const [markedDatesEnd, setMarkedDatesEnd] = useState({});
@@ -114,6 +115,7 @@ const ViewJob = ({
   const [yearEnd, setYearEnd] = useState(yearNow);
   const [switchDateEnd, setSwitchDateEnd] = useState(false);
   const [placeHolderDateEnd, setPlaceHolderDateEnd] = useState('');
+  const [showPopDeadlineEnd, setShowPopDeadlineEnd] = useState(false);
 
   //COadmin
   const [checkCoAdmin, setCheckCoAdmin] = useState('');
@@ -126,6 +128,21 @@ const ViewJob = ({
 
   //Leader
   const [checkLeader, setCheckLeader] = useState('');
+
+  const [filter, setFilter] = useState({
+    a: null,
+    b: null,
+    bmin: null,
+    bmax: null,
+    cmin: null,
+    cmax: null,
+    d: null,
+    emin: null,
+    emax: null,
+    f: null,
+    g: null,
+  });
+  const [qs, setQs] = useState('');
 
   const widthValue = useState(new Animated.Value(deviceWidth - 40))[0];
 
@@ -255,9 +272,9 @@ const ViewJob = ({
   //GETJOBGROUP
   const getJobGroup = () => {
     axios
-      .get(`${API_URL}/jzl/api/api/view_detail/${user_id}${filter}`)
+      .get(`${API_URL}/jzl/api/api/view_detail/${user_id}${sort}${qs}`)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         activeJobRedux(res.data.data.active);
         inactiveJobRedux(res.data.data.inactive);
         deactiveJobRedux(res.data.data.deactivate);
@@ -321,22 +338,12 @@ const ViewJob = ({
   };
 
   const addListPt = (id, pt) => {
-    if (checkPt.length < 1) {
-      setCheckPt([...checkPt, {}]);
-    } else {
-      let foundValue = checkPt.filter((obj) => obj.id === id);
-      if (foundValue.length == 0) {
-        setCheckPt([
-          ...checkPt,
-          {
-            id,
-            pt,
-          },
-        ]);
-      } else if (foundValue[0].id == id) {
-        const newPt = checkPt.filter((item) => item.id !== id);
-        setCheckPt(newPt);
-      }
+    let foundValue = checkPt.filter((obj) => obj.id === id);
+    if (foundValue.length == 0) {
+      setCheckPt([...checkPt, {id, pt}]);
+    } else if (foundValue[0].id == id) {
+      const newPt = checkPt.filter((item) => item.id !== id);
+      setCheckPt(newPt);
     }
   };
 
@@ -355,6 +362,54 @@ const ViewJob = ({
     }
   };
 
+  const handleReset = () => {
+    setActivity('');
+    setSubjob('');
+    setSubJobMin('');
+    setsubJobMax('');
+    setSwitchDateEnd(false);
+    setSwitchDateStart(false);
+    setPlaceHolderDateStart('');
+    setPlaceHolderDateEnd('');
+    dateStart(''), dateEnd('');
+    setCheckCoAdmin('');
+    setMinCrew('');
+    setMaxCrew('');
+    setCheckPt([]);
+    setCheckLeader('');
+    setFilter({
+      ...filter,
+      a: null,
+      b: null,
+      bmin: null,
+      bmax: null,
+      cmin: null,
+      cmax: null,
+      d: null,
+      emin: null,
+      emax: null,
+      f: null,
+      g: null,
+    });
+  };
+
+  const handleFilter = () => {
+    console.log(filter);
+
+    const newPt = checkPt.map((item) => {
+      return item.id;
+    });
+    setFilter({...filter, f: `f=${newPt.join(',')}`});
+
+    const {a, b, bmin, bmax, cmin, cmax, d, emin, emax, f, g} = filter;
+    const newArr = [a, b, bmin, bmax, cmin, cmax, d, emin, emax, f, g];
+    const dispost = newArr.filter((value) => {
+      return value != null;
+    });
+
+    setQs(`?${dispost.join('&')}`);
+  };
+
   useEffect(() => {
     let mounted = true;
     if (mounted) {
@@ -363,7 +418,7 @@ const ViewJob = ({
       getAllPt();
     }
     return () => (mounted = false);
-  }, [search, initialFilter]);
+  }, [search, initialFilter, qs]);
 
   return (
     <ScrollView style={styles.container}>
@@ -399,11 +454,11 @@ const ViewJob = ({
               onPress={() => {
                 if (initialFilter === 1) {
                   setInitialFilter(2);
-                  setFilter(`?as=${initialFilter}`);
+                  setSort(`?as=${initialFilter}`);
                   setShowPopover(false);
                 } else {
                   setInitialFilter(1);
-                  setFilter(`?as=${initialFilter}`);
+                  setSort(`?as=${initialFilter}`);
                   setShowPopover(false);
                 }
               }}>
@@ -415,11 +470,11 @@ const ViewJob = ({
               onPress={() => {
                 if (initialFilter === 1) {
                   setInitialFilter(2);
-                  setFilter(`?bs=${initialFilter}`);
+                  setSort(`?bs=${initialFilter}`);
                   setShowPopover(false);
                 } else {
                   setInitialFilter(1);
-                  setFilter(`?bs=${initialFilter}`);
+                  setSort(`?bs=${initialFilter}`);
                   setShowPopover(false);
                 }
               }}>
@@ -431,11 +486,11 @@ const ViewJob = ({
               onPress={() => {
                 if (initialFilter === 1) {
                   setInitialFilter(2);
-                  setFilter(`?cs=${initialFilter}`);
+                  setSort(`?cs=${initialFilter}`);
                   setShowPopover(false);
                 } else {
                   setInitialFilter(1);
-                  setFilter(`?cs=${initialFilter}`);
+                  setSort(`?cs=${initialFilter}`);
                   setShowPopover(false);
                 }
               }}>
@@ -447,11 +502,11 @@ const ViewJob = ({
               onPress={() => {
                 if (initialFilter === 1) {
                   setInitialFilter(2);
-                  setFilter(`?ds=${initialFilter}`);
+                  setSort(`?ds=${initialFilter}`);
                   setShowPopover(false);
                 } else {
                   setInitialFilter(1);
-                  setFilter(`?ds=${initialFilter}`);
+                  setSort(`?ds=${initialFilter}`);
                   setShowPopover(false);
                 }
               }}>
@@ -463,11 +518,11 @@ const ViewJob = ({
               onPress={() => {
                 if (initialFilter === 1) {
                   setInitialFilter(2);
-                  setFilter(`?es=${initialFilter}`);
+                  setSort(`?es=${initialFilter}`);
                   setShowPopover(false);
                 } else {
                   setInitialFilter(1);
-                  setFilter(`?es=${initialFilter}`);
+                  setSort(`?es=${initialFilter}`);
                   setShowPopover(false);
                 }
               }}>
@@ -486,16 +541,17 @@ const ViewJob = ({
                 style={{
                   ...styles.btnActivity,
                   flex: 0.6,
-                  backgroundColor: activity === 'all' ? 'white' : 'transparent',
+                  backgroundColor: activity === 'a=1' ? 'white' : 'transparent',
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setActivity('all');
+                    setActivity('a=1');
+                    setFilter({...filter, a: 'a=1'});
                   }}>
                   <Text
                     style={{
                       fontSize: 10,
-                      color: activity === 'all' ? 'black' : 'white',
+                      color: activity === 'a=1' ? 'black' : 'white',
                     }}>
                     All
                   </Text>
@@ -505,17 +561,17 @@ const ViewJob = ({
                 style={{
                   ...styles.btnActivity,
                   flex: 0.8,
-                  backgroundColor:
-                    activity === 'active' ? 'white' : 'transparent',
+                  backgroundColor: activity === 'a=2' ? 'white' : 'transparent',
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setActivity('active');
+                    setActivity('a=2');
+                    setFilter({...filter, a: 'a=2'});
                   }}>
                   <Text
                     style={{
                       fontSize: 10,
-                      color: activity === 'active' ? 'black' : 'white',
+                      color: activity === 'a=2' ? 'black' : 'white',
                     }}>
                     ACTIVE
                   </Text>
@@ -525,17 +581,17 @@ const ViewJob = ({
                 style={{
                   ...styles.btnActivity,
                   flex: 0.9,
-                  backgroundColor:
-                    activity === 'inactive' ? 'white' : 'transparent',
+                  backgroundColor: activity === 'a=3' ? 'white' : 'transparent',
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setActivity('inactive');
+                    setActivity('a=3');
+                    setFilter({...filter, a: 'a=3'});
                   }}>
                   <Text
                     style={{
                       fontSize: 10,
-                      color: activity === 'inactive' ? 'black' : 'white',
+                      color: activity === 'a=3' ? 'black' : 'white',
                     }}>
                     INACTIVE
                   </Text>
@@ -545,17 +601,17 @@ const ViewJob = ({
                 style={{
                   ...styles.btnActivity,
                   width: 75,
-                  backgroundColor:
-                    activity === 'deactivated' ? 'white' : 'transparent',
+                  backgroundColor: activity === 'a=4' ? 'white' : 'transparent',
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setActivity('deactivated');
+                    setActivity('a=4');
+                    setFilter({...filter, a: 'a=4'});
                   }}>
                   <Text
                     style={{
                       fontSize: 10,
-                      color: activity === 'deactivated' ? 'black' : 'white',
+                      color: activity === 'a=4' ? 'black' : 'white',
                     }}>
                     DEACTIVATED
                   </Text>
@@ -573,16 +629,17 @@ const ViewJob = ({
                   style={{
                     ...styles.btnActivity,
                     flex: 1,
-                    backgroundColor: subjob === 'all' ? 'white' : 'transparent',
+                    backgroundColor: subjob === 'b=1' ? 'white' : 'transparent',
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      setSubjob('all');
+                      setSubjob('b=1');
+                      setFilter({...filter, b: 'b=1'});
                     }}>
                     <Text
                       style={{
                         fontSize: 10,
-                        color: subjob === 'all' ? 'black' : 'white',
+                        color: subjob === 'b=1' ? 'black' : 'white',
                       }}>
                       ALL
                     </Text>
@@ -592,17 +649,17 @@ const ViewJob = ({
                   style={{
                     ...styles.btnActivity,
                     flex: 1,
-                    backgroundColor:
-                      subjob === 'active' ? 'white' : 'transparent',
+                    backgroundColor: subjob === 'b=2' ? 'white' : 'transparent',
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      setSubjob('active');
+                      setSubjob('b=2');
+                      setFilter({...filter, b: 'b=2'});
                     }}>
                     <Text
                       style={{
                         fontSize: 10,
-                        color: subjob === 'active' ? 'black' : 'white',
+                        color: subjob === 'b=2' ? 'black' : 'white',
                       }}>
                       ACTIVE
                     </Text>
@@ -619,6 +676,13 @@ const ViewJob = ({
                   maxLength={2}
                   value={subJobMin}
                   onChangeText={(text) => setSubJobMin(text)}
+                  onEndEditing={() => {
+                    if (subJobMin === '') {
+                      setFilter({...filter, bmin: null});
+                    } else {
+                      setFilter({...filter, bmin: `bmin=${subJobMin}`});
+                    }
+                  }}
                 />
               </View>
               <Text style={{fontSize: 10, marginLeft: 5}}>To</Text>
@@ -630,6 +694,13 @@ const ViewJob = ({
                   style={{fontSize: 10, width: '100%'}}
                   value={subJobMax}
                   onChangeText={(text) => setsubJobMax(text)}
+                  onEndEditing={() => {
+                    if (subJobMax === '') {
+                      setFilter({...filter, bmax: null});
+                    } else {
+                      setFilter({...filter, bmax: `bmax=${subJobMax}`});
+                    }
+                  }}
                 />
               </View>
             </View>
@@ -639,17 +710,21 @@ const ViewJob = ({
           <View style={{...styles.flexRow, marginTop: 10}}>
             <Text style={{fontSize: 12}}>Deadline</Text>
             <View style={styles.rowSubjob}>
-              <View style={styles.fieldDeadline}>
+              <Pressable
+                style={styles.fieldDeadline}
+                onPress={() => setShowPopDeadlineStart(true)}>
                 <View>
                   <Text style={{fontSize: 10}}>
                     {switchDateStart ? placeHolderDateStart : 'None'}
                   </Text>
                 </View>
                 <Popover
+                  onRequestClose={() => setShowPopDeadlineStart(false)}
+                  isVisible={showPopDeadlineStart}
                   popoverStyle={styles.containerPopOver}
                   placement={PopoverPlacement.BOTTOM}
                   from={
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => setShowPopover(true)}>
                       <Image
                         source={ArrowDown}
                         style={{height: 5, width: 10}}
@@ -720,23 +795,29 @@ const ViewJob = ({
                     onDayPress={(day) => {
                       setSwitchDateStart(true);
                       dateStart(day.dateString);
+                      setFilter({...filter, cmin: `cmin=${day.dateString}`});
                     }}
                     markedDates={markedDatesStart}
                   />
                 </Popover>
-              </View>
+              </Pressable>
               <Text style={{marginHorizontal: 10, fontSize: 10}}>To</Text>
-              <View style={styles.fieldDeadline}>
+              <Pressable
+                style={styles.fieldDeadline}
+                onPress={() => setShowPopDeadlineEnd(true)}>
                 <View>
                   <Text style={{fontSize: 10}}>
                     {switchDateEnd ? placeHolderDateEnd : 'None'}
                   </Text>
                 </View>
                 <Popover
+                  onRequestClose={() => setShowPopDeadlineEnd(false)}
+                  isVisible={showPopDeadlineEnd}
                   popoverStyle={styles.containerPopOver}
                   placement={PopoverPlacement.BOTTOM}
                   from={
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => setShowPopDeadlineEnd(true)}>
                       <Image
                         source={ArrowDown}
                         style={{height: 5, width: 10}}
@@ -807,11 +888,12 @@ const ViewJob = ({
                     onDayPress={(day) => {
                       dateEnd(day.dateString);
                       setSwitchDateEnd(true);
+                      setFilter({...filter, cmax: `cmax=${day.dateString}`});
                     }}
                     markedDates={markedDatesEnd}
                   />
                 </Popover>
-              </View>
+              </Pressable>
             </View>
           </View>
 
@@ -849,15 +931,25 @@ const ViewJob = ({
                         onPress={() => {
                           if (idUser === checkCoAdmin.idUser) {
                             setCheckCoAdmin('');
+                            setFilter({...filter, d: null});
                           } else {
                             setCheckCoAdmin({
                               idUser,
                               name,
                               idPt,
                             });
+                            setFilter({...filter, d: `d=${idUser}`});
                           }
-                        }}>
-                        <Text style={{fontFamily: fonts.SFProDisplayMedium}}>
+                        }}
+                        disabled={checkLeader.idUser == idUser ? true : false}>
+                        <Text
+                          style={{
+                            fontFamily: fonts.SFProDisplayMedium,
+                            color:
+                              checkLeader.idUser == idUser
+                                ? 'lightgrey'
+                                : 'black',
+                          }}>
                           {name}
                         </Text>
                         <View
@@ -865,7 +957,15 @@ const ViewJob = ({
                             flexDirection: 'row',
                             alignItems: 'center',
                           }}>
-                          <Text>{pt}</Text>
+                          <Text
+                            style={{
+                              color:
+                                checkLeader.idUser == idUser
+                                  ? 'lightgrey'
+                                  : 'black',
+                            }}>
+                            {pt}
+                          </Text>
                           <Image
                             source={
                               checkCoAdmin.idUser === idUser
@@ -901,6 +1001,9 @@ const ViewJob = ({
                   maxLength={2}
                   value={minCrew}
                   onChangeText={(text) => setMinCrew(text)}
+                  onEndEditing={() => {
+                    setFilter({...filter, emin: `emin=${minCrew}`});
+                  }}
                 />
               </View>
               <Text style={{fontSize: 10, marginLeft: 10}}>To</Text>
@@ -912,6 +1015,9 @@ const ViewJob = ({
                   maxLength={2}
                   value={maxCrew}
                   onChangeText={(text) => setMaxCrew(text)}
+                  onEndEditing={() => {
+                    setFilter({...filter, emax: `emax=${maxCrew}`});
+                  }}
                 />
               </View>
               <Popover
@@ -953,7 +1059,6 @@ const ViewJob = ({
                           onPress={() => {
                             addListPt(id, pt);
                           }}
-                          disabled={checkPt.id == id ? true : false}
                           style={{
                             flexDirection: 'row',
                             marginBottom: 10,
@@ -1025,8 +1130,13 @@ const ViewJob = ({
                         onPress={() => {
                           if (idUser === checkLeader.idUser) {
                             setCheckLeader('');
+                            setFilter({...filter, g: null});
                           } else {
                             setCheckLeader({idUser, name});
+                            setFilter({
+                              ...filter,
+                              g: `g=${idUser}`,
+                            });
                           }
                         }}
                         disabled={checkCoAdmin.idUser == idUser ? true : false}>
@@ -1080,7 +1190,11 @@ const ViewJob = ({
           {/* ButtonAction */}
           <View style={styles.btnActionContainer}>
             <View style={{...styles.btnBottom, borderColor: 'blue'}}>
-              <TouchableOpacity style={styles.touchRange}>
+              <TouchableOpacity
+                style={styles.touchRange}
+                onPress={() => {
+                  handleFilter();
+                }}>
                 <Text style={{color: 'blue'}}>APPLY</Text>
               </TouchableOpacity>
             </View>
@@ -1093,26 +1207,18 @@ const ViewJob = ({
               <TouchableOpacity
                 style={styles.touchRange}
                 onPress={() => {
-                  setActivity('');
-                  setSubjob('');
-                  setSubJobMin('');
-                  setsubJobMax('');
-                  setSwitchDateEnd(false);
-                  setSwitchDateStart(false);
-                  setPlaceHolderDateStart('');
-                  setPlaceHolderDateEnd('');
-                  dateStart(''), dateEnd('');
-                  setCheckCoAdmin('');
-                  setMinCrew('');
-                  setMaxCrew('');
-                  setListPt('');
-                  setCheckLeader('');
+                  handleReset();
                 }}>
                 <Text style={{color: 'blue'}}>RESET</Text>
               </TouchableOpacity>
             </View>
             <View style={{...styles.btnBottom, borderColor: 'red'}}>
-              <TouchableOpacity style={styles.touchRange}>
+              <TouchableOpacity
+                style={styles.touchRange}
+                onPress={() => {
+                  handleReset();
+                  setCollapse(true);
+                }}>
                 <Text style={{color: 'red'}}>CANCEL</Text>
               </TouchableOpacity>
             </View>
