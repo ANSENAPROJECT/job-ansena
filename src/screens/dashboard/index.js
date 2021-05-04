@@ -39,6 +39,7 @@ import {
 import CardAI from '../../components/dashboard/cardAi';
 import CardJob from '../../components/dashboard/cardJob';
 import CardArsipJob from '../../components/dashboard/cardArsipJob';
+import qs from 'qs';
 
 const Dashboard = ({
   navigation,
@@ -128,16 +129,19 @@ const Dashboard = ({
   const handleAddJobGroup = () => {
     deleteJobRedux();
     deleteAllsubJob();
+    const data = {
+      userId: idUser,
+    };
     axios
-      .post(`${API_URL}/jzl/api/api/saveTemplateGroupJob/${idUser}`)
+      .post(`${API_URL}/jzl/api/api/saveTemplateGroupJob`, qs.stringify(data))
       .then((res) => {
-        console.log('response data', res.data.data.jobId);
+        console.log('response data', res);
         const data = res.data.data.jobId;
         addJobGroup(data);
         navigation.navigate('addjobgroup');
       })
-      .catch(({response}) => {
-        console.log(response);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
