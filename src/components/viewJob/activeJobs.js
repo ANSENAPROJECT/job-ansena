@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import {Image} from 'react-native';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, ToastAndroid} from 'react-native';
 import Collapsible from 'react-native-collapsible';
+import Modal from 'react-native-modal';
 import {
   ScrollView,
   TextInput,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
-import {useSelector} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {
   ArrowDown,
   ArrowDownBlue,
@@ -24,16 +25,77 @@ import {
 } from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import {Pressable} from 'react-native';
+import {API_URL} from '@env';
+import axios from 'axios';
+import qs from 'qs';
+import {
+  activeJobGroup,
+  deactivatedJobGroup,
+  inactiveJobGroup,
+} from '../../public/redux/ActionCreators/viewjob';
 
-const ActiveJobs = () => {
+const ActiveJobs = ({
+  activeJobRedux,
+  inactiveJobRedux,
+  deactiveJobRedux,
+  navigation,
+}) => {
   const [collapse, setCollapse] = useState(true);
   const [collapseChild, setCollapseChild] = useState(true);
   const [collapseDeactive, setCollapseDeactive] = useState(true);
   const [checkCollapse, setCheckCollapse] = useState('');
   const activeJob = useSelector((state) => state.viewjob.activeJobGroup);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isVisibleDeactive, setIsVisibleDeactive] = useState(false);
+  const [note, setNote] = useState('');
+  const idUser = useSelector((state) => state.auth.idUser);
+
+  const showToast = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
+
+  const handleSubmit = () => {
+    if (note === '') {
+      showToast('Note must be filled in');
+    } else {
+      setIsVisibleDeactive(true);
+    }
+  };
+  const submitDeactive = () => {
+    const data = {
+      note_deactivate: note,
+      jobId: checkCollapse,
+      userId: idUser,
+      action: 1,
+    };
+    axios
+      .post(`${API_URL}/jzl/api/api/action_view`, qs.stringify(data))
+      .then((res) => {
+        console.log(res);
+        setIsVisibleDeactive(false);
+        activeJobRedux(res.data.data.active);
+        inactiveJobRedux(res.data.data.inactive);
+        deactiveJobRedux(res.data.data.deactivate);
+        if (res.data.data.active.length === 0) {
+          setCollapse(true);
+        }
+      })
+      .then(({response}) => {
+        console.log(response);
+      });
+  };
+
   return (
     <>
       <TouchableOpacity
+        disabled={activeJob.length === 0 ? true : false}
         style={styles.container}
         onPress={() => {
           setCollapse(!collapse);
@@ -47,18 +109,21 @@ const ActiveJobs = () => {
           showsVerticalScrollIndicator={false}>
           {activeJob &&
             activeJob.map(
-              ({
-                coadmin,
-                create,
-                crew,
-                dateEnd,
-                dateStart,
-                jobId,
-                leader,
-                status,
-                subjob,
-                title,
-              }, index) => {
+              (
+                {
+                  coadmin,
+                  create,
+                  crew,
+                  dateEnd,
+                  dateStart,
+                  jobId,
+                  leader,
+                  status,
+                  subjob,
+                  title,
+                },
+                index,
+              ) => {
                 return (
                   <View style={styles.containerCollapse} key={index}>
                     <TouchableOpacity
@@ -149,7 +214,7 @@ const ActiveJobs = () => {
                                 source={DeadlineEnd}
                                 style={styles.imgSize}
                               />
-                              <Text>Until {dateEnd}</Text>
+                              <Text>{dateEnd}</Text>
                             </View>
                           </View>
                           <View
@@ -175,6 +240,9 @@ const ActiveJobs = () => {
                             ...styles.btnBottom,
                             backgroundColor: colors.colorReportAcive,
                             alignItems: 'center',
+                          }}
+                          onPress={() => {
+                            setIsVisible(true);
                           }}>
                           <Text style={{...styles.txtWhite, color: 'white'}}>
                             Duplicate Job Group
@@ -226,9 +294,15 @@ const ActiveJobs = () => {
                                 <TextInput
                                   placeholder="Deactivate Notes"
                                   multiline
+                                  value={note}
+                                  onChangeText={(text) => setNote(text)}
                                 />
                               </View>
-                              <TouchableOpacity style={styles.submitDeactive}>
+                              <TouchableOpacity
+                                style={styles.submitDeactive}
+                                onPress={() => {
+                                  handleSubmit();
+                                }}>
                                 <Text
                                   style={{
                                     color: 'white',
@@ -248,11 +322,89 @@ const ActiveJobs = () => {
             )}
         </View>
       </Collapsible>
+
+      <Modal
+        isVisible={isVisible}
+        onBackdropPress={() => {
+          setIsVisible(false);
+        }}>
+        <View style={styles.containerModal}>
+          <View style={styles.bodyModal}>
+            <Text style={{textAlign: 'center'}}>
+              Confirmation, You'll be chaired to Job's Screen, are you sure to
+              left this page ?
+            </Text>
+            <View style={styles.rowFlexModal}>
+              <Pressable
+                onPress={() => {
+                  setIsVisible(false);
+                }}>
+                <Text
+                  style={{fontFamily: fonts.SFProDisplayMedium, color: 'red'}}>
+                  No
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setIsVisible(false);
+                  navigation.navigate('addjobgroup', checkCollapse);
+                }}>
+                <Text
+                  style={{fontFamily: fonts.SFProDisplayMedium, color: 'blue'}}>
+                  Yes
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={isVisibleDeactive}
+        onBackdropPress={() => {
+          setIsVisibleDeactive(false);
+        }}>
+        <View style={styles.containerModal}>
+          <View style={{...styles.bodyModal, height: 100}}>
+            <Text style={{textAlign: 'center'}}>
+              Are you sure to deactivate this job group ?
+            </Text>
+            <View style={styles.rowFlexModal}>
+              <Pressable
+                onPress={() => {
+                  setIsVisibleDeactive(false);
+                }}>
+                <Text
+                  style={{fontFamily: fonts.SFProDisplayMedium, color: 'blue'}}>
+                  No
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  submitDeactive();
+                }}>
+                <Text
+                  style={{fontFamily: fonts.SFProDisplayMedium, color: 'red'}}>
+                  Yes
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
 
-export default ActiveJobs;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    activeJobRedux: (data) => dispatch(activeJobGroup(data)),
+    inactiveJobRedux: (data) => dispatch(inactiveJobGroup(data)),
+    deactiveJobRedux: (data) => dispatch(deactivatedJobGroup(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(ActiveJobs);
 
 const styles = StyleSheet.create({
   container: {
@@ -346,6 +498,23 @@ const styles = StyleSheet.create({
   },
   containerCollapseDeactive: {
     height: 170,
+    marginTop: 10,
+  },
+
+  //Modal
+  containerModal: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  bodyModal: {
+    padding: 15,
+    height: 120,
+    width: '60%',
+    borderRadius: 15,
+    backgroundColor: 'white',
+    alignItems: 'center',
+  },
+  rowFlexModal: {
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    width: '100%',
     marginTop: 10,
   },
 });

@@ -151,6 +151,7 @@ const AddJobGroup = ({
   const code = useSelector((state) => state.auth.code);
   const subJobData = useSelector((state) => state.job.subJobData);
   const userId = useSelector((state) => state.auth.idUser);
+  const [jobIdDuplicate, setJobIdDuplicate] = useState('');
 
   //---------------------End State---------------------------
 
@@ -158,6 +159,7 @@ const AddJobGroup = ({
     let mounted = true;
     if (mounted) {
       getData();
+      getDetailJob();
     }
     return () => (mounted = false);
   }, [search]);
@@ -308,11 +310,17 @@ const AddJobGroup = ({
   //End of function Modal
 
   const handleBack = () => {
+    let data;
+    if (!route.params) {
+      data = jobId;
+    } else {
+      data = jobIdDuplicate;
+    }
     axios
-      .post(`${API_URL}/jzl/api/api/deleteJob/${jobId}`)
+      .post(`${API_URL}/jzl/api/api/deleteJob/${data}`)
       .then((res) => {
         showToastMsg(`The filled has been deleted`);
-        console.log(res.data.data.message);
+        console.log(res);
         deleteJobRedux();
         deleteAllsubJob();
         navigation.replace('dashboard');
@@ -323,13 +331,19 @@ const AddJobGroup = ({
   };
 
   const handleAddSubjob = () => {
+    let IDJOB;
+    if (!route.params) {
+      IDJOB = jobId;
+    } else {
+      IDJOB = jobIdDuplicate;
+    }
     axios
-      .post(`${API_URL}/jzl/api/api/saveTemplateSubjob/${jobId}/${code}`)
+      .post(`${API_URL}/jzl/api/api/saveTemplateSubjob/${IDJOB}/${code}`)
       .then((res) => {
-        console.log(res.data);
+        console.log('response add subjob', res.data);
         const data = {
           id: res.data.data.subjobId,
-          id_title: jobId,
+          id_title: IDJOB,
           subjob: '',
           code: 'DIDI' + res.data.data.code,
           purpose: '',
@@ -475,8 +489,35 @@ const AddJobGroup = ({
     );
   };
 
+  const getDetailJob = () => {
+    if (!route.params) {
+      null;
+    } else {
+      const jobId = route.params;
+      axios
+        .get(`${API_URL}/jzl/api/api/duplicate_job/${jobId}`)
+        .then((res) => {
+          console.log(res);
+          setJobIdDuplicate(res.data.data.jobId);
+          setcheckCrew(res.data.data.crew);
+          setCheckedCoAdmin(res.data.data.coadmin);
+          setLeader(res.data.data.leader);
+          setTitle(res.data.data.title);
+        })
+        .catch(({response}) => {
+          console.log(response);
+        });
+    }
+  };
+
   const postData = async () => {
     console.log('Ini adalah subjob data', subJobData);
+    let data;
+    if (!route.params) {
+      data = jobId;
+    } else {
+      data = jobIdDuplicate;
+    }
     setModalLoading(true);
     setTxtLoading('Please wait...');
     function formatDate(date) {
@@ -514,7 +555,7 @@ const AddJobGroup = ({
         let newIdPt = [...new Set(ptId)];
 
         const dataPost = {
-          jobId: jobId,
+          jobId: data,
           title: title,
           pt: newIdPt.join(','),
           crew: idCrew.join(','),
@@ -522,7 +563,7 @@ const AddJobGroup = ({
           admin: 1,
           coadmin: checkedCoadmin.idUser,
         };
-        console.log(dataPost);
+        console.log('data yang di post', dataPost);
         await axios
           .post(`${API_URL}/jzl/api/api/saveJobGroup`, qs.stringify(dataPost))
           .then((res) => {
@@ -589,6 +630,7 @@ const AddJobGroup = ({
                   setModalLoading(false);
                   setTxtLoading('Upload success');
                   // showToastWithGravityAndOffset('Success add job');
+                  deleteAllsubJob();
                   navigation.goBack();
                 })
                 .catch(({response}) => {
@@ -637,6 +679,7 @@ const AddJobGroup = ({
         {/* Body */}
         <View style={styles.inputjobgroup}>
           <TextInput
+            value={title}
             placeholder="Job Group Title"
             onChangeText={(title) => {
               setTitle(title);

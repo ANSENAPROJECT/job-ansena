@@ -1,6 +1,6 @@
 const initialState = {
   activeJobGroup: [],
-  inactiveJobHroup: [],
+  inactiveJobGroup: [],
   deactivatedJobGroup: [],
 };
 
@@ -14,7 +14,7 @@ export const ViewJobReducer = (prevState = initialState, action) => {
     case 'INACTIVE_JOB_GROUP':
       return {
         ...prevState,
-        inactiveJobHroup: action.payload,
+        inactiveJobGroup: action.payload,
       };
     case 'DEACTIVATED_JOB_GROUP':
       return {

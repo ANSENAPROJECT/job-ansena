@@ -1254,9 +1254,9 @@ const ViewJob = ({
           </TouchableOpacity>
         ) : null}
       </View>
-      <ActiveJobs />
-      <InActiveJob />
-      <DeactiveJob />
+      <ActiveJobs navigation={navigation} />
+      <InActiveJob navigation={navigation} />
+      <DeactiveJob navigation={navigation} />
     </ScrollView>
   );
 };
