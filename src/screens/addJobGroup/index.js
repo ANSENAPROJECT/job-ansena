@@ -152,6 +152,7 @@ const AddJobGroup = ({
   const subJobData = useSelector((state) => state.job.subJobData);
   const userId = useSelector((state) => state.auth.idUser);
   const [jobIdDuplicate, setJobIdDuplicate] = useState('');
+  const coadminStatus = useSelector((state) => state.auth.coadminStatus);
 
   //---------------------End State---------------------------
 
@@ -684,11 +685,13 @@ const AddJobGroup = ({
             onChangeText={(title) => {
               setTitle(title);
             }}
+            editable={coadminStatus ? false : true}
           />
         </View>
 
         {/* Add Co Admin */}
         <TouchableOpacity
+          disabled={coadminStatus ? true : false}
           style={styles.addCoAdmin}
           activeOpacity={0.6}
           onPress={() => {
@@ -819,17 +822,19 @@ const AddJobGroup = ({
                 }}
                 keyExtractor={(item) => item.idUser}
               />
-              <TouchableOpacity
-                style={styles.containerAdd}
-                onPress={() => {
-                  setModalVisible(true);
-                }}>
-                <Image
-                  source={Plus1}
-                  style={{height: 15, width: 15, marginRight: 10}}
-                />
-                <Text style={styles.addBtn}>Add ..</Text>
-              </TouchableOpacity>
+              {coadminStatus ? null : (
+                <TouchableOpacity
+                  style={styles.containerAdd}
+                  onPress={() => {
+                    setModalVisible(true);
+                  }}>
+                  <Image
+                    source={Plus1}
+                    style={{height: 15, width: 15, marginRight: 10}}
+                  />
+                  <Text style={styles.addBtn}>Add ..</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </Collapsible>
         </TouchableOpacity>
@@ -882,6 +887,7 @@ const AddJobGroup = ({
                 checkCrew.map(({idUser, idPt, name, pt}, index) => {
                   return (
                     <TouchableOpacity
+                      disabled={coadminStatus ? true : false}
                       key={index}
                       style={{
                         flexDirection: 'row',
