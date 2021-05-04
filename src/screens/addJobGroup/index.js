@@ -66,6 +66,21 @@ const getYear = datetime.getFullYear();
 const getMonth = datetime.getMonth() + 1;
 const getDate = datetime.getDate();
 
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 const AddJobGroup = ({
   navigation,
   deleteJobRedux,
@@ -962,6 +977,11 @@ const AddJobGroup = ({
                 data={subJobData}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => {
+                  const bulan = item.deadline.split(' ')[0].split('-');
+                  const jam = item.deadline.split(' ')[1];
+                  const Newdeadline = `${bulan[2]} ${
+                    monthNames[bulan[1] - 1]
+                  } ${jam}`;
                   return (
                     <View
                       style={{
@@ -987,9 +1007,7 @@ const AddJobGroup = ({
                       <View
                         style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text style={{marginRight: 10, color: colors.txtGrey}}>
-                          {item.deadline === ''
-                            ? ''
-                            : item.deadline.split(' ')[0]}
+                          {item.deadline === '' ? 'No Deadline' : Newdeadline}
                         </Text>
                         <Popover
                           // placement={PopoverPlacement.BOTTOM}
