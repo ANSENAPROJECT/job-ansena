@@ -604,7 +604,6 @@ const AddJobGroup = ({
             console.log(subJobData);
             for (let n = 0; n < checkCrew.length; n++) {
               console.log('ini adalah token yang dikirim', checkCrew[n].token);
-
               const token = checkCrew[n].token;
               const dataNotif = {
                 to: token,
@@ -612,7 +611,7 @@ const AddJobGroup = ({
                 soundName: 'default',
                 notification: {
                   title: 'JOB',
-                  body: `Hai ${(checkCrew[n].name, split(' ')[0])} You've got ${
+                  body: `Hai ${checkCrew[n].name.split(' ')[0]} You've got ${
                     subJobData.length
                   } ${subJobData.length > 1 ? 'Jobs' : 'Job'}`,
                 },
@@ -622,11 +621,10 @@ const AddJobGroup = ({
                 .then((res) => {
                   console.log(res);
                 })
-                .catch(({response}) => {
-                  console.log(response);
+                .catch((err) => {
+                  console.log(err);
                 });
             }
-
             for (let i = 0; i < subJobData.length; i++) {
               let newRemind = [];
               for (let j = 0; j < subJobData[i].remind.length; j++) {
@@ -680,6 +678,7 @@ const AddJobGroup = ({
                 .post(`${API_URL}/jzl/api/api/save_subjob`, data, config)
                 .then((res) => {
                   console.log(res);
+
                   setModalLoading(false);
                   setTxtLoading('Upload success');
                   // showToastWithGravityAndOffset('Success add job');
@@ -693,9 +692,9 @@ const AddJobGroup = ({
                 });
             }
           })
-          .catch(({response}) => {
+          .catch((err) => {
             setModalLoading(false);
-            console.log(response);
+            console.log(err);
           });
       }
     }
