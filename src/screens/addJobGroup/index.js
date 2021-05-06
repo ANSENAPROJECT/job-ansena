@@ -1143,7 +1143,7 @@ const AddJobGroup = ({
           <FlatList
             data={searchData.length === 0 ? dataCrew : searchData}
             renderItem={({item}) => {
-              const {idUser, name, pt, idPt} = item;
+              const {idUser, name, pt, idPt, token} = item;
               var foundValue =
                 checkCrew.length > 0 &&
                 checkCrew.filter((obj) => obj.idUser === idUser);
@@ -1162,6 +1162,7 @@ const AddJobGroup = ({
                       idUser,
                       name,
                       idPt,
+                      token,
                     });
                   }}>
                   <View style={styles.listData}>
@@ -1298,7 +1299,7 @@ const AddJobGroup = ({
               <FlatList
                 data={searchData.length === 0 ? dataCrew : searchData}
                 renderItem={({item}) => {
-                  const {idUser, name, pt, idPt} = item;
+                  const {idUser, name, pt, idPt, token} = item;
                   var foundValue =
                     checkCrew.length > 0 &&
                     checkCrew.filter((obj) => obj.idUser === idUser);
@@ -1306,7 +1307,7 @@ const AddJobGroup = ({
                     <TouchableOpacity
                       activeOpacity={0.6}
                       onPress={() => {
-                        addNewItem(idUser, name, idPt);
+                        addNewItem(idUser, name, idPt, token);
                       }}
                       disabled={checkedCoadmin.idUser == idUser ? true : false}>
                       <View style={styles.listData}>

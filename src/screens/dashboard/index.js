@@ -40,6 +40,7 @@ import CardAI from '../../components/dashboard/cardAi';
 import CardJob from '../../components/dashboard/cardJob';
 import CardArsipJob from '../../components/dashboard/cardArsipJob';
 import qs from 'qs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Dashboard = ({
   navigation,
@@ -64,6 +65,8 @@ const Dashboard = ({
   const [activeJob, setActiveJob] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const heightValue = useState(new Animated.Value(44))[0];
+  const token = useSelector((state) => state.token.token);
+  const tokenAuth = useSelector((state) => state.auth.token);
 
   function extendFooter() {
     Animated.timing(heightValue, {
@@ -92,8 +95,21 @@ const Dashboard = ({
   };
 
   useEffect(() => {
+    axios
+      .get(`${API_URL}/jzl/api/api/get_token/${token}`)
+      .then((res) => {
+        if (res.data === 0) {
+          showToastWithGravityAndOffset(
+            'Your account had been logged in on another device!',
+          );
+          handleLogout();
+        }
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
     getDataJob();
-  }, []);
+  }, [tokenAuth]);
 
   const getDataJob = () => {
     axios
@@ -121,9 +137,23 @@ const Dashboard = ({
   };
 
   const handleLogout = () => {
-    logoutRedux();
-    setModalVisible(false);
-    navigation.replace('login');
+    axios
+      .post(`${API_URL}/jzl/api/api/logout/${token}`)
+      .then((res) => {
+        console.log(res);
+        AsyncStorage.removeItem('adminStatus');
+        AsyncStorage.removeItem('coadminStatus');
+        AsyncStorage.removeItem('code');
+        AsyncStorage.removeItem('idUser');
+        AsyncStorage.removeItem('name');
+        AsyncStorage.removeItem('token');
+        logoutRedux();
+        setModalVisible(false);
+        navigation.replace('login');
+      })
+      .catch(({response}) => {
+        console.log(response);
+      });
   };
 
   const handleAddJobGroup = () => {

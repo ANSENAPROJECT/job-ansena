@@ -18,6 +18,7 @@ import axios from 'axios';
 import qs from 'qs';
 import {connect} from 'react-redux';
 import {API_URL} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Login extends Component {
   constructor() {
@@ -51,6 +52,7 @@ class Login extends Component {
       const data = {
         email: this.state.email,
         password: this.state.password,
+        token: this.props.token.token,
       };
       console.log('INi adalah data yang dikirm ', data);
       axios
@@ -64,7 +66,14 @@ class Login extends Component {
             code: res.data.code,
             idUser: res.data.idUser,
             name: res.data.name,
+            token: res.data.token,
           };
+          AsyncStorage.setItem('adminStatus', `${res.data.adminStatus}`);
+          AsyncStorage.setItem('coadminStatus', `${res.data.coadminStatus}`);
+          AsyncStorage.setItem('code', `${res.data.code}`);
+          AsyncStorage.setItem('idUser', `${res.data.idUser}`);
+          AsyncStorage.setItem('name', `${res.data.name}`);
+          AsyncStorage.setItem('token', `${res.data.token}`);
           this.props.dispatch(setLoginTrue(dataLogin));
           if (res.data.message !== 'success') {
             this.showToastWithGravityAndOffset(msg);
@@ -88,6 +97,7 @@ class Login extends Component {
   };
   render() {
     const {pass, isLoading, errMsg} = this.state;
+    console.log('ini ada di login : ', this.props.token.token);
     return (
       <ScrollView style={styles.container}>
         <Image source={Logo} style={styles.logoImage} />
@@ -207,9 +217,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({auth}) => {
+const mapStateToProps = ({auth, token}) => {
   return {
     auth,
+    token,
   };
 };
 

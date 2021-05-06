@@ -1,18 +1,42 @@
 import React, {useEffect} from 'react';
 import {ActivityIndicator, Image, StyleSheet, View} from 'react-native';
 import {Logo} from '../../assets';
-import {useSelector} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setLoginTrue} from '../../public/redux/ActionCreators/auth';
 
-const Splash = ({navigation}) => {
+const Splash = ({navigation, setLoginRedux}) => {
   const auth = useSelector((state) => state.auth);
   console.log(auth);
   useEffect(() => {
-    setTimeout(() => {
-      auth.code != null
-        ? navigation.replace('dashboard')
-        : navigation.replace('login');
-    }, 2000);
-  });
+    const validation = async () => {
+      const name = await AsyncStorage.getItem('name');
+      const adminStatus = await AsyncStorage.getItem('adminStatus');
+      const coadminStatus = await AsyncStorage.getItem('coadminStatus');
+      const code = await AsyncStorage.getItem('code');
+      const idUser = await AsyncStorage.getItem('idUser');
+      const token = await AsyncStorage.getItem('token');
+
+      const data = {
+        name,
+        adminStatus,
+        coadminStatus,
+        code,
+        idUser,
+        data,
+        token,
+      };
+
+      setLoginRedux(data);
+
+      setTimeout(() => {
+        code != null
+          ? navigation.replace('dashboard')
+          : navigation.replace('login');
+      }, 2000);
+    };
+    validation();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.body}>
@@ -42,4 +66,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Splash;
+const mapdispatchToProps = (dispatch) => {
+  return {
+    setLoginRedux: (data) => dispatch(setLoginTrue(data)),
+  };
+};
+
+export default connect(null, mapdispatchToProps)(Splash);

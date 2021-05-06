@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Router from './src/Router';
 
 //Redux
@@ -9,13 +9,31 @@ import store from './src/public/redux/store';
 import {PersistGate} from 'redux-persist/es/integration/react';
 import {persistStore} from 'redux-persist';
 
+import NotifService from './NotifService';
+
 const persistedStore = persistStore(store);
 
 const App = () => {
+  const [registerToken, setRegisterToken] = useState('');
+  const [fcmRegistered, setFcmRegistered] = useState(false);
+
+  const onRegister = (token) => {
+    setRegisterToken(token.token);
+    setFcmRegistered(true);
+  };
+
+  const onNotif = (notif) => {
+    // Alert.alert(notif.title, notif.message);
+    notification.localNotif(notif);
+  };
+
+  const notification = new NotifService(onRegister, onNotif);
+
+  // console.log('ini token', registerToken);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>
-        <Router />
+        <Router registerToken={registerToken} />
       </PersistGate>
     </Provider>
   );

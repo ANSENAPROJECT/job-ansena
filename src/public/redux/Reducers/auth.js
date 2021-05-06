@@ -7,6 +7,7 @@ const initialState = {
   code: null,
   idUser: null,
   name: null,
+  token: null,
 };
 
 const AuthReducer = (prevState = initialState, action) => {
@@ -20,6 +21,7 @@ const AuthReducer = (prevState = initialState, action) => {
         code: action.data.code,
         idUser: action.data.idUser,
         name: action.data.name,
+        token: action.data.token,
       };
     case actionTypes.LOGOUT:
       return {
@@ -30,6 +32,7 @@ const AuthReducer = (prevState = initialState, action) => {
         code: null,
         idUser: null,
         name: null,
+        token: null,
       };
     default:
       return {

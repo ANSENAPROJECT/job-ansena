@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1059757012731",
+    "project_id": "ansena-app",
+    "storage_bucket": "ansena-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059757012731:android:213285ae53337e1218625e",
+        "android_client_info": {
+          "package_name": "com.ansena"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059757012731-ph195fa5flqbesqsnsqg2oe9psnpab84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtegLhH3QszWQTEWAcvlAmBeAlZNxYcac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059757012731-ph195fa5flqbesqsnsqg2oe9psnpab84.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, Easing} from 'react-native';
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
@@ -16,6 +16,8 @@ import AddSubJob from './screens/addSubJob';
 import DetailUser from './screens/detailJob/detailUser';
 import DetailAdmin from './screens/detailJob/detailAdmin';
 import ViewJob from './screens/viewJob';
+import {deviceToken} from './public/redux/ActionCreators/token';
+import {connect} from 'react-redux';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +41,10 @@ const closeConfig = {
   },
 };
 
-const Router = () => {
+const Router = ({registerToken, deviceTokenRedux}) => {
+  useEffect(() => {
+    deviceTokenRedux(registerToken);
+  }, [registerToken]);
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -119,4 +124,10 @@ const Router = () => {
   );
 };
 
-export default Router;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deviceTokenRedux: (data) => dispatch(deviceToken(data)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Router);
