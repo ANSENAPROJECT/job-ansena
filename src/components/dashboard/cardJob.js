@@ -530,6 +530,9 @@ const CardJob = ({navigation}) => {
 
             return (
               <TouchableOpacity
+                disabled={jobList.filter((item) => {
+                  return item.idJobGroup === '' ? true : false;
+                })}
                 activeOpacity={0.8}
                 style={styles.rowContainer}
                 key={index}

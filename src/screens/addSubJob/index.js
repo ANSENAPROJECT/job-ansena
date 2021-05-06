@@ -467,7 +467,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
       });
   };
 
-  const addNewItem = (idUser, name, idPt) => {
+  const addNewItem = (idUser, name, idPt, token) => {
     if (checkRemind.length < 1) {
       setCheckRemind([
         ...checkRemind,
@@ -475,6 +475,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           idUser,
           name,
           idPt,
+          token,
         },
       ]);
     } else {
@@ -486,6 +487,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             idUser,
             name,
             idPt,
+            token,
           },
         ]);
       } else if (foundValue[0].idUser == idUser) {
@@ -1233,7 +1235,11 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                       {/* <Text style={{color: colors.txtGrey}}>None</Text> */}
                       {valueRemindOption}
                     </View>
-                    <View style={{...styles.flexRow, marginTop: 10}}>
+                    <View
+                      style={{
+                        ...styles.flexRow,
+                        marginTop: 10,
+                      }}>
                       <TouchableOpacity
                         style={{
                           ...styles.btnOptionRemind,
@@ -1442,6 +1448,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           />
         </View>
       </ScrollView>
+
       {/* Modal */}
       <Modal
         transparent={true}
@@ -1497,7 +1504,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 <FlatList
                   data={searchData.length === 0 ? dataCrew : searchData}
                   renderItem={({item}) => {
-                    const {idUser, name, pt, idPt} = item;
+                    const {idUser, name, pt, idPt, token} = item;
                     var foundValue =
                       checkRemind.length > 0 &&
                       checkRemind.filter((obj) => obj.idUser === idUser);
@@ -1516,6 +1523,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                             idUser,
                             name,
                             idPt,
+                            token,
                           });
                         }}>
                         <View style={styles.listData}>
@@ -1665,7 +1673,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                 <FlatList
                   data={searchData.length === 0 ? dataCrew : searchData}
                   renderItem={({item}) => {
-                    const {idUser, name, pt, idPt} = item;
+                    const {idUser, name, pt, idPt, token} = item;
                     var foundValue =
                       checkRemind.length > 0 &&
                       checkRemind.filter((obj) => obj.idUser === idUser);
@@ -1673,7 +1681,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                       <Pressable
                         activeOpacity={0.6}
                         onPress={() => {
-                          addNewItem(idUser, name, idPt);
+                          addNewItem(idUser, name, idPt, token);
                         }}
                         disabled={
                           checkCoassessor.idUser == idUser ? true : false

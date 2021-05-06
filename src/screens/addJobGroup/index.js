@@ -53,6 +53,17 @@ import {
   updateSubjob,
 } from '../../public/redux/ActionCreators/job';
 import {useIsFocused} from '@react-navigation/native';
+const config = {
+  headers: {
+    'Content-type': 'multipart/form-data',
+  },
+};
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
 
 const windowHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -169,6 +180,10 @@ const AddJobGroup = ({
   const [jobIdDuplicate, setJobIdDuplicate] = useState('');
   const coadminStatus = useSelector((state) => state.auth.coadminStatus);
 
+  console.log(
+    'Ini token check crew : ',
+    checkCrew.map((item) => item.token),
+  );
   //---------------------End State---------------------------
 
   useEffect(() => {
@@ -444,7 +459,7 @@ const AddJobGroup = ({
       });
   };
 
-  const addNewItem = (idUser, name, idPt) => {
+  const addNewItem = (idUser, name, idPt, token) => {
     if (checkCrew.length < 1) {
       setcheckCrew([
         ...checkCrew,
@@ -452,6 +467,7 @@ const AddJobGroup = ({
           idUser,
           name,
           idPt,
+          token,
         },
       ]);
     } else {
@@ -463,6 +479,7 @@ const AddJobGroup = ({
             idUser,
             name,
             idPt,
+            token,
           },
         ]);
       } else if (foundValue[0].idUser == idUser) {
@@ -585,6 +602,31 @@ const AddJobGroup = ({
           .then((res) => {
             console.log('Ini response jobgroup', res);
             console.log(subJobData);
+            for (let n = 0; n < checkCrew.length; n++) {
+              console.log('ini adalah token yang dikirim', checkCrew[n].token);
+
+              const token = checkCrew[n].token;
+              const dataNotif = {
+                to: token,
+                priority: 'high',
+                soundName: 'default',
+                notification: {
+                  title: 'JOB',
+                  body: `Hai ${(checkCrew[n].name, split(' ')[0])} You've got ${
+                    subJobData.length
+                  } ${subJobData.length > 1 ? 'Jobs' : 'Job'}`,
+                },
+              };
+              axios
+                .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+                .then((res) => {
+                  console.log(res);
+                })
+                .catch(({response}) => {
+                  console.log(response);
+                });
+            }
+
             for (let i = 0; i < subJobData.length; i++) {
               let newRemind = [];
               for (let j = 0; j < subJobData[i].remind.length; j++) {
@@ -634,11 +676,6 @@ const AddJobGroup = ({
                   });
               console.log('Ini adalah formdata', data);
 
-              const config = {
-                headers: {
-                  'Content-type': 'multipart/form-data',
-                },
-              };
               axios
                 .post(`${API_URL}/jzl/api/api/save_subjob`, data, config)
                 .then((res) => {
@@ -715,7 +752,7 @@ const AddJobGroup = ({
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image
               source={CoAdmin}
-              style={{height: 40, width: 40, marginRight: 10}}
+              style={{height: 30, width: 30, marginRight: 10}}
             />
             <Text>Add Co-Admin</Text>
           </View>
@@ -754,7 +791,7 @@ const AddJobGroup = ({
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image
                 source={Crew}
-                style={{height: 40, width: 40, marginRight: 10}}
+                style={{height: 30, width: 30, marginRight: 10}}
               />
               <Text>Assign Crew</Text>
             </View>
@@ -872,7 +909,7 @@ const AddJobGroup = ({
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image
                 source={Leader}
-                style={{height: 40, width: 40, marginRight: 10}}
+                style={{height: 30, width: 30, marginRight: 10}}
               />
               <Text>Assign Leader</Text>
             </View>
@@ -947,7 +984,7 @@ const AddJobGroup = ({
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Image
                 source={Subjob}
-                style={{height: 40, width: 40, marginRight: 10}}
+                style={{height: 30, width: 30, marginRight: 10}}
               />
               <Text>Sub Job</Text>
             </View>

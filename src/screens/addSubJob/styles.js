@@ -288,6 +288,7 @@ export default StyleSheet.create({
   containerRemindRow: {
     height: 100,
     width: '100%',
+    marginBottom: 15,
   },
   flexRow: {
     flexDirection: 'row',
