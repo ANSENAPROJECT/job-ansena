@@ -10,7 +10,13 @@ const CoAssessor = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.txt}>Co-Assessor</Text>
-      <Text style={styles.txt}>{assessor === name ? 'You' : assessor}</Text>
+      <Text style={{...styles.txt, color: 'white', fontSize: 14}}>
+        {assessor.length === 0
+          ? 'No Co-Assessor'
+          : assessor.name === name
+          ? 'You'
+          : assessor.name}
+      </Text>
     </View>
   );
 };

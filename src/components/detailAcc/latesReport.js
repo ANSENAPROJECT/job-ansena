@@ -25,7 +25,9 @@ const LatestReport = () => {
           <Text>Show Latest Report</Text>
         </View>
         <View style={styles.flexRow}>
-          {imgReport === 0 ? null : <View style={styles.dot} />}
+          {timeReport === 'Not yet reported' ? null : (
+            <View style={styles.dot} />
+          )}
           <Image source={ArrowDown} style={styles.arrowImg} />
         </View>
       </TouchableOpacity>

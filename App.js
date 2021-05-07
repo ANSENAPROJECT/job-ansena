@@ -22,12 +22,12 @@ const App = () => {
     setFcmRegistered(true);
   };
 
-  const onNotif = (notif) => {
-    // Alert.alert(notif.title, notif.message);
-    notification.localNotif(notif);
-  };
+  // const onNotif = (notif) => {
+  //   // Alert.alert(notif.title, notif.message);
+  //   notification.localNotif(notif);
+  // };
 
-  const notification = new NotifService(onRegister, onNotif);
+  const notification = new NotifService(onRegister);
 
   // console.log('ini token', registerToken);
   return (

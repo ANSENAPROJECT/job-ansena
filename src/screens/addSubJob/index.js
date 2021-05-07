@@ -538,7 +538,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
   const submitSubjob = () => {
     const time =
       valueHour < 10
-        ? '0' + valueHour + ': 00'
+        ? '0' + valueHour + ':00'
         : `${valueHour}:${
             valueMinutes === ''
               ? '0'

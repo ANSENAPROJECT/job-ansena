@@ -144,7 +144,7 @@ const AddJobGroup = ({
   }, []);
 
   //-----------------Start State--------------------
-  const [title, setTitle] = useState('New Job Group 1');
+  const [title, setTitle] = useState('');
   const [arrow, setArrow] = useState(false);
   const [arrowLead, setArrowLead] = useState(false);
   const [arrowSub, setArrowSub] = useState(false);
@@ -180,10 +180,6 @@ const AddJobGroup = ({
   const [jobIdDuplicate, setJobIdDuplicate] = useState('');
   const coadminStatus = useSelector((state) => state.auth.coadminStatus);
 
-  console.log(
-    'Ini token check crew : ',
-    checkCrew.map((item) => item.token),
-  );
   //---------------------End State---------------------------
 
   useEffect(() => {
@@ -588,7 +584,7 @@ const AddJobGroup = ({
         let newIdPt = [...new Set(ptId)];
 
         const dataPost = {
-          jobId: data,
+          jobId: data === '' ? jobId : data,
           title: title,
           pt: newIdPt.join(','),
           crew: idCrew.join(','),
@@ -736,13 +732,13 @@ const AddJobGroup = ({
             onChangeText={(title) => {
               setTitle(title);
             }}
-            editable={coadminStatus ? false : true}
+            editable={`${coadminStatus}` === false ? false : true}
           />
         </View>
 
         {/* Add Co Admin */}
         <TouchableOpacity
-          disabled={coadminStatus ? true : false}
+          disabled={`${coadminStatus}` === true ? true : false}
           style={styles.addCoAdmin}
           activeOpacity={0.6}
           onPress={() => {
@@ -873,7 +869,7 @@ const AddJobGroup = ({
                 }}
                 keyExtractor={(item) => item.idUser}
               />
-              {coadminStatus ? null : (
+              {`${coadminStatus}` === false ? null : (
                 <TouchableOpacity
                   style={styles.containerAdd}
                   onPress={() => {
@@ -938,7 +934,7 @@ const AddJobGroup = ({
                 checkCrew.map(({idUser, idPt, name, pt}, index) => {
                   return (
                     <TouchableOpacity
-                      disabled={coadminStatus ? true : false}
+                      disabled={`${coadminStatus}` === 'true' ? true : false}
                       key={index}
                       style={{
                         flexDirection: 'row',

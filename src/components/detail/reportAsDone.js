@@ -50,6 +50,19 @@ const monthNames = [
   'Dec',
 ];
 
+const config = {
+  headers: {
+    'Content-type': 'multipart/form-data',
+  },
+};
+
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const ReportAsDone = ({
   _ModalUpload,
   deleteProgressRedux,
@@ -76,7 +89,9 @@ const ReportAsDone = ({
   const jobId = useSelector((state) => state.detailjob.jobId);
   const subjobId = useSelector((state) => state.detailjob.subjobId);
   const userId = useSelector((state) => state.auth.idUser);
-
+  const approval = useSelector((state) => state.detailjob.approval);
+  const assessor = useSelector((state) => state.detailjob.assessor);
+  const name = useSelector((state) => state.auth.name);
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
   };
@@ -117,6 +132,16 @@ const ReportAsDone = ({
     updateProgressRedux(data);
   };
 
+  let newToken;
+  let nameToken;
+  if (assessor.length === 0) {
+    newToken = approval[0].token;
+    nameToken = approval[0].approval;
+  } else {
+    newToken = assessor.token;
+    nameToken = assessor.name;
+  }
+
   const handleUpload = () => {
     if (description == '') {
       showToastWithGravity('Field description must be filled in');
@@ -140,16 +165,30 @@ const ReportAsDone = ({
       });
 
       console.log(data);
-      const config = {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
-      };
 
       axios
         .post(`${API_URL}/jzl/api/api/report_as_done`, data, config)
         .then((res) => {
           console.log(res);
+          const token = newToken;
+          const dataNotif = {
+            to: token,
+            priority: 'high',
+            soundName: 'default',
+            notification: {
+              title: 'JOB',
+              body: `Hai ${nameToken.split(' ')[0]} You've got 1 job`,
+            },
+          };
+          console.log('Ini adalah name token : ', nameToken);
+          axios
+            .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           setIsLoading(false);
           reportHistoryRedux(res.data.data.reportHistory);
           statusButtonRedux(res.data.data.statusButton);

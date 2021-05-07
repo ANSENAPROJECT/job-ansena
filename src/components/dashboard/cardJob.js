@@ -7,9 +7,11 @@ import {colors} from '../../utils/colors';
 import {API_URL} from '@env';
 import {useIsFocused} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import NotifService from '../../../NotifService';
 
 const CardJob = ({navigation}) => {
   const idUser = useSelector((state) => state.auth.idUser);
+  const [checkId, setCheckId] = useState('');
 
   const isFocused = useIsFocused();
 
@@ -37,7 +39,7 @@ const CardJob = ({navigation}) => {
     axios
       .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
       .then((res) => {
-        // console.log(res);
+        // console.log('Ini dari card job', res);
         let i = '';
         for (let j = 0; j < 4 - res.data.result.length; j++) {
           i += '0';
@@ -50,6 +52,12 @@ const CardJob = ({navigation}) => {
         console.log(response);
       });
   };
+  const onNotif = (notif) => {
+    // Alert.alert(notif.title, notif.message);
+    getData();
+    notification.localNotif(notif);
+  };
+  const notification = new NotifService(onNotif);
 
   return (
     <ScrollView style={styles.containerAi} nestedScrollEnabled>
@@ -527,26 +535,26 @@ const CardJob = ({navigation}) => {
               }
             }
             //End of Condition status badge
-
             return (
               <TouchableOpacity
-                disabled={jobList.filter((item) => {
-                  return item.idJobGroup === '' ? true : false;
-                })}
                 activeOpacity={0.8}
                 style={styles.rowContainer}
                 key={index}
                 onPress={() => {
-                  navigation.push(
-                    isAdmin == 1
-                      ? 'detailadmin'
-                      : isCoadmin == 1
-                      ? 'detailadmin'
-                      : isAssessor == 1
-                      ? 'detailadmin'
-                      : 'detailuser',
-                    subjobId,
-                  );
+                  if (!subjobId) {
+                    null;
+                  } else {
+                    navigation.push(
+                      isAdmin == 1
+                        ? 'detailadmin'
+                        : isCoadmin == 1
+                        ? 'detailadmin'
+                        : isAssessor == 1
+                        ? 'detailadmin'
+                        : 'detailuser',
+                      subjobId,
+                    );
+                  }
                 }}>
                 <View
                   style={{

@@ -4,7 +4,7 @@ const initialState = {
   jobId: '',
   subjobId: '',
   deadline: '',
-  approval: '',
+  approval: [],
   assessor: '',
   purpose: '',
   image: [],

@@ -10,9 +10,9 @@ const Splash = ({navigation, setLoginRedux}) => {
   console.log(auth);
   useEffect(() => {
     const validation = async () => {
-      const name = await AsyncStorage.getItem('name');
       const adminStatus = await AsyncStorage.getItem('adminStatus');
       const coadminStatus = await AsyncStorage.getItem('coadminStatus');
+      const name = await AsyncStorage.getItem('name');
       const code = await AsyncStorage.getItem('code');
       const idUser = await AsyncStorage.getItem('idUser');
       const token = await AsyncStorage.getItem('token');
@@ -26,6 +26,7 @@ const Splash = ({navigation, setLoginRedux}) => {
         data,
         token,
       };
+      console.log('data login redux', data);
 
       setLoginRedux(data);
 

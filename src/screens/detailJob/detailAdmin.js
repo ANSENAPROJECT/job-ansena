@@ -69,8 +69,6 @@ const DetailAdmin = ({
   const status = useSelector((state) => state.detailjob.statusButton);
   const reportProgress = useSelector((state) => state.progressreport);
 
-  console.log('Ini ada di detail admin : ', status);
-
   useEffect(() => {
     getData();
   }, []);

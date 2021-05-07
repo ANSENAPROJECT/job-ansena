@@ -5,11 +5,20 @@ import {colors} from '../../../utils/colors';
 import {fonts} from '../../../utils/fonts';
 
 const Approval = () => {
-  const approvalList = useSelector((state) => state.detailjob.approval);
+  const approval = useSelector((state) => state.detailjob.approval);
+
+  const newApproval =
+    approval &&
+    approval.map((item) => {
+      return item.approval;
+    });
+
   return (
     <View style={styles.container}>
       <Text style={styles.txt}>Approval</Text>
-      <Text style={styles.txt}>{approvalList}</Text>
+      <Text style={styles.right}>
+        {approval.length > 1 ? newApproval.join(' Then ') : approval.approval}
+      </Text>
     </View>
   );
 };

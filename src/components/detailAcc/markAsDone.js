@@ -13,9 +13,20 @@ import {
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
 
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
   const subjobId = useSelector((state) => state.detailjob.subjobId);
   const idUser = useSelector((state) => state.auth.idUser);
+  const approval = useSelector((state) => state.detailjob.approval);
+  const status = useSelector((state) => state.detailjob.statusButton);
+  const coadminStatus = useSelector((state) => state.auth.coadminStatus);
+  const adminStatus = useSelector((state) => state.auth.adminStatus);
 
   const showToast = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
@@ -31,11 +42,45 @@ const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
     userId: idUser,
   };
 
+  let newToken;
+  let nameToken;
+  if (`${coadminStatus}` === 'true') {
+    newToken = approval[1].token;
+    nameToken = approval[1].approval;
+  } else {
+    newToken = approval[0].token;
+    nameToken = approval[0].approval;
+  }
+
   const submitDone = () => {
     axios
       .post(`${API_URL}/jzl/api/api/mark_as_done`, qs.stringify(data))
       .then((res) => {
         console.log('INi adalah response', res.data.statusButton);
+        const token = newToken;
+        const dataNotif = {
+          to: token,
+          priority: 'high',
+          soundName: 'default',
+          notification: {
+            title: 'JOB',
+            body: `Hai ${nameToken.split(' ')[0]} You've got 1 job`,
+          },
+        };
+        console.log('Ini nama tokennya', nameToken);
+        if (`${adminStatus}` === 'true') {
+          console.log('tidak kirim notif');
+          null;
+        } else {
+          axios
+            .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
         statusButtonRedux(res.data.statusButton);
         statusReportHistoryRedux(res.data.reportHistory);
         showToast('Submit Done !');

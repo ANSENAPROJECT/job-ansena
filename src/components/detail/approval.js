@@ -6,13 +6,19 @@ import {fonts} from '../../utils/fonts';
 
 const Approval = () => {
   const approval = useSelector((state) => state.detailjob.approval);
+
+  const newApproval =
+    approval &&
+    approval.map((item) => {
+      return item.approval;
+    });
   return (
     <View style={styles.container}>
       <View style={styles.left}>
         <Image source={CoAdmin} style={styles.imgSize} />
         <Text style={{fontFamily: fonts.SFProDisplayMedium}}>Approval</Text>
       </View>
-      <Text style={styles.right}>{approval}</Text>
+      <Text style={styles.right}>{newApproval.join(' Then ')}</Text>
     </View>
   );
 };

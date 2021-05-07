@@ -57,7 +57,6 @@ const Dashboard = ({
   const idUser = useSelector((state) => state.auth.idUser);
   const isAdmin = useSelector((state) => state.auth.adminStatus);
   const isCoAdmin = useSelector((state) => state.auth.coadminStatus);
-
   const isLogin = useSelector((state) => state.auth.isLogin);
   const [waiting, setWaiting] = useState('');
   const [failed, setFailed] = useState('');
@@ -309,7 +308,7 @@ const Dashboard = ({
         </Animated.ScrollView>
 
         {/* footer */}
-        {isAdmin == true || isCoAdmin == true ? (
+        {`${isAdmin}` === 'true' || `${isCoAdmin}` === 'true' ? (
           <Animated.View
             style={{
               ...styles.footer,
@@ -317,7 +316,7 @@ const Dashboard = ({
               backgroundColor: possScroll > 0 ? '#f2f1f6' : colors.mainColor,
               opacity: possScroll > 0 ? 0.9 : 1,
             }}>
-            {isAdmin == true ? (
+            {`${isAdmin}` === 'true' ? (
               <TouchableOpacity
                 style={{flexDirection: 'row', alignItems: 'center'}}
                 activeOpacity={0.6}

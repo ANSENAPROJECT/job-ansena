@@ -12,7 +12,9 @@ const CoAssessor = () => {
         <Image source={Assessor} style={styles.imgSize} />
         <Text style={{fontFamily: fonts.SFProDisplayMedium}}>Co-Assessor</Text>
       </View>
-      <Text style={styles.right}>{assessor}</Text>
+      <Text style={styles.right}>
+        {assessor.length === 0 ? 'No Assessor' : assessor.name}
+      </Text>
     </View>
   );
 };
