@@ -27,10 +27,9 @@ const CardJob = ({navigation}) => {
   }, [navigation, isFocused]);
 
   useEffect(() => {
-    getData();
-    return () => {
+    setInterval(() => {
       getData();
-    };
+    }, 1000);
   }, [jobList, isFocused]);
 
   const [jobList, setJobList] = useState([]);
