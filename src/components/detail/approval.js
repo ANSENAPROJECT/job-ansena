@@ -18,7 +18,9 @@ const Approval = () => {
         <Image source={CoAdmin} style={styles.imgSize} />
         <Text style={{fontFamily: fonts.SFProDisplayMedium}}>Approval</Text>
       </View>
-      <Text style={styles.right}>{newApproval.join(' Then ')}</Text>
+      <Text style={styles.right}>
+        {approval.length > 1 ? newApproval.join(' Then ') : newApproval[0]}
+      </Text>
     </View>
   );
 };

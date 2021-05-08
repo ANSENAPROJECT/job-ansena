@@ -23,6 +23,7 @@ import {
   WaitingActive,
   Prio1,
   FailedActive,
+  Logout,
 } from '../../assets';
 import {logout} from '../../public/redux/ActionCreators/auth';
 import {colors} from '../../utils/colors';
@@ -191,7 +192,7 @@ const Dashboard = ({
             <TouchableOpacity
               style={{marginLeft: 20}}
               onPress={() => setModalVisible(true)}>
-              <Image style={styles.bell} source={iconBell ? Bell : RedBell} />
+              <Image style={styles.bell} source={Logout} />
             </TouchableOpacity>
           </View>
         </View>

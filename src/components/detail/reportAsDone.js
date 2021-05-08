@@ -164,16 +164,15 @@ const ReportAsDone = ({
           console.log(res);
           let newToken;
           let nameToken;
-          if (!assessor) {
+          if (assessor.length === 0) {
             newToken = approval[0].token;
             nameToken = approval[0].approval;
           } else {
             newToken = assessor.token;
             nameToken = assessor.name;
           }
-          const token = newToken;
           const dataNotif = {
-            to: token,
+            to: newToken,
             priority: 'high',
             soundName: 'default',
             notification: {
@@ -183,11 +182,11 @@ const ReportAsDone = ({
               } You've got a job report from ${name}`,
             },
           };
-          console.log('Ini adalah name token : ', nameToken);
           axios
             .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
             .then((res) => {
               console.log(res);
+              setIsLoading(false);
             })
             .catch((err) => {
               console.log(err);
