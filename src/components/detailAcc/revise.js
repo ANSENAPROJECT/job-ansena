@@ -66,6 +66,13 @@ const monthNames = [
   'December',
 ];
 
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const Revise = ({
   _ModalUpload,
   deleteProgressRedux,
@@ -95,6 +102,7 @@ const Revise = ({
   const jobId = useSelector((state) => state.detailjob.jobId);
   const userId = useSelector((state) => state.auth.idUser);
   const [isLoading, setIsLoading] = useState(false);
+  const checkCrew = useSelector((state) => state.detailjob.crew);
 
   const progressreport = useSelector(
     (state) => state.progressreport.img_request,
@@ -234,10 +242,13 @@ const Revise = ({
           }`;
     const deadline = `${selectedDate} ${time}`;
     if (description === '') {
+      setIsLoading(false);
       showToastWithGravity('Field Description must be filled in');
     } else if (switchDate === false) {
+      setIsLoading(false);
       showToastWithGravity('Deadline must be selected');
     } else if (progressreport.length === 0) {
+      setIsLoading(false);
       showToastWithGravity('Image notes must be filled in');
     } else {
       const data = new FormData();
@@ -266,6 +277,29 @@ const Revise = ({
         .post(`${API_URL}/jzl/api/api/revise`, data, config)
         .then((res) => {
           console.log(res);
+          for (let n = 0; n < checkCrew.length; n++) {
+            console.log('ini adalah token yang dikirim', checkCrew[n].token);
+            const token = checkCrew[n].token;
+            const dataNotif = {
+              to: token,
+              priority: 'high',
+              soundName: 'default',
+              notification: {
+                title: 'JOB',
+                body: `Hai ${
+                  checkCrew[n].name.split(' ')[0]
+                } Your report needs revision`,
+              },
+            };
+            axios
+              .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
           statusButtonRedux(res.data.statusButton);
           reportHistoryRedux(res.data.reportHistory);
           deleteAllProgressRedux();

@@ -13,10 +13,18 @@ import {
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
 
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const AcceptOverdueBtn = ({overdueHistoryRedux, statusButtonRedux}) => {
   const subjobId = useSelector((state) => state.detailjob.subjobId);
   const userId = useSelector((state) => state.auth.idUser);
-
+  const checkCrew = useSelector((state) => state.detailjob.crew);
+  console.log(checkCrew);
   const data = {
     subjobId: subjobId,
     userId: userId,
@@ -27,13 +35,36 @@ const AcceptOverdueBtn = ({overdueHistoryRedux, statusButtonRedux}) => {
       .post(`${API_URL}/jzl/api/api/change_overdue`, qs.stringify(data))
       .then((res) => {
         console.log(res);
+        for (let n = 0; n < checkCrew.length; n++) {
+          console.log('ini adalah token yang dikirim', checkCrew[n].token);
+          const token = checkCrew[n].token;
+          const dataNotif = {
+            to: token,
+            priority: 'high',
+            soundName: 'default',
+            notification: {
+              title: 'JOB',
+              body: `Hai ${
+                checkCrew[n].name.split(' ')[0]
+              } your new deadline request has been approved`,
+            },
+          };
+          axios
+            .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
         const overdueHistory = res.data.overdueHistory;
         const status = res.data.statusButton;
         overdueHistoryRedux(overdueHistory);
         statusButtonRedux(status);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
   };
 

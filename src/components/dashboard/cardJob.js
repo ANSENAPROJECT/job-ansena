@@ -52,12 +52,6 @@ const CardJob = ({navigation}) => {
         console.log(response);
       });
   };
-  const onNotif = (notif) => {
-    // Alert.alert(notif.title, notif.message);
-    getData();
-    notification.localNotif(notif);
-  };
-  const notification = new NotifService(onNotif);
 
   return (
     <ScrollView style={styles.containerAi} nestedScrollEnabled>

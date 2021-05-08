@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   ToastAndroid,
@@ -71,6 +71,18 @@ const monthNames = [
   'December',
 ];
 
+const config = {
+  headers: {
+    'Content-type': 'multipart/form-data',
+  },
+};
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const Overdue = ({
   _ModalUpload,
   deleteProgressRedux,
@@ -104,6 +116,8 @@ const Overdue = ({
   const [check, setCheck] = useState('');
   const [reason, setReason] = useState('');
   const userId = useSelector((state) => state.auth.idUser);
+  const approval = useSelector((state) => state.detailjob.approval);
+  const name = useSelector((state) => state.auth.name);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -224,6 +238,7 @@ const Overdue = ({
   };
 
   const handleupload = () => {
+    setIsLoading(true);
     const time =
       valueHour < 10
         ? '0' + valueHour + ':00'
@@ -238,10 +253,13 @@ const Overdue = ({
 
     if (reason === '') {
       showToastWithGravity('Field reason must be filled in');
+      setIsLoading(false);
     } else if (switchDate === false) {
       showToastWithGravity('The date must be selected');
+      setIsLoading(false);
     } else if (progressreport.length < 1) {
       showToastWithGravity('Image must be filled in');
+      setIsLoading(false);
     } else {
       const data = new FormData();
       data.append('jobId', `${jobId}`);
@@ -262,15 +280,40 @@ const Overdue = ({
 
       console.log(data);
 
-      const config = {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
-      };
       axios
         .post(`${API_URL}/jzl/api/api/request_deadline`, data, config)
         .then((res) => {
           console.log(res);
+          let newToken;
+          let nameToken;
+          if (approval.length > 1) {
+            newToken = approval[1].token;
+            nameToken = approval[1].approval;
+          } else {
+            newToken = approval[0].token;
+            nameToken = approval[0].approval;
+          }
+          const token = newToken;
+          const dataNotif = {
+            to: token,
+            priority: 'high',
+            soundName: 'default',
+            notification: {
+              title: 'JOB',
+              body: `Hai ${
+                nameToken.split(' ')[0]
+              } You've deadline request from ${name.split(' ')[0]}`,
+            },
+          };
+          console.log('Ini adalah name token : ', nameToken);
+          axios
+            .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
           setIsLoading(false);
           overdueHistoryRedux(res.data.data.overdueHistory);
           statusButtonRedux(res.data.data.statusButton);
@@ -677,7 +720,7 @@ const Overdue = ({
           </View>
 
           {/* btn propose deadline */}
-          {!isLoading ? (
+          {isLoading ? (
             <View style={styles.btnPropose}>
               <ActivityIndicator size="small" color="white" />
               <Text style={{...styles.txtBtnPropose, marginLeft: 10}}>
@@ -690,7 +733,6 @@ const Overdue = ({
               style={styles.btnPropose}
               onPress={() => {
                 handleupload();
-                setIsLoading(true);
               }}>
               <Text style={styles.txtBtnPropose}>Propose Overdue Deadline</Text>
             </TouchableOpacity>

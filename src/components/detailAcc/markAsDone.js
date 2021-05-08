@@ -27,7 +27,8 @@ const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
   const status = useSelector((state) => state.detailjob.statusButton);
   const coadminStatus = useSelector((state) => state.auth.coadminStatus);
   const adminStatus = useSelector((state) => state.auth.adminStatus);
-
+  const checkCrew = useSelector((state) => state.detailjob.crew);
+  const name = useSelector((state) => state.auth.name);
   const showToast = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
       msg,
@@ -42,35 +43,55 @@ const MarkAsDone = ({statusButtonRedux, statusReportHistoryRedux}) => {
     userId: idUser,
   };
 
-  let newToken;
-  let nameToken;
-  if (`${coadminStatus}` === 'true') {
-    newToken = approval[1].token;
-    nameToken = approval[1].approval;
-  } else {
-    newToken = approval[0].token;
-    nameToken = approval[0].approval;
-  }
-
   const submitDone = () => {
     axios
       .post(`${API_URL}/jzl/api/api/mark_as_done`, qs.stringify(data))
       .then((res) => {
         console.log('INi adalah response', res.data.statusButton);
-        const token = newToken;
+        let newToken;
+        let nameToken;
+        if (`${coadminStatus}` === 'true') {
+          newToken = approval[1].token;
+          nameToken = approval[1].approval;
+        } else {
+          newToken = approval[0].token;
+          nameToken = approval[0].approval;
+        }
         const dataNotif = {
-          to: token,
+          to: newToken,
           priority: 'high',
           soundName: 'default',
           notification: {
             title: 'JOB',
-            body: `Hai ${nameToken.split(' ')[0]} You've got 1 job`,
+            body: `Hai ${
+              nameToken.split(' ')[0]
+            } You've got a job report from ${name}`,
           },
         };
-        console.log('Ini nama tokennya', nameToken);
         if (`${adminStatus}` === 'true') {
-          console.log('tidak kirim notif');
-          null;
+          for (let n = 0; n < checkCrew.length; n++) {
+            console.log('ini adalah token yang dikirim', checkCrew[n].token);
+            const token = checkCrew[n].token;
+            const dataNotif = {
+              to: token,
+              priority: 'high',
+              soundName: 'default',
+              notification: {
+                title: 'JOB',
+                body: `Hai ${
+                  checkCrew[n].name.split(' ')[0]
+                } Your job has been marked as done`,
+              },
+            };
+            axios
+              .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         } else {
           axios
             .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)

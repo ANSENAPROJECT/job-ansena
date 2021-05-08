@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   StyleSheet,
@@ -132,15 +132,7 @@ const ReportAsDone = ({
     updateProgressRedux(data);
   };
 
-  let newToken;
-  let nameToken;
-  if (assessor.length === 0) {
-    newToken = approval[0].token;
-    nameToken = approval[0].approval;
-  } else {
-    newToken = assessor.token;
-    nameToken = assessor.name;
-  }
+  console.log('ini approval', approval);
 
   const handleUpload = () => {
     if (description == '') {
@@ -170,6 +162,15 @@ const ReportAsDone = ({
         .post(`${API_URL}/jzl/api/api/report_as_done`, data, config)
         .then((res) => {
           console.log(res);
+          let newToken;
+          let nameToken;
+          if (!assessor) {
+            newToken = approval[0].token;
+            nameToken = approval[0].approval;
+          } else {
+            newToken = assessor.token;
+            nameToken = assessor.name;
+          }
           const token = newToken;
           const dataNotif = {
             to: token,
@@ -177,7 +178,9 @@ const ReportAsDone = ({
             soundName: 'default',
             notification: {
               title: 'JOB',
-              body: `Hai ${nameToken.split(' ')[0]} You've got 1 job`,
+              body: `Hai ${
+                nameToken.split(' ')[0]
+              } You've got a job report from ${name}`,
             },
           };
           console.log('Ini adalah name token : ', nameToken);

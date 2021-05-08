@@ -61,6 +61,13 @@ const monthNames = [
   'December',
 ];
 
+const auth = {
+  headers: {
+    Authorization:
+      'key=AAAA9r5wtvs:APA91bEeoQGsG7xNX2CsOl7cBPjB2gfBbhZSpXaCN3vwPqGBxDRxUteZu_Eu3X62Wcq3ogf1Iv2O-xBOzC8t45CRu2dAerBzcOJ7n1Po1yQbE6ef896K3DY2AbrU_t27CEVeeIPuoaUj',
+  },
+};
+
 const ChangeOverdue = ({statusButtonRedux, overdueHistoryRedux}) => {
   const [collapse, setCollapse] = useState(true);
   const [notes, setNotes] = useState('');
@@ -79,6 +86,7 @@ const ChangeOverdue = ({statusButtonRedux, overdueHistoryRedux}) => {
   const [option, setOption] = useState('');
   const userId = useSelector((state) => state.auth.idUser);
   const subjobId = useSelector((state) => state.detailjob.subjobId);
+  const checkCrew = useSelector((state) => state.detailjob.crew);
 
   const showToastWithGravity = (msg) => {
     ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
@@ -189,6 +197,29 @@ const ChangeOverdue = ({statusButtonRedux, overdueHistoryRedux}) => {
         .post(`${API_URL}/jzl/api/api/change_overdue`, qs.stringify(data))
         .then((res) => {
           console.log(res);
+          for (let n = 0; n < checkCrew.length; n++) {
+            console.log('ini adalah token yang dikirim', checkCrew[n].token);
+            const token = checkCrew[n].token;
+            const dataNotif = {
+              to: token,
+              priority: 'high',
+              soundName: 'default',
+              notification: {
+                title: 'JOB',
+                body: `Hai ${
+                  checkCrew[n].name.split(' ')[0]
+                } your new deadline request has been modified`,
+              },
+            };
+            axios
+              .post(`https://fcm.googleapis.com/fcm/send`, dataNotif, auth)
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
           statusButtonRedux(res.data.statusButton);
           overdueHistoryRedux(res.data.overdueHistory);
         })
