@@ -1,23 +1,19 @@
-import React, {useEffect} from 'react';
-import {View, Text, Easing} from 'react-native';
-import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-} from '@react-navigation/stack';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
+import React, {useEffect} from 'react';
+import {Easing} from 'react-native';
+import 'react-native-gesture-handler';
 
-import Splash from './screens/splash';
-import Login from './screens/auth/login';
-import Dashboard from './screens/dashboard';
+import {connect} from 'react-redux';
+import {deviceToken} from './public/redux/ActionCreators/token';
 import AddJobGroup from './screens/addJobGroup';
 import AddSubJob from './screens/addSubJob';
-import DetailUser from './screens/detailJob/detailUser';
+import Login from './screens/auth/login';
+import Dashboard from './screens/dashboard';
 import DetailAdmin from './screens/detailJob/detailAdmin';
+import DetailUser from './screens/detailJob/detailUser';
+import Splash from './screens/splash';
 import ViewJob from './screens/viewJob';
-import {deviceToken} from './public/redux/ActionCreators/token';
-import {connect} from 'react-redux';
 
 const Stack = createStackNavigator();
 

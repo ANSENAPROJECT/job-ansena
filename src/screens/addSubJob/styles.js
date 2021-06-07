@@ -261,7 +261,7 @@ export default StyleSheet.create({
     width: 45,
   },
   containerNote: {
-    height: 200,
+    minHeight: 200,
     backgroundColor: 'white',
     marginBottom: 30,
     borderRadius: 20,

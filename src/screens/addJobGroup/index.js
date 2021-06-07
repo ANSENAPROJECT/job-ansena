@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   LogBox,
   Pressable,
+  Platform,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import Popover, {PopoverPlacement} from 'react-native-popover-view';
@@ -53,6 +54,8 @@ import {
   updateSubjob,
 } from '../../public/redux/ActionCreators/job';
 import {useIsFocused} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native';
+import {Root, Toast} from 'native-base';
 const config = {
   headers: {
     'Content-type': 'multipart/form-data',
@@ -499,23 +502,21 @@ const AddJobGroup = ({
   };
 
   const showToastWithGravityAndOffset = (msg) => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER,
-      25,
-      50,
-    );
+    Toast.show({
+      text: msg,
+      buttonText: 'Ok',
+      duration: 2000,
+      position: 'bottom',
+    });
   };
 
   const showToastMsg = (msg) => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
+    Toast.show({
+      text: msg,
+      buttonText: 'Ok',
+      duration: 2000,
+      position: 'bottom',
+    });
   };
 
   const getDetailJob = () => {
@@ -697,11 +698,11 @@ const AddJobGroup = ({
   };
 
   return (
-    <>
+    <Root>
       {/* The View */}
       <ScrollView style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
+        <SafeAreaView style={styles.header}>
           <TouchableOpacity onPress={handleBack}>
             <Text style={styles.btnheader}>Cancel</Text>
           </TouchableOpacity>
@@ -716,7 +717,7 @@ const AddJobGroup = ({
               Done
             </Text>
           </TouchableOpacity>
-        </View>
+        </SafeAreaView>
 
         {/* Date */}
         <View style={styles.datetime}>
@@ -732,6 +733,7 @@ const AddJobGroup = ({
             onChangeText={(title) => {
               setTitle(title);
             }}
+            placeholderTextColor="grey"
             editable={`${coadminStatus}` === false ? false : true}
           />
         </View>
@@ -975,8 +977,13 @@ const AddJobGroup = ({
               justifyContent: 'space-between',
               width: '100%',
               alignItems: 'center',
+              marginBottom: Platform.OS === 'ios' ? 10 : 0,
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
               <Image
                 source={Subjob}
                 style={{height: 30, width: 30, marginRight: 10}}
@@ -1021,12 +1028,14 @@ const AddJobGroup = ({
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         paddingHorizontal: 14,
+                        marginBottom: Platform.OS === 'ios' ? 25 : 0,
                       }}>
                       <View
                         style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Text style={{marginRight: 20}}>{index + 1}. </Text>
 
                         <TextInput
+                          placeholderTextColor="grey"
                           placeholder="input Subjob"
                           value={checkId === item.id ? name : item.subjob}
                           onChangeText={(text) => setName(text)}
@@ -1059,6 +1068,11 @@ const AddJobGroup = ({
                               }}
                               onPress={() => {
                                 setCheckSub(item.id);
+                              }}
+                              style={{
+                                height: 20,
+                                width: 30,
+                                alignItems: 'flex-end',
                               }}>
                               <Image
                                 source={DotMenu}
@@ -1142,23 +1156,26 @@ const AddJobGroup = ({
             transform: [{translateX: modalCoadmin}],
           },
         ]}>
-        <View style={styles.headerModalCoadmin}>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-            }}>
-            <Text style={styles.txtCancel}>Cancel</Text>
-          </TouchableOpacity>
-          <Text style={styles.txtTitleModal}>Add-CoAdmin</Text>
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-            }}>
-            <Text style={styles.txtAddModal}>Add</Text>
-          </TouchableOpacity>
-        </View>
+        <SafeAreaView>
+          <View style={styles.headerModalCoadmin}>
+            <TouchableOpacity
+              onPress={() => {
+                closeModal();
+              }}>
+              <Text style={styles.txtCancel}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={styles.txtTitleModal}>Add-CoAdmin</Text>
+            <TouchableOpacity
+              onPress={() => {
+                closeModal();
+              }}>
+              <Text style={styles.txtAddModal}>Add</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
         <View style={styles.formSearch}>
           <TextInput
+            placeholderTextColor="grey"
             placeholder="Search Co-Admin Name..."
             onChangeText={(search) => setSearch(search)}
             onSubmitEditing={searchName}
@@ -1306,6 +1323,7 @@ const AddJobGroup = ({
             </View>
             <View style={styles.formSearch}>
               <TextInput
+                placeholderTextColor="grey"
                 placeholder="Search Crew Name..."
                 onChangeText={(search) => setSearch(search)}
                 onSubmitEditing={searchName}
@@ -1429,7 +1447,7 @@ const AddJobGroup = ({
           </View>
         </View>
       </Modal>
-    </>
+    </Root>
   );
 };
 
@@ -1564,12 +1582,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   txtTitleModal: {
-    fontFamily: fonts.SFProDisplayLightItalic,
     color: 'black',
     fontSize: 24,
   },
   txtCancel: {
-    fontFamily: fonts.SFProDisplayLightItalic,
     color: colors.badgeRed,
     fontSize: 16,
   },

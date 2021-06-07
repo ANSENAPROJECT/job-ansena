@@ -57,6 +57,7 @@ import {API_URL} from '@env';
 import {connect, useSelector} from 'react-redux';
 import {updateDetailSubjob} from '../../public/redux/ActionCreators/job';
 import {KeyboardAvoidingView} from 'react-native';
+import {SafeAreaView} from 'react-native';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
@@ -299,74 +300,80 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
   };
 
   const pickMultiple = () => {
-    ImagePicker.openPicker({
-      multiple: true,
-      waitAnimationEnd: false,
-      sortOrder: 'desc',
-      includeExif: true,
-      forceJpg: true,
-    })
-      .then((img) => {
-        if (images.length < 1) {
-          setImages(
-            img.map((i) => {
-              console.log('received image', i);
+    setTimeout(() => {
+      ImagePicker.openPicker({
+        multiple: true,
+        waitAnimationEnd: false,
+        sortOrder: 'desc',
+        includeExif: true,
+        forceJpg: true,
+        allowsEditing: true,
+      })
+        .then((img) => {
+          if (images.length < 1) {
+            setImages(
+              img.map((i) => {
+                console.log('received image', i);
+                return {
+                  uri: i.path,
+                  width: i.width,
+                  height: i.height,
+                  mime: i.mime,
+                };
+              }),
+            );
+          } else {
+            let result = img.map((i) => {
               return {
                 uri: i.path,
                 width: i.width,
                 height: i.height,
                 mime: i.mime,
               };
-            }),
-          );
-        } else {
-          let result = img.map((i) => {
-            return {
-              uri: i.path,
-              width: i.width,
-              height: i.height,
-              mime: i.mime,
-            };
-          });
-          setImages([...images.concat(result)]);
-        }
-      })
-      .catch((e) => alert(e));
+            });
+            setImages([...images.concat(result)]);
+          }
+        })
+        .catch((e) => alert(e));
+    }, 1000);
   };
 
   const pickSingleWithCamera = (cropping, mediaType = 'photo') => {
-    ImagePicker.openCamera({
-      cropping: cropping,
-      width: 200,
-      height: 200,
-      includeExif: true,
-      mediaType,
-    })
-      .then((img) => {
-        if (images.length < 1) {
-          setImages([
-            ...images,
-            {
-              uri: img.path,
-              width: img.width,
-              height: img.height,
-              mime: img.mime,
-            },
-          ]);
-        } else {
-          // console.log('gambar sudah lebih dari 1');
-          setImages([
-            ...images,
-            {
-              uri: img.path,
-              width: img.width,
-              height: img.height,
-              mime: img.mime,
-            },
-          ]);
-        }
+    setTimeout(() => {
+      ImagePicker.openCamera({
+        cropping: cropping,
+        width: 200,
+        height: 200,
+        includeExif: true,
+        mediaType,
+        allowsEditing: true,
       })
-      .catch((e) => console.log(e));
+        .then((img) => {
+          if (images.length < 1) {
+            setImages([
+              ...images,
+              {
+                uri: img.path,
+                width: img.width,
+                height: img.height,
+                mime: img.mime,
+              },
+            ]);
+          } else {
+            // console.log('gambar sudah lebih dari 1');
+            setImages([
+              ...images,
+              {
+                uri: img.path,
+                width: img.width,
+                height: img.height,
+                mime: img.mime,
+              },
+            ]);
+          }
+        })
+        .catch((e) => console.log(e));
+    }, 1000);
   };
 
   const deletePhoto = (uri) => {
@@ -660,7 +667,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
     <ScrollView removeClippedSubviews={true}>
       <ScrollView style={styles.container} nestedScrollEnabled={true}>
         {/* Header */}
-        <View style={styles.containerHeader}>
+        <SafeAreaView style={styles.containerHeader}>
           <TouchableOpacity
             style={styles.left}
             onPress={() => {
@@ -679,7 +686,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             }}>
             <Text style={styles.txtColorBlue}>Add</Text>
           </TouchableOpacity>
-        </View>
+        </SafeAreaView>
 
         {/* Code */}
         <View style={styles.code}>
@@ -690,6 +697,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
         {/* title */}
         <View style={styles.titleinpt}>
           <TextInput
+            placeholderTextColor="grey"
             placeholder="Input Subjob"
             value={title}
             onChangeText={(text) => setTitle(text)}
@@ -1438,7 +1446,9 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
         </View>
 
         {/* Notes */}
-        <View style={styles.containerNote}>
+        <KeyboardAvoidingView
+          style={styles.containerNote}
+          behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <TextInput
             blurOnSubmit={false}
             placeholder="Notes"
@@ -1446,7 +1456,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             multiline={true}
             onChangeText={(text) => setNote(text)}
           />
-        </View>
+        </KeyboardAvoidingView>
       </ScrollView>
 
       {/* Modal */}
@@ -1462,7 +1472,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           showToastWithGravity('Modal has been closed.');
           setModalCoAssessor(!modalCoAssessor);
         }}>
-        <View style={styles.centeredView}>
+        <SafeAreaView style={styles.centeredView}>
           <View style={styles.modalView}>
             {/* Header Modal */}
             <View style={styles.headerModal}>
@@ -1614,7 +1624,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               </View>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       {/* Modal Remind */}
@@ -1630,7 +1640,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           showToastWithGravity('Modal has been closed.');
           setModalRemind(!modalRemind);
         }}>
-        <View style={styles.centeredView}>
+        <SafeAreaView style={styles.centeredView}>
           <View style={styles.modalView}>
             {/* Header Modal */}
             <View style={styles.headerModal}>
@@ -1752,7 +1762,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               </View>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       {/* Modal Camera */}

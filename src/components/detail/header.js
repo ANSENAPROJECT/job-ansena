@@ -1,4 +1,5 @@
 import React from 'react';
+import {SafeAreaView} from 'react-native';
 import {View, Text, StyleSheet, Dimensions, Image} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {BackIcon, DotMenuBlue} from '../../assets';
@@ -9,17 +10,19 @@ const deviceHeight = Dimensions.get('window').height;
 
 const Header = ({navigation}) => {
   return (
-    <View style={styles.headerContainer}>
-      <TouchableOpacity
-        style={styles.leftHeader}
-        onPress={() => {
-          navigation.goBack();
-        }}>
-        <Image source={BackIcon} style={styles.arrowimg} />
-        <Text style={styles.txtHeader}>Back</Text>
-      </TouchableOpacity>
-      <Image source={DotMenuBlue} style={styles.dotmenu} />
-    </View>
+    <SafeAreaView>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.leftHeader}
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <Image source={BackIcon} style={styles.arrowimg} />
+          <Text style={styles.txtHeader}>Back</Text>
+        </TouchableOpacity>
+        <Image source={DotMenuBlue} style={styles.dotmenu} />
+      </View>
+    </SafeAreaView>
   );
 };
 

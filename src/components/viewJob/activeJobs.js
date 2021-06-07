@@ -270,7 +270,7 @@ const ActiveJobs = ({
                             activeOpacity={0.8}
                             style={{
                               ...styles.flexJustify,
-                              marginTop: 5,
+                              marginTop: 10,
                             }}>
                             <Text
                               style={{

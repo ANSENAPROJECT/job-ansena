@@ -135,82 +135,86 @@ const DetailAdmin = ({
 
   // camera
   const pickSingleWithCamera = (cropping, mediaType = 'photo') => {
-    ImagePicker.openCamera({
-      cropping: cropping,
-      width: 200,
-      height: 200,
-      includeExif: true,
-      mediaType,
-    })
-      .then((img) => {
-        if (images.length < 1) {
-          const data = {
-            image: {
-              uri: img.path,
-              width: img.width,
-              height: img.height,
-              mime: img.mime,
-            },
-            desc: '',
-          };
-          addProgresReportRedux(data);
-        } else {
-          const data = {
-            image: {
-              uri: img.path,
-              width: img.width,
-              height: img.height,
-              mime: img.mime,
-            },
-            desc: '',
-          };
-          addProgresReportRedux(data);
-        }
+    setTimeout(() => {
+      ImagePicker.openCamera({
+        cropping: cropping,
+        width: 200,
+        height: 200,
+        includeExif: true,
+        mediaType,
       })
-      .catch((e) => console.log(e));
+        .then((img) => {
+          if (images.length < 1) {
+            const data = {
+              image: {
+                uri: img.path,
+                width: img.width,
+                height: img.height,
+                mime: img.mime,
+              },
+              desc: '',
+            };
+            addProgresReportRedux(data);
+          } else {
+            const data = {
+              image: {
+                uri: img.path,
+                width: img.width,
+                height: img.height,
+                mime: img.mime,
+              },
+              desc: '',
+            };
+            addProgresReportRedux(data);
+          }
+        })
+        .catch((e) => console.log(e));
+    }, 1000);
   };
 
   //Galery
   const pickMultiple = () => {
-    ImagePicker.openPicker({
-      multiple: true,
-      waitAnimationEnd: false,
-      sortOrder: 'desc',
-      includeExif: true,
-      forceJpg: true,
-    })
-      .then((img) => {
-        if (images.length < 1) {
-          // addProgresReportRedux();
-          let data = img.map((i) => {
-            return {
-              image: {
-                uri: i.path,
-                width: i.width,
-                height: i.height,
-                mime: i.mime,
-              },
-              desc: '',
-            };
-          });
-          addProgressReportGaleryRedux(data);
-        } else {
-          let data = img.map((i) => {
-            console.log(i);
-            return {
-              image: {
-                uri: i.path,
-                width: i.width,
-                height: i.height,
-                mime: i.mime,
-              },
-              desc: '',
-            };
-          });
-          addProgressReportGaleryRedux(data);
-        }
+    setTimeout(() => {
+      ImagePicker.openPicker({
+        multiple: true,
+        waitAnimationEnd: false,
+        sortOrder: 'desc',
+        includeExif: true,
+        forceJpg: true,
       })
-      .catch((e) => console.log(e));
+        .then((img) => {
+          if (images.length < 1) {
+            // addProgresReportRedux();
+            let data = img.map((i) => {
+              return {
+                image: {
+                  uri: i.path,
+                  width: i.width,
+                  height: i.height,
+                  mime: i.mime,
+                },
+                desc: '',
+              };
+            });
+            addProgressReportGaleryRedux(data);
+          } else {
+            let data = img.map((i) => {
+              console.log(i);
+              return {
+                image: {
+                  uri: i.path,
+                  width: i.width,
+                  height: i.height,
+                  mime: i.mime,
+                },
+                desc: '',
+              };
+            });
+            addProgressReportGaleryRedux(data);
+          }
+        })
+        .catch((e) => console.log(e));
+    }, 1000);
   };
 
   let btnStatus;

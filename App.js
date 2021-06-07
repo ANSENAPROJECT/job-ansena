@@ -11,6 +11,9 @@ import {persistStore} from 'redux-persist';
 
 import NotifService from './NotifService';
 
+import PushNotification from 'react-native-push-notification';
+import {Platform} from 'react-native';
+
 const persistedStore = persistStore(store);
 
 const App = () => {
@@ -29,7 +32,7 @@ const App = () => {
 
   const notification = new NotifService(onRegister, onNotif);
 
-  // console.log('ini token', registerToken);
+  console.log('ini token ada di APp js', registerToken);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>

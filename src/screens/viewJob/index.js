@@ -668,6 +668,7 @@ const ViewJob = ({
               </View>
               <View style={styles.inputMinMax}>
                 <TextInput
+                  placeholderTextColor="grey"
                   keyboardType="number-pad"
                   placeholder="Min"
                   style={{
@@ -688,6 +689,7 @@ const ViewJob = ({
               <Text style={{fontSize: 10, marginLeft: 5}}>To</Text>
               <View style={styles.inputMinMax}>
                 <TextInput
+                  placeholderTextColor="grey"
                   keyboardType="number-pad"
                   placeholder="Max"
                   maxLength={2}
@@ -995,6 +997,7 @@ const ViewJob = ({
             <View style={styles.crewRowContainer}>
               <View style={{...styles.inputMinMax, marginLeft: 0}}>
                 <TextInput
+                  placeholderTextColor="grey"
                   keyboardType="number-pad"
                   placeholder="Min"
                   style={{fontSize: 10}}
@@ -1009,6 +1012,7 @@ const ViewJob = ({
               <Text style={{fontSize: 10, marginLeft: 10}}>To</Text>
               <View style={styles.inputMinMax}>
                 <TextInput
+                  placeholderTextColor="grey"
                   keyboardType="number-pad"
                   placeholder="Max"
                   style={{fontSize: 10}}
@@ -1038,6 +1042,7 @@ const ViewJob = ({
                 <View style={styles.containerBoxPop}>
                   <View style={styles.formSearch}>
                     <TextInput
+                      placeholderTextColor="grey"
                       placeholder="Search"
                       value={namePt}
                       onChangeText={(text) => setNamePt(text)}
@@ -1233,6 +1238,7 @@ const ViewJob = ({
           }}>
           <Image source={Search} style={styles.iconSearch} />
           <TextInput
+            placeholderTextColor="grey"
             placeholder="Search"
             style={{width: '100%'}}
             onEndEditing={() => {

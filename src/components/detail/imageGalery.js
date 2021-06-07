@@ -10,6 +10,7 @@ import {useSelector} from 'react-redux';
 const ImageGalery = () => {
   const [collapse, setCollapse] = useState(true);
   const image = useSelector((state) => state.detailjob.image);
+  console.log('ini adalah data dari image', image);
 
   return (
     <View style={styles.container}>
@@ -51,7 +52,7 @@ const ImageGalery = () => {
           showsHorizontalScrollIndicator={false}>
           {image &&
             image.map((item, index) => {
-              let Image_Http_URL = {uri: `${API_URL}/${item}`};
+              let Image_Http_URL = {uri: `${item.url}`};
               return (
                 <Image
                   key={index}

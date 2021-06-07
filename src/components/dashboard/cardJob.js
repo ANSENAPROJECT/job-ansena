@@ -572,7 +572,7 @@ const CardJob = ({navigation}) => {
                         {title}
                       </Text>
                       <Text style={{fontSize: 10, fontWeight: '300'}}>
-                        {deadline == 0 ? null : deadline}
+                        {deadline == 0 ? 'No Deadline' : deadline}
                       </Text>
                     </View>
                   </View>

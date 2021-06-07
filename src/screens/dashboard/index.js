@@ -8,6 +8,7 @@ import {
   Image,
   ToastAndroid,
   Pressable,
+  Platform,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
@@ -42,6 +43,7 @@ import CardJob from '../../components/dashboard/cardJob';
 import CardArsipJob from '../../components/dashboard/cardArsipJob';
 import qs from 'qs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SafeAreaView} from 'react-native';
 
 const Dashboard = ({
   navigation,
@@ -64,9 +66,10 @@ const Dashboard = ({
   const [priority, setPriority] = useState('');
   const [activeJob, setActiveJob] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const heightValue = useState(new Animated.Value(44))[0];
+  const heightValue = useState(new Animated.Value(50))[0];
   const token = useSelector((state) => state.token.token);
   const tokenAuth = useSelector((state) => state.auth.token);
+  console.log('Ini adalh token', token);
 
   function extendFooter() {
     Animated.timing(heightValue, {
@@ -78,7 +81,7 @@ const Dashboard = ({
 
   function minimizeFooter() {
     Animated.timing(heightValue, {
-      toValue: 40,
+      toValue: 50,
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -179,23 +182,25 @@ const Dashboard = ({
     <>
       <View style={styles.container}>
         {/* header */}
-        <View style={styles.header}>
-          <Image source={Logo} style={styles.logo} />
-          <View style={{flexDirection: 'row'}}>
-            <Text>
-              Hello
-              <Text style={{fontWeight: 'bold'}}>
-                {' '}
-                {name === null ? null : name.split(' ')[0]}
+        <SafeAreaView>
+          <View style={styles.header}>
+            <Image source={Logo} style={styles.logo} />
+            <View style={{flexDirection: 'row'}}>
+              <Text>
+                Hello
+                <Text style={{fontWeight: 'bold'}}>
+                  {' '}
+                  {name === null ? null : name.split(' ')[0]}
+                </Text>
               </Text>
-            </Text>
-            <TouchableOpacity
-              style={{marginLeft: 20}}
-              onPress={() => setModalVisible(true)}>
-              <Image style={styles.bell} source={Logout} />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{marginLeft: 20}}
+                onPress={() => setModalVisible(true)}>
+                <Image style={styles.bell} source={Logout} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </SafeAreaView>
 
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
@@ -398,7 +403,7 @@ const Dashboard = ({
               </Pressable>
               <Pressable
                 style={{...styles.btnModal, borderLeftWidth: 0.5}}
-                onPress={handleLogout}>
+                onPress={() => handleLogout()}>
                 <Text
                   style={{
                     color: colors.badgeBlue,

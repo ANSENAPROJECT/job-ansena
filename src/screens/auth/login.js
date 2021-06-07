@@ -19,6 +19,7 @@ import qs from 'qs';
 import {connect} from 'react-redux';
 import {API_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Root, Toast} from 'native-base';
 
 class Login extends Component {
   constructor() {
@@ -33,13 +34,11 @@ class Login extends Component {
   }
 
   showToastWithGravityAndOffset = (msg) => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
+    Toast.show({
+      text: msg,
+      buttonText: 'Ok',
+      duration: 2000,
+    });
   };
 
   SubmitLogin = () => {
@@ -47,7 +46,7 @@ class Login extends Component {
       this.setState({
         isLoading: false,
       });
-      this.showToastWithGravityAndOffset('Semua kolom harus diisi.');
+      this.showToastWithGravityAndOffset('All column cannot be empty.');
     } else {
       const data = {
         email: this.state.email,
@@ -99,75 +98,79 @@ class Login extends Component {
     const {pass, isLoading, errMsg} = this.state;
     console.log('ini ada di login : ', this.props.token.token);
     return (
-      <ScrollView style={styles.container}>
-        <Image source={Logo} style={styles.logoImage} />
-        <View style={styles.titleLogin}>
-          <Text style={styles.title}>Lorem Ipsum</Text>
-          <Text
-            style={{
-              textAlign: 'justify',
-              fontSize: 12,
-              fontFamily: fonts.SFProDisplayBold,
-              color: 'grey',
-            }}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s.
-          </Text>
-        </View>
-        <View style={{...styles.formInput, marginTop: 40, marginBottom: 17}}>
-          <TextInput
-            placeholder="Nama Pengguna"
-            value={this.state.email}
-            onChangeText={(email) => this.setState({email})}
-          />
-        </View>
-        <View style={{...styles.formInput, marginBottom: 30}}>
-          <TextInput
-            secureTextEntry={pass}
-            style={{width: 220}}
-            placeholder="Kata Sandi"
-            value={this.state.password}
-            onChangeText={(text) => {
-              this.setState({password: text});
-            }}
-          />
-          <TouchableOpacity
-            activeOpacity={0.6}
-            onPress={() => {
-              this.setState({
-                pass: !pass,
-              });
-            }}>
-            <Image source={pass ? EyeClose : EyeOpen} />
-          </TouchableOpacity>
-        </View>
-        {isLoading ? (
-          <View style={{...styles.btn, flexDirection: 'row'}}>
-            <ActivityIndicator size="small" color="white" />
+      <Root>
+        <ScrollView style={styles.container}>
+          <Image source={Logo} style={styles.logoImage} />
+          <View style={styles.titleLogin}>
+            <Text style={styles.title}>Lorem Ipsum</Text>
             <Text
               style={{
-                fontFamily: fonts.SFProDisplayMedium,
-                color: 'white',
-                marginLeft: 10,
+                textAlign: 'justify',
+                fontSize: 12,
+                fontFamily: fonts.SFProDisplayBold,
+                color: 'grey',
               }}>
-              Please Wait...
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s.
             </Text>
           </View>
-        ) : (
-          <TouchableOpacity
-            style={styles.btn}
-            activeOpacity={0.5}
-            onPress={() => {
-              this.setState({
-                isLoading: true,
-              });
-              this.SubmitLogin();
-            }}>
-            <Text style={{color: 'white'}}>Masuk</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
+          <View style={{...styles.formInput, marginTop: 40, marginBottom: 17}}>
+            <TextInput
+              autoCapitalize="none"
+              placeholder="Nama Pengguna"
+              value={this.state.email}
+              onChangeText={(email) => this.setState({email})}
+            />
+          </View>
+          <View style={{...styles.formInput, marginBottom: 30}}>
+            <TextInput
+              autoCapitalize="none"
+              secureTextEntry={pass}
+              style={{width: 220}}
+              placeholder="Kata Sandi"
+              value={this.state.password}
+              onChangeText={(text) => {
+                this.setState({password: text});
+              }}
+            />
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => {
+                this.setState({
+                  pass: !pass,
+                });
+              }}>
+              <Image source={pass ? EyeClose : EyeOpen} />
+            </TouchableOpacity>
+          </View>
+          {isLoading ? (
+            <View style={{...styles.btn, flexDirection: 'row'}}>
+              <ActivityIndicator size="small" color="white" />
+              <Text
+                style={{
+                  fontFamily: fonts.SFProDisplayMedium,
+                  color: 'white',
+                  marginLeft: 10,
+                }}>
+                Please Wait...
+              </Text>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.btn}
+              activeOpacity={0.5}
+              onPress={() => {
+                this.setState({
+                  isLoading: true,
+                });
+                this.SubmitLogin();
+              }}>
+              <Text style={{color: 'white'}}>Masuk</Text>
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      </Root>
     );
   }
 }
