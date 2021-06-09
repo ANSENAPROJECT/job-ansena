@@ -1,15 +1,18 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, Modal} from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {ArrowDown, CoAdmin, IconGalery, Remind} from '../../assets';
 import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
 import {useSelector} from 'react-redux';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const ImageGalery = () => {
   const [collapse, setCollapse] = useState(true);
   const image = useSelector((state) => state.detailjob.image);
+  const [visible, setIsVisible] = useState(false);
+  const [renderImg, setRenderImg] = useState('');
   console.log('ini adalah data dari image', image);
 
   return (
@@ -52,17 +55,29 @@ const ImageGalery = () => {
           showsHorizontalScrollIndicator={false}>
           {image &&
             image.map((item, index) => {
-              let Image_Http_URL = {uri: `${item.url}`};
+              let img = {uri: `${item.url}`};
               return (
-                <Image
-                  key={index}
-                  style={styles.imgGalery}
-                  source={Image_Http_URL}
-                />
+                <TouchableOpacity
+                  onPress={() => {
+                    setRenderImg(item.url);
+                    setIsVisible(true);
+                  }}>
+                  <Image key={index} style={styles.imgGalery} source={img} />
+                </TouchableOpacity>
               );
             })}
         </ScrollView>
       </Collapsible>
+      <Modal visible={visible} transparent={true}>
+        <ImageViewer
+          enableSwipeDown={true}
+          useNativeDriver
+          imageUrls={[{url: renderImg}]}
+          onSwipeDown={() => {
+            setIsVisible(false);
+          }}
+        />
+      </Modal>
     </View>
   );
 };
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     width: 15,
     marginLeft: 10,
   },
-  imgGalery: {height: 30, width: 30, marginRight: 10},
+  imgGalery: {height: 30, width: 30, marginRight: 10, borderRadius: 10},
   txtRight: {
     fontFamily: fonts.SFProDisplayMedium,
     color: 'lightgrey',

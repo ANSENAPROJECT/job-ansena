@@ -7,12 +7,17 @@ import {ArrowDown, Image1, Showlatest} from '../../assets';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {Modal} from 'react-native';
 
 const LatestReport = () => {
   const [collapse, setCollapse] = useState(true);
   const noteReport = useSelector((state) => state.detailjob.noteReport);
   const imgReport = useSelector((state) => state.detailjob.imgReport);
   const timeReport = useSelector((state) => state.detailjob.timeReport);
+
+  const [visible, setIsVisible] = useState(false);
+  const [renderImg, setRenderImg] = useState('');
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -48,10 +53,16 @@ const LatestReport = () => {
                 return (
                   <>
                     <View style={styles.rowGalery} key={index} key={index}>
-                      <Image
-                        source={Image_Http_URL}
-                        style={styles.imgGalerySize}
-                      />
+                      <TouchableOpacity
+                        onPress={() => {
+                          setRenderImg(`${API_URL}/${img}`);
+                          setIsVisible(true);
+                        }}>
+                        <Image
+                          source={Image_Http_URL}
+                          style={styles.imgGalerySize}
+                        />
+                      </TouchableOpacity>
                       <View style={{flex: 1}}>
                         <Text>{desc}</Text>
                       </View>
@@ -63,6 +74,16 @@ const LatestReport = () => {
           </View>
         </View>
       </Collapsible>
+      <Modal visible={visible} transparent={true}>
+        <ImageViewer
+          enableSwipeDown={true}
+          useNativeDriver
+          imageUrls={[{url: renderImg}]}
+          onSwipeDown={() => {
+            setIsVisible(false);
+          }}
+        />
+      </Modal>
     </View>
   );
 };

@@ -14,14 +14,17 @@ import Profile from '../../screens/profile';
 import Dashboard from '../../screens/dashboard';
 import Event from '../../screens/event';
 import Hrd from '../../screens/hrd';
-import {useSelector} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {API_URL} from '@env';
 import axios from 'axios';
 import {colors} from '../../utils/colors';
 import Modal from 'react-native-modal';
+import {logout} from '../../public/redux/ActionCreators/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Tab = createMaterialTopTabNavigator();
 
-const HeaderDashboard = () => {
+const HeaderDashboard = ({logoutRedux, navigation}) => {
+  const token = useSelector((state) => state.token.token);
   const [modalVisible, setModalVisible] = useState(false);
   const auth = useSelector((state) => state.auth);
   const name = useSelector((state) => state.auth.name);
@@ -182,7 +185,13 @@ const HeaderDashboard = () => {
   );
 };
 
-export default HeaderDashboard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logoutRedux: () => dispatch(logout()),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(HeaderDashboard);
 
 const styles = StyleSheet.create({
   header: {

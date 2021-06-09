@@ -34,6 +34,8 @@ import {
   reportHistory,
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
+import {Modal} from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 const monthNames = [
   'Jan',
@@ -93,20 +95,27 @@ const ReportAsDone = ({
   const assessor = useSelector((state) => state.detailjob.assessor);
   const name = useSelector((state) => state.auth.name);
   const showToastWithGravity = (msg) => {
-    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
+    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
   };
 
   const renderAsset = (image, index) => {
     return renderImage(image, index);
   };
+  const [visible, setIsVisible] = useState(false);
+  const [renderImg, setRenderImg] = useState('');
 
   const renderImage = (image, index) => {
     return (
       <>
         <View>
-          <View style={{position: 'relative'}}>
+          <TouchableOpacity
+            style={{position: 'relative'}}
+            onPress={() => {
+              setRenderImg(image.uri);
+              setIsVisible(true);
+            }}>
             <Image source={image} style={styles.imgStyle} />
-          </View>
+          </TouchableOpacity>
           <Pressable
             style={{position: 'absolute', left: -5, top: -5}}
             onPress={() => {
@@ -132,13 +141,14 @@ const ReportAsDone = ({
     updateProgressRedux(data);
   };
 
-  console.log('ini approval', approval);
-
   const handleUpload = () => {
+    setIsLoading(true);
     if (description == '') {
       showToastWithGravity('Field description must be filled in');
+      setIsLoading(false);
     } else if (progressreport.length === 0) {
       showToastWithGravity('Image must be filled in');
+      setIsLoading(false);
     } else {
       const data = new FormData();
       data.append('jobId', `${jobId}`);
@@ -301,13 +311,23 @@ const ReportAsDone = ({
               activeOpacity={0.6}
               onPress={() => {
                 handleUpload();
-                setIsLoading(true);
               }}>
               <Text style={styles.txtBtn}>Report as Done</Text>
             </TouchableOpacity>
           )}
         </View>
       </Collapsible>
+
+      <Modal visible={visible} transparent={true}>
+        <ImageViewer
+          enableSwipeDown={true}
+          useNativeDriver
+          imageUrls={[{url: renderImg}]}
+          onSwipeDown={() => {
+            setIsVisible(false);
+          }}
+        />
+      </Modal>
     </View>
   );
 };

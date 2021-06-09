@@ -60,10 +60,12 @@ const Dashboard = ({
 }) => {
   const [possScroll, setPossScroll] = useState('');
   const [iconBell, setIconBell] = useState(true);
-
+  const tokenAuth = useSelector((state) => state.auth);
+  const token = useSelector((state) => state.token.token);
   const auth = useSelector((state) => state.auth);
   const name = useSelector((state) => state.auth.name);
   const idUser = useSelector((state) => state.auth.idUser);
+  ``;
   const isAdmin = useSelector((state) => state.auth.adminStatus);
   const isCoAdmin = useSelector((state) => state.auth.coadminStatus);
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -73,9 +75,6 @@ const Dashboard = ({
   const [activeJob, setActiveJob] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const heightValue = useState(new Animated.Value(50))[0];
-  const token = useSelector((state) => state.token.token);
-  const tokenAuth = useSelector((state) => state.auth.token);
-  console.log('Ini adalh token', token);
 
   function extendFooter() {
     Animated.timing(heightValue, {

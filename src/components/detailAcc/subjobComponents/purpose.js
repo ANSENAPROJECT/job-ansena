@@ -7,9 +7,9 @@ import {fonts} from '../../../utils/fonts';
 const Purpose = () => {
   const purpose = useSelector((state) => state.detailjob.purpose);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Purpose</Text>
-      <Text style={styles.rowTxt}>{purpose}</Text>
+    <View style={styles.containerPurpose}>
+      <Text style={styles.titlePurpose}>Purpose</Text>
+      <Text style={styles.rowTxtPurpose}>{purpose}</Text>
     </View>
   );
 };
@@ -17,7 +17,7 @@ const Purpose = () => {
 export default Purpose;
 
 const styles = StyleSheet.create({
-  container: {
+  containerPurpose: {
     minHeight: 50,
     backgroundColor: colors.mainColor,
     borderRadius: 15,
@@ -25,13 +25,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  title: {
+  titlePurpose: {
     fontFamily: fonts.SFProDisplayMedium,
     color: 'grey',
     fontSize: 16,
     marginBottom: 10,
   },
-  rowTxt: {
+  rowTxtPurpose: {
     fontFamily: fonts.SFProDisplayMedium,
     color: 'grey',
     fontSize: 14,

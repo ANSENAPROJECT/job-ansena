@@ -9,17 +9,16 @@ import {fonts} from '../../../utils/fonts';
 import {API_URL} from '@env';
 
 const ImageGalery = () => {
-  const [collapse, setCollapse] = useState(true);
+  const [collapseImgGalery, setCollapseImgGalery] = useState(true);
   const image = useSelector((state) => state.detailjob.image);
-  console.log('INi adalah data image', image);
   return (
-    <View style={styles.container}>
+    <View style={styles.containerImgGalery}>
       <TouchableOpacity
         disabled={image.length === 0 ? true : false}
         onPress={() => {
-          setCollapse(!collapse);
+          setCollapseImgGalery(!collapseImgGalery);
         }}
-        style={styles.btn}>
+        style={styles.btnImgGalery}>
         <Text
           style={{
             fontFamily: fonts.SFProDisplayMedium,
@@ -39,8 +38,8 @@ const ImageGalery = () => {
           )}
         </View>
       </TouchableOpacity>
-      <Collapsible collapsed={collapse}>
-        <View style={styles.containerCollapse}>
+      <Collapsible collapsed={collapseImgGalery}>
+        <View style={styles.containerCollapseImgGalery}>
           <ScrollView horizontal={true}>
             {image &&
               image.map((item, index) => {
@@ -53,9 +52,6 @@ const ImageGalery = () => {
                   />
                 );
               })}
-            {/* <Image source={Image1} style={styles.imgSize} />
-            <Image source={Image1} style={styles.imgSize} />
-            <Image source={Image1} style={styles.imgSize} /> */}
           </ScrollView>
         </View>
       </Collapsible>
@@ -66,14 +62,14 @@ const ImageGalery = () => {
 export default ImageGalery;
 
 const styles = StyleSheet.create({
-  container: {
+  containerImgGalery: {
     minHeight: 50,
     backgroundColor: colors.mainColor,
     borderRadius: 15,
     marginTop: 20,
     paddingHorizontal: 20,
   },
-  btn: {
+  btnImgGalery: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -86,7 +82,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   arrowImg: {height: 10, width: 15, marginLeft: 10},
-  containerCollapse: {
+  containerCollapseImgGalery: {
     height: 50,
     marginVertical: 10,
   },

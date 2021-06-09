@@ -6,6 +6,8 @@ import {
   View,
   ToastAndroid,
   Pressable,
+  Modal,
+  Platform,
 } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import {TextInput, TouchableOpacity} from 'react-native-gesture-handler';
@@ -38,6 +40,8 @@ import {
   statusButton,
 } from '../../public/redux/ActionCreators/detailjob';
 import {ActivityIndicator} from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import {withTheme} from 'react-native-elements';
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -104,15 +108,46 @@ const Revise = ({
   const [isLoading, setIsLoading] = useState(false);
   const checkCrew = useSelector((state) => state.detailjob.crew);
 
+  //view image and zoom image
+  const [visible, setIsVisible] = useState(false);
+  const [renderImg, setRenderImg] = useState('');
+
+  //Modal alert
+  const [alertModal, setAlertModal] = useState(false);
+  const [modalTxt, setModalTxt] = useState('');
+
   const progressreport = useSelector(
     (state) => state.progressreport.img_request,
   );
 
   const showToastWithGravity = (msg) => {
-    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
+    if (Platform.OS === 'ios') {
+      handleAlertIos();
+    } else {
+      ToastAndroid.showWithGravity(
+        msg,
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
+    }
   };
   const showToast = (msg) => {
-    ToastAndroid.showWithGravity(msg, ToastAndroid.SHORT, ToastAndroid.CENTER);
+    if (Platform.OS === 'ios') {
+      handleAlertIos();
+    } else {
+      ToastAndroid.showWithGravity(
+        msg,
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
+    }
+  };
+
+  const handleAlertIos = () => {
+    setAlertModal(true);
+    setTimeout(() => {
+      setAlertModal(false);
+    }, 1500);
   };
 
   const handleSlider = (value) => {
@@ -202,7 +237,13 @@ const Revise = ({
       <>
         <View>
           <View style={{position: 'relative'}}>
-            <Image source={image} style={styles.imgStyle} />
+            <TouchableOpacity
+              onPress={() => {
+                setRenderImg(image.uri);
+                setIsVisible(true);
+              }}>
+              <Image source={image} style={styles.imgStyle} />
+            </TouchableOpacity>
           </View>
           <Pressable
             style={{position: 'absolute', left: -5, top: -5}}
@@ -230,6 +271,7 @@ const Revise = ({
   };
 
   const submitRevise = () => {
+    setIsLoading(true);
     const time =
       valueHour < 10
         ? '0' + valueHour + ':00'
@@ -244,12 +286,15 @@ const Revise = ({
     if (description === '') {
       setIsLoading(false);
       showToastWithGravity('Field Description must be filled in');
+      setModalTxt('Field Description must be filled in');
     } else if (switchDate === false) {
       setIsLoading(false);
       showToastWithGravity('Deadline must be selected');
+      setModalTxt('Deadline must be selected');
     } else if (progressreport.length === 0) {
       setIsLoading(false);
       showToastWithGravity('Image notes must be filled in');
+      setModalTxt('Image notes must be filled in');
     } else {
       const data = new FormData();
       data.append('jobId', `${jobId}`);
@@ -719,13 +764,41 @@ const Revise = ({
               style={styles.btnRevision}
               onPress={() => {
                 submitRevise();
-                setIsLoading(true);
               }}>
               <Text style={styles.txtBtnRevision}>Request Revision</Text>
             </TouchableOpacity>
           )}
         </View>
       </Collapsible>
+      <Modal visible={visible} transparent={true}>
+        <ImageViewer
+          enableSwipeDown={true}
+          useNativeDriver
+          imageUrls={[{url: renderImg}]}
+          onSwipeDown={() => {
+            setIsVisible(false);
+          }}
+        />
+      </Modal>
+      <Modal visible={alertModal} transparent animationType="fade">
+        <View
+          style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+          <View
+            style={{
+              marginBottom: 50,
+              height: 40,
+              minWidth: 150,
+              borderRadius: 15,
+              backgroundColor: 'white',
+              opacity: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: 10,
+            }}>
+            <Text>{modalTxt}</Text>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
