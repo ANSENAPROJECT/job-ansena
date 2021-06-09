@@ -5,6 +5,7 @@ import {Easing} from 'react-native';
 import 'react-native-gesture-handler';
 
 import {connect} from 'react-redux';
+import HeaderDashboard from './components/header';
 import {deviceToken} from './public/redux/ActionCreators/token';
 import AddJobGroup from './screens/addJobGroup';
 import AddSubJob from './screens/addSubJob';
@@ -59,8 +60,8 @@ const Router = ({registerToken, deviceTokenRedux}) => {
           }}
         />
         <Stack.Screen
-          name="dashboard"
-          component={Dashboard}
+          name="headerDashboard"
+          component={HeaderDashboard}
           options={{
             headerShown: false,
           }}

@@ -32,7 +32,7 @@ const App = () => {
 
   const notification = new NotifService(onRegister, onNotif);
 
-  console.log('ini token ada di APp js', registerToken);
+  // console.log('ini token ada di APp js', registerToken);
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistedStore}>

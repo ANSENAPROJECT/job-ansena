@@ -32,7 +32,7 @@ const Splash = ({navigation, setLoginRedux}) => {
 
       setTimeout(() => {
         code != null
-          ? navigation.replace('dashboard')
+          ? navigation.replace('headerDashboard')
           : navigation.replace('login');
       }, 2000);
     };

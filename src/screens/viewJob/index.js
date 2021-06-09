@@ -50,6 +50,7 @@ import {
   inactiveJobGroup,
 } from '../../public/redux/ActionCreators/viewjob';
 import {TouchableHighlight} from 'react-native';
+import {Root} from 'native-base';
 
 const deviceWidth = Dimensions.get('window').width;
 
@@ -421,620 +422,504 @@ const ViewJob = ({
   }, [search, initialFilter, qs]);
 
   return (
-    <ScrollView style={styles.container}>
-      <Header navigation={navigation} />
+    <Root>
+      <ScrollView style={styles.container}>
+        <Header navigation={navigation} />
 
-      {/* Header Title */}
-      <View style={styles.title}>
-        <Text style={{fontFamily: fonts.SFProDisplayHeavy, fontSize: 24}}>
-          View Job Group
-        </Text>
-        <View style={styles.flexRow}>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => {
-              setCollapse(!collapse);
-            }}>
-            <Image source={FilterBtn} style={{height: 20, width: 25}} />
-          </TouchableOpacity>
-          <Popover
-            onRequestClose={() => setShowPopover(false)}
-            popoverStyle={styles.sortBy}
-            placement={PopoverPlacement.BOTTOM}
-            isVisible={showPopover}
-            from={
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={() => setShowPopover(true)}>
-                <Image source={SortBtn} style={{height: 20, width: 20}} />
-              </TouchableOpacity>
-            }>
-            <Pressable
-              style={styles.rowSort}
-              onPress={() => {
-                if (initialFilter === 1) {
-                  setInitialFilter(2);
-                  setSort(`?as=${initialFilter}`);
-                  setShowPopover(false);
-                } else {
-                  setInitialFilter(1);
-                  setSort(`?as=${initialFilter}`);
-                  setShowPopover(false);
-                }
-              }}>
-              <Text>Name</Text>
-            </Pressable>
-            <View style={styles.line} />
-            <Pressable
-              style={styles.rowSort}
-              onPress={() => {
-                if (initialFilter === 1) {
-                  setInitialFilter(2);
-                  setSort(`?bs=${initialFilter}`);
-                  setShowPopover(false);
-                } else {
-                  setInitialFilter(1);
-                  setSort(`?bs=${initialFilter}`);
-                  setShowPopover(false);
-                }
-              }}>
-              <Text>Date Created</Text>
-            </Pressable>
-            <View style={styles.line} />
-            <Pressable
-              style={styles.rowSort}
-              onPress={() => {
-                if (initialFilter === 1) {
-                  setInitialFilter(2);
-                  setSort(`?cs=${initialFilter}`);
-                  setShowPopover(false);
-                } else {
-                  setInitialFilter(1);
-                  setSort(`?cs=${initialFilter}`);
-                  setShowPopover(false);
-                }
-              }}>
-              <Text>Number of Crew</Text>
-            </Pressable>
-            <View style={styles.line} />
-            <Pressable
-              style={styles.rowSort}
-              onPress={() => {
-                if (initialFilter === 1) {
-                  setInitialFilter(2);
-                  setSort(`?ds=${initialFilter}`);
-                  setShowPopover(false);
-                } else {
-                  setInitialFilter(1);
-                  setSort(`?ds=${initialFilter}`);
-                  setShowPopover(false);
-                }
-              }}>
-              <Text>Number of Sub Jobs</Text>
-            </Pressable>
-            <View style={styles.line} />
-            <Pressable
-              style={styles.rowSort}
-              onPress={() => {
-                if (initialFilter === 1) {
-                  setInitialFilter(2);
-                  setSort(`?es=${initialFilter}`);
-                  setShowPopover(false);
-                } else {
-                  setInitialFilter(1);
-                  setSort(`?es=${initialFilter}`);
-                  setShowPopover(false);
-                }
-              }}>
-              <Text>Upcoming Deadline</Text>
-            </Pressable>
-          </Popover>
-        </View>
-      </View>
-      <Collapsible collapsed={collapse}>
-        <View style={styles.containerCollapse}>
-          {/* Activity */}
+        {/* Header Title */}
+        <View style={styles.title}>
+          <Text style={{fontFamily: fonts.SFProDisplayHeavy, fontSize: 24}}>
+            View Job Group
+          </Text>
           <View style={styles.flexRow}>
-            <Text style={{fontSize: 12}}>ACTIVITY</Text>
-            <View style={styles.rowActivity}>
-              <View
-                style={{
-                  ...styles.btnActivity,
-                  flex: 0.6,
-                  backgroundColor: activity === 'a=1' ? 'white' : 'transparent',
-                }}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => {
+                setCollapse(!collapse);
+              }}>
+              <Image source={FilterBtn} style={{height: 20, width: 25}} />
+            </TouchableOpacity>
+            <Popover
+              onRequestClose={() => setShowPopover(false)}
+              popoverStyle={styles.sortBy}
+              placement={PopoverPlacement.BOTTOM}
+              isVisible={showPopover}
+              from={
                 <TouchableOpacity
-                  onPress={() => {
-                    setActivity('a=1');
-                    setFilter({...filter, a: 'a=1'});
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: activity === 'a=1' ? 'black' : 'white',
-                    }}>
-                    All
-                  </Text>
+                  style={styles.btn}
+                  onPress={() => setShowPopover(true)}>
+                  <Image source={SortBtn} style={{height: 20, width: 20}} />
                 </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  ...styles.btnActivity,
-                  flex: 0.8,
-                  backgroundColor: activity === 'a=2' ? 'white' : 'transparent',
+              }>
+              <Pressable
+                style={styles.rowSort}
+                onPress={() => {
+                  if (initialFilter === 1) {
+                    setInitialFilter(2);
+                    setSort(`?as=${initialFilter}`);
+                    setShowPopover(false);
+                  } else {
+                    setInitialFilter(1);
+                    setSort(`?as=${initialFilter}`);
+                    setShowPopover(false);
+                  }
                 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setActivity('a=2');
-                    setFilter({...filter, a: 'a=2'});
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: activity === 'a=2' ? 'black' : 'white',
-                    }}>
-                    ACTIVE
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  ...styles.btnActivity,
-                  flex: 0.9,
-                  backgroundColor: activity === 'a=3' ? 'white' : 'transparent',
+                <Text>Name</Text>
+              </Pressable>
+              <View style={styles.line} />
+              <Pressable
+                style={styles.rowSort}
+                onPress={() => {
+                  if (initialFilter === 1) {
+                    setInitialFilter(2);
+                    setSort(`?bs=${initialFilter}`);
+                    setShowPopover(false);
+                  } else {
+                    setInitialFilter(1);
+                    setSort(`?bs=${initialFilter}`);
+                    setShowPopover(false);
+                  }
                 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setActivity('a=3');
-                    setFilter({...filter, a: 'a=3'});
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: activity === 'a=3' ? 'black' : 'white',
-                    }}>
-                    INACTIVE
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  ...styles.btnActivity,
-                  width: 75,
-                  backgroundColor: activity === 'a=4' ? 'white' : 'transparent',
+                <Text>Date Created</Text>
+              </Pressable>
+              <View style={styles.line} />
+              <Pressable
+                style={styles.rowSort}
+                onPress={() => {
+                  if (initialFilter === 1) {
+                    setInitialFilter(2);
+                    setSort(`?cs=${initialFilter}`);
+                    setShowPopover(false);
+                  } else {
+                    setInitialFilter(1);
+                    setSort(`?cs=${initialFilter}`);
+                    setShowPopover(false);
+                  }
                 }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setActivity('a=4');
-                    setFilter({...filter, a: 'a=4'});
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: activity === 'a=4' ? 'black' : 'white',
-                    }}>
-                    DEACTIVATED
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+                <Text>Number of Crew</Text>
+              </Pressable>
+              <View style={styles.line} />
+              <Pressable
+                style={styles.rowSort}
+                onPress={() => {
+                  if (initialFilter === 1) {
+                    setInitialFilter(2);
+                    setSort(`?ds=${initialFilter}`);
+                    setShowPopover(false);
+                  } else {
+                    setInitialFilter(1);
+                    setSort(`?ds=${initialFilter}`);
+                    setShowPopover(false);
+                  }
+                }}>
+                <Text>Number of Sub Jobs</Text>
+              </Pressable>
+              <View style={styles.line} />
+              <Pressable
+                style={styles.rowSort}
+                onPress={() => {
+                  if (initialFilter === 1) {
+                    setInitialFilter(2);
+                    setSort(`?es=${initialFilter}`);
+                    setShowPopover(false);
+                  } else {
+                    setInitialFilter(1);
+                    setSort(`?es=${initialFilter}`);
+                    setShowPopover(false);
+                  }
+                }}>
+                <Text>Upcoming Deadline</Text>
+              </Pressable>
+            </Popover>
           </View>
-
-          {/* Subjob  */}
-          <View style={{...styles.flexRow, marginTop: 10}}>
-            <Text style={{fontSize: 12}}>SUB JOBS</Text>
-            <View style={styles.rowSubjob}>
-              <View style={styles.rowButton}>
+        </View>
+        <Collapsible collapsed={collapse}>
+          <View style={styles.containerCollapse}>
+            {/* Activity */}
+            <View style={styles.flexRow}>
+              <Text style={{fontSize: 12}}>ACTIVITY</Text>
+              <View style={styles.rowActivity}>
                 <View
                   style={{
                     ...styles.btnActivity,
-                    flex: 1,
-                    backgroundColor: subjob === 'b=1' ? 'white' : 'transparent',
+                    flex: 0.6,
+                    backgroundColor:
+                      activity === 'a=1' ? 'white' : 'transparent',
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      setSubjob('b=1');
-                      setFilter({...filter, b: 'b=1'});
+                      setActivity('a=1');
+                      setFilter({...filter, a: 'a=1'});
                     }}>
                     <Text
                       style={{
                         fontSize: 10,
-                        color: subjob === 'b=1' ? 'black' : 'white',
+                        color: activity === 'a=1' ? 'black' : 'white',
                       }}>
-                      ALL
+                      All
                     </Text>
                   </TouchableOpacity>
                 </View>
                 <View
                   style={{
                     ...styles.btnActivity,
-                    flex: 1,
-                    backgroundColor: subjob === 'b=2' ? 'white' : 'transparent',
+                    flex: 0.8,
+                    backgroundColor:
+                      activity === 'a=2' ? 'white' : 'transparent',
                   }}>
                   <TouchableOpacity
                     onPress={() => {
-                      setSubjob('b=2');
-                      setFilter({...filter, b: 'b=2'});
+                      setActivity('a=2');
+                      setFilter({...filter, a: 'a=2'});
                     }}>
                     <Text
                       style={{
                         fontSize: 10,
-                        color: subjob === 'b=2' ? 'black' : 'white',
+                        color: activity === 'a=2' ? 'black' : 'white',
                       }}>
                       ACTIVE
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
-              <View style={styles.inputMinMax}>
-                <TextInput
-                  placeholderTextColor="grey"
-                  keyboardType="number-pad"
-                  placeholder="Min"
+                <View
                   style={{
-                    fontSize: 10,
-                  }}
-                  maxLength={2}
-                  value={subJobMin}
-                  onChangeText={(text) => setSubJobMin(text)}
-                  onEndEditing={() => {
-                    if (subJobMin === '') {
-                      setFilter({...filter, bmin: null});
-                    } else {
-                      setFilter({...filter, bmin: `bmin=${subJobMin}`});
-                    }
-                  }}
-                />
-              </View>
-              <Text style={{fontSize: 10, marginLeft: 5}}>To</Text>
-              <View style={styles.inputMinMax}>
-                <TextInput
-                  placeholderTextColor="grey"
-                  keyboardType="number-pad"
-                  placeholder="Max"
-                  maxLength={2}
-                  style={{fontSize: 10, width: '100%'}}
-                  value={subJobMax}
-                  onChangeText={(text) => setsubJobMax(text)}
-                  onEndEditing={() => {
-                    if (subJobMax === '') {
-                      setFilter({...filter, bmax: null});
-                    } else {
-                      setFilter({...filter, bmax: `bmax=${subJobMax}`});
-                    }
-                  }}
-                />
-              </View>
-            </View>
-          </View>
-
-          {/* Deadline */}
-          <View style={{...styles.flexRow, marginTop: 10}}>
-            <Text style={{fontSize: 12}}>Deadline</Text>
-            <View style={styles.rowSubjob}>
-              <Pressable
-                style={styles.fieldDeadline}
-                onPress={() => setShowPopDeadlineStart(true)}>
-                <View>
-                  <Text style={{fontSize: 10}}>
-                    {switchDateStart ? placeHolderDateStart : 'None'}
-                  </Text>
-                </View>
-                <Popover
-                  onRequestClose={() => setShowPopDeadlineStart(false)}
-                  isVisible={showPopDeadlineStart}
-                  popoverStyle={styles.containerPopOver}
-                  placement={PopoverPlacement.BOTTOM}
-                  from={
-                    <TouchableOpacity onPress={() => setShowPopover(true)}>
-                      <Image
-                        source={ArrowDown}
-                        style={{height: 5, width: 10}}
-                      />
-                    </TouchableOpacity>
-                  }>
-                  <View style={{alignSelf: 'flex-end', flexDirection: 'row'}}>
+                    ...styles.btnActivity,
+                    flex: 0.9,
+                    backgroundColor:
+                      activity === 'a=3' ? 'white' : 'transparent',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setActivity('a=3');
+                      setFilter({...filter, a: 'a=3'});
+                    }}>
                     <Text
                       style={{
-                        fontFamily: fonts.SFProDisplayMedium,
-                        fontSize: 12,
+                        fontSize: 10,
+                        color: activity === 'a=3' ? 'black' : 'white',
                       }}>
-                      {switchDateStart ? placeHolderDateStart : 'Set Date'}
+                      INACTIVE
                     </Text>
-                    <Pressable
-                      onPress={() => {
-                        if (switchDateStart == false) {
-                          setSwitchDateStart(!switchDateStart);
-                          dateStart(defaultDate);
-                          setDateStart(defaultDate);
-                        } else {
-                          setSwitchDateStart(!switchDateStart);
-                          dateStart('');
-                        }
-                      }}>
-                      <Image
-                        source={!switchDateStart ? SwitchDefault : SwitchActive}
-                        style={styles.iconSwitch}
-                      />
-                    </Pressable>
-                  </View>
-                  <View style={styles.line} />
-                  <Calendar
-                    theme={{
-                      backgroundColor: 'transparent',
-                      calendarBackground: 'transparent',
-                      textSectionTitleColor: 'black',
-                      textSectionTitleDisabledColor: '#d9e1e8',
-                      selectedDayTextColor: '#ffffff',
-                      todayTextColor: '#00adf5',
-                      dayTextColor: '#2d4150',
-                      textDisabledColor: '#d9e1e8',
-                      dotColor: '#00adf5',
-                      selectedDotColor: '#ffffff',
-                      arrowColor: 'blue',
-                      disabledArrowColor: '#d9e1e8',
-                      monthTextColor: 'black',
-                      indicatorColor: 'blue',
-                      textDayFontFamily: 'monospace',
-                      textMonthFontFamily: 'monospace',
-                      textDayHeaderFontFamily: 'monospace',
-                      textDayFontWeight: '300',
-                      textMonthFontWeight: 'bold',
-                      textDayHeaderFontWeight: '300',
-                      textDayFontSize: 14,
-                      textMonthFontSize: 14,
-                      textDayHeaderFontSize: 14,
-                      selectedDayBackgroundColor: '#40a1f8',
-                      'stylesheet.day.basic': {
-                        base: {
-                          width: 30,
-                          height: 30,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                      },
-                    }}
-                    onDayPress={(day) => {
-                      setSwitchDateStart(true);
-                      dateStart(day.dateString);
-                      setFilter({...filter, cmin: `cmin=${day.dateString}`});
-                    }}
-                    markedDates={markedDatesStart}
-                  />
-                </Popover>
-              </Pressable>
-              <Text style={{marginHorizontal: 10, fontSize: 10}}>To</Text>
-              <Pressable
-                style={styles.fieldDeadline}
-                onPress={() => setShowPopDeadlineEnd(true)}>
-                <View>
-                  <Text style={{fontSize: 10}}>
-                    {switchDateEnd ? placeHolderDateEnd : 'None'}
-                  </Text>
+                  </TouchableOpacity>
                 </View>
-                <Popover
-                  onRequestClose={() => setShowPopDeadlineEnd(false)}
-                  isVisible={showPopDeadlineEnd}
-                  popoverStyle={styles.containerPopOver}
-                  placement={PopoverPlacement.BOTTOM}
-                  from={
+                <View
+                  style={{
+                    ...styles.btnActivity,
+                    width: 75,
+                    backgroundColor:
+                      activity === 'a=4' ? 'white' : 'transparent',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setActivity('a=4');
+                      setFilter({...filter, a: 'a=4'});
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        color: activity === 'a=4' ? 'black' : 'white',
+                      }}>
+                      DEACTIVATED
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+
+            {/* Subjob  */}
+            <View style={{...styles.flexRow, marginTop: 10}}>
+              <Text style={{fontSize: 12}}>SUB JOBS</Text>
+              <View style={styles.rowSubjob}>
+                <View style={styles.rowButton}>
+                  <View
+                    style={{
+                      ...styles.btnActivity,
+                      flex: 1,
+                      backgroundColor:
+                        subjob === 'b=1' ? 'white' : 'transparent',
+                    }}>
                     <TouchableOpacity
-                      onPress={() => setShowPopDeadlineEnd(true)}>
-                      <Image
-                        source={ArrowDown}
-                        style={{height: 5, width: 10}}
-                      />
-                    </TouchableOpacity>
-                  }>
-                  <View style={{alignSelf: 'flex-end', flexDirection: 'row'}}>
-                    <Text
-                      style={{
-                        fontFamily: fonts.SFProDisplayMedium,
-                        fontSize: 12,
-                      }}>
-                      {switchDateEnd ? placeHolderDateEnd : ' Set Date'}
-                    </Text>
-                    <Pressable
                       onPress={() => {
-                        if (switchDateEnd == false) {
-                          setSwitchDateEnd(!switchDateEnd);
-                          dateEnd(defaultDate);
-                          setDateEnd(defaultDate);
-                        } else {
-                          setSwitchDateEnd(!switchDateEnd);
-                          dateEnd('');
-                        }
+                        setSubjob('b=1');
+                        setFilter({...filter, b: 'b=1'});
                       }}>
-                      <Image
-                        source={!switchDateEnd ? SwitchDefault : SwitchActive}
-                        style={styles.iconSwitch}
-                      />
-                    </Pressable>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: subjob === 'b=1' ? 'black' : 'white',
+                        }}>
+                        ALL
+                      </Text>
+                    </TouchableOpacity>
                   </View>
-                  <View style={styles.line} />
-                  <Calendar
-                    theme={{
-                      backgroundColor: 'transparent',
-                      calendarBackground: 'transparent',
-                      textSectionTitleColor: 'black',
-                      textSectionTitleDisabledColor: '#d9e1e8',
-                      selectedDayBackgroundColor: '#00adf5',
-                      selectedDayTextColor: '#ffffff',
-                      todayTextColor: '#00adf5',
-                      dayTextColor: '#2d4150',
-                      textDisabledColor: '#d9e1e8',
-                      dotColor: '#00adf5',
-                      selectedDotColor: '#ffffff',
-                      arrowColor: 'blue',
-                      disabledArrowColor: '#d9e1e8',
-                      monthTextColor: 'black',
-                      indicatorColor: 'blue',
-                      textDayFontFamily: 'monospace',
-                      textMonthFontFamily: 'monospace',
-                      textDayHeaderFontFamily: 'monospace',
-                      textDayFontWeight: '300',
-                      textMonthFontWeight: 'bold',
-                      textDayHeaderFontWeight: '300',
-                      textDayFontSize: 14,
-                      textMonthFontSize: 14,
-                      textDayHeaderFontSize: 14,
-                      'stylesheet.day.basic': {
-                        base: {
-                          width: 30,
-                          height: 30,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        },
-                      },
-                    }}
-                    onDayPress={(day) => {
-                      dateEnd(day.dateString);
-                      setSwitchDateEnd(true);
-                      setFilter({...filter, cmax: `cmax=${day.dateString}`});
-                    }}
-                    markedDates={markedDatesEnd}
-                  />
-                </Popover>
-              </Pressable>
-            </View>
-          </View>
-
-          {/* coadmin */}
-          <View style={{...styles.flexRow, marginTop: 10}}>
-            <Text style={{fontSize: 12}}>CO-ADMIN</Text>
-
-            <Popover
-              placement={PopoverPlacement.BOTTOM}
-              popoverStyle={styles.containerPopCoadmin}
-              from={
-                <TouchableOpacity style={styles.btnLeader}>
-                  <Text style={{fontSize: 10}}>
-                    {checkCoAdmin === '' ? 'NONE' : checkCoAdmin.name}{' '}
-                  </Text>
-                  <Image source={ArrowDown} style={{height: 5, width: 10}} />
-                </TouchableOpacity>
-              }>
-              <View style={styles.containerBoxPop}>
-                <View style={styles.formSearch}>
-                  <TextInput
-                    placeholder="Search"
-                    onChangeText={(search) => setSearch(search)}
-                    onSubmitEditing={searchName}
-                  />
-                  <Image source={Search} styl={{height: 10, width: 10}} />
+                  <View
+                    style={{
+                      ...styles.btnActivity,
+                      flex: 1,
+                      backgroundColor:
+                        subjob === 'b=2' ? 'white' : 'transparent',
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSubjob('b=2');
+                        setFilter({...filter, b: 'b=2'});
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: subjob === 'b=2' ? 'black' : 'white',
+                        }}>
+                        ACTIVE
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <FlatList
-                  data={searchData.length === 0 ? listDataCrew : searchData}
-                  renderItem={({item}) => {
-                    const {idUser, name, idPt, pt} = item;
-                    return (
-                      <Pressable
-                        style={styles.rowCoadmin}
-                        onPress={() => {
-                          if (idUser === checkCoAdmin.idUser) {
-                            setCheckCoAdmin('');
-                            setFilter({...filter, d: null});
-                          } else {
-                            setCheckCoAdmin({
-                              idUser,
-                              name,
-                              idPt,
-                            });
-                            setFilter({...filter, d: `d=${idUser}`});
-                          }
-                        }}
-                        disabled={checkLeader.idUser == idUser ? true : false}>
-                        <Text
-                          style={{
-                            fontFamily: fonts.SFProDisplayMedium,
-                            color:
-                              checkLeader.idUser == idUser
-                                ? 'lightgrey'
-                                : 'black',
-                          }}>
-                          {name}
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
-                          <Text
-                            style={{
-                              color:
-                                checkLeader.idUser == idUser
-                                  ? 'lightgrey'
-                                  : 'black',
-                            }}>
-                            {pt}
-                          </Text>
-                          <Image
-                            source={
-                              checkCoAdmin.idUser === idUser
-                                ? RadioChecked
-                                : RadioUncheck
-                            }
-                            style={{height: 15, width: 15, marginLeft: 10}}
-                          />
-                        </View>
-                      </Pressable>
-                    );
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                  onEndReached={handleLoadmore}
-                  onEndReachedThreshold={0.01}
-                  ListFooterComponent={
-                    searchData.length === 0 ? renderFooter : null
-                  }
-                />
+                <View style={styles.inputMinMax}>
+                  <TextInput
+                    placeholderTextColor="grey"
+                    keyboardType="number-pad"
+                    placeholder="Min"
+                    style={{
+                      fontSize: 10,
+                    }}
+                    maxLength={2}
+                    value={subJobMin}
+                    onChangeText={(text) => setSubJobMin(text)}
+                    onEndEditing={() => {
+                      if (subJobMin === '') {
+                        setFilter({...filter, bmin: null});
+                      } else {
+                        setFilter({...filter, bmin: `bmin=${subJobMin}`});
+                      }
+                    }}
+                  />
+                </View>
+                <Text style={{fontSize: 10, marginLeft: 5}}>To</Text>
+                <View style={styles.inputMinMax}>
+                  <TextInput
+                    placeholderTextColor="grey"
+                    keyboardType="number-pad"
+                    placeholder="Max"
+                    maxLength={2}
+                    style={{fontSize: 10, width: '100%'}}
+                    value={subJobMax}
+                    onChangeText={(text) => setsubJobMax(text)}
+                    onEndEditing={() => {
+                      if (subJobMax === '') {
+                        setFilter({...filter, bmax: null});
+                      } else {
+                        setFilter({...filter, bmax: `bmax=${subJobMax}`});
+                      }
+                    }}
+                  />
+                </View>
               </View>
-            </Popover>
-          </View>
+            </View>
 
-          {/* Crew */}
-          <View style={{...styles.flexRow, marginTop: 10}}>
-            <Text style={{fontSize: 12}}>CREW</Text>
-            <View style={styles.crewRowContainer}>
-              <View style={{...styles.inputMinMax, marginLeft: 0}}>
-                <TextInput
-                  placeholderTextColor="grey"
-                  keyboardType="number-pad"
-                  placeholder="Min"
-                  style={{fontSize: 10}}
-                  maxLength={2}
-                  value={minCrew}
-                  onChangeText={(text) => setMinCrew(text)}
-                  onEndEditing={() => {
-                    setFilter({...filter, emin: `emin=${minCrew}`});
-                  }}
-                />
-              </View>
-              <Text style={{fontSize: 10, marginLeft: 10}}>To</Text>
-              <View style={styles.inputMinMax}>
-                <TextInput
-                  placeholderTextColor="grey"
-                  keyboardType="number-pad"
-                  placeholder="Max"
-                  style={{fontSize: 10}}
-                  maxLength={2}
-                  value={maxCrew}
-                  onChangeText={(text) => setMaxCrew(text)}
-                  onEndEditing={() => {
-                    setFilter({...filter, emax: `emax=${maxCrew}`});
-                  }}
-                />
-              </View>
-              <Popover
-                popoverStyle={styles.containerPopCoadmin}
-                placement={PopoverPlacement.BOTTOM}
-                from={
-                  <TouchableOpacity style={styles.ChosePt}>
+            {/* Deadline */}
+            <View style={{...styles.flexRow, marginTop: 10}}>
+              <Text style={{fontSize: 12}}>Deadline</Text>
+              <View style={styles.rowSubjob}>
+                <Pressable
+                  style={styles.fieldDeadline}
+                  onPress={() => setShowPopDeadlineStart(true)}>
+                  <View>
                     <Text style={{fontSize: 10}}>
-                      {checkPt.length === 0
-                        ? 'None'
-                        : checkPt.length > 1
-                        ? `${checkPt.length} Pt's`
-                        : `${checkPt.length} Pt`}{' '}
+                      {switchDateStart ? placeHolderDateStart : 'None'}
+                    </Text>
+                  </View>
+                  <Popover
+                    onRequestClose={() => setShowPopDeadlineStart(false)}
+                    isVisible={showPopDeadlineStart}
+                    popoverStyle={styles.containerPopOver}
+                    placement={PopoverPlacement.BOTTOM}
+                    from={
+                      <TouchableOpacity onPress={() => setShowPopover(true)}>
+                        <Image
+                          source={ArrowDown}
+                          style={{height: 5, width: 10}}
+                        />
+                      </TouchableOpacity>
+                    }>
+                    <View style={{alignSelf: 'flex-end', flexDirection: 'row'}}>
+                      <Text
+                        style={{
+                          fontFamily: fonts.SFProDisplayMedium,
+                          fontSize: 12,
+                        }}>
+                        {switchDateStart ? placeHolderDateStart : 'Set Date'}
+                      </Text>
+                      <Pressable
+                        onPress={() => {
+                          if (switchDateStart == false) {
+                            setSwitchDateStart(!switchDateStart);
+                            dateStart(defaultDate);
+                            setDateStart(defaultDate);
+                          } else {
+                            setSwitchDateStart(!switchDateStart);
+                            dateStart('');
+                          }
+                        }}>
+                        <Image
+                          source={
+                            !switchDateStart ? SwitchDefault : SwitchActive
+                          }
+                          style={styles.iconSwitch}
+                        />
+                      </Pressable>
+                    </View>
+                    <View style={styles.line} />
+                    <Calendar
+                      theme={{
+                        backgroundColor: 'transparent',
+                        calendarBackground: 'transparent',
+                        textSectionTitleColor: 'black',
+                        textSectionTitleDisabledColor: '#d9e1e8',
+                        selectedDayTextColor: '#ffffff',
+                        todayTextColor: '#00adf5',
+                        dayTextColor: '#2d4150',
+                        textDisabledColor: '#d9e1e8',
+                        dotColor: '#00adf5',
+                        selectedDotColor: '#ffffff',
+                        arrowColor: 'blue',
+                        disabledArrowColor: '#d9e1e8',
+                        monthTextColor: 'black',
+                        indicatorColor: 'blue',
+                        textDayFontFamily: 'monospace',
+                        textMonthFontFamily: 'monospace',
+                        textDayHeaderFontFamily: 'monospace',
+                        textDayFontWeight: '300',
+                        textMonthFontWeight: 'bold',
+                        textDayHeaderFontWeight: '300',
+                        textDayFontSize: 14,
+                        textMonthFontSize: 14,
+                        textDayHeaderFontSize: 14,
+                        selectedDayBackgroundColor: '#40a1f8',
+                        'stylesheet.day.basic': {
+                          base: {
+                            width: 30,
+                            height: 30,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          },
+                        },
+                      }}
+                      onDayPress={(day) => {
+                        setSwitchDateStart(true);
+                        dateStart(day.dateString);
+                        setFilter({...filter, cmin: `cmin=${day.dateString}`});
+                      }}
+                      markedDates={markedDatesStart}
+                    />
+                  </Popover>
+                </Pressable>
+                <Text style={{marginHorizontal: 10, fontSize: 10}}>To</Text>
+                <Pressable
+                  style={styles.fieldDeadline}
+                  onPress={() => setShowPopDeadlineEnd(true)}>
+                  <View>
+                    <Text style={{fontSize: 10}}>
+                      {switchDateEnd ? placeHolderDateEnd : 'None'}
+                    </Text>
+                  </View>
+                  <Popover
+                    onRequestClose={() => setShowPopDeadlineEnd(false)}
+                    isVisible={showPopDeadlineEnd}
+                    popoverStyle={styles.containerPopOver}
+                    placement={PopoverPlacement.BOTTOM}
+                    from={
+                      <TouchableOpacity
+                        onPress={() => setShowPopDeadlineEnd(true)}>
+                        <Image
+                          source={ArrowDown}
+                          style={{height: 5, width: 10}}
+                        />
+                      </TouchableOpacity>
+                    }>
+                    <View style={{alignSelf: 'flex-end', flexDirection: 'row'}}>
+                      <Text
+                        style={{
+                          fontFamily: fonts.SFProDisplayMedium,
+                          fontSize: 12,
+                        }}>
+                        {switchDateEnd ? placeHolderDateEnd : ' Set Date'}
+                      </Text>
+                      <Pressable
+                        onPress={() => {
+                          if (switchDateEnd == false) {
+                            setSwitchDateEnd(!switchDateEnd);
+                            dateEnd(defaultDate);
+                            setDateEnd(defaultDate);
+                          } else {
+                            setSwitchDateEnd(!switchDateEnd);
+                            dateEnd('');
+                          }
+                        }}>
+                        <Image
+                          source={!switchDateEnd ? SwitchDefault : SwitchActive}
+                          style={styles.iconSwitch}
+                        />
+                      </Pressable>
+                    </View>
+                    <View style={styles.line} />
+                    <Calendar
+                      theme={{
+                        backgroundColor: 'transparent',
+                        calendarBackground: 'transparent',
+                        textSectionTitleColor: 'black',
+                        textSectionTitleDisabledColor: '#d9e1e8',
+                        selectedDayBackgroundColor: '#00adf5',
+                        selectedDayTextColor: '#ffffff',
+                        todayTextColor: '#00adf5',
+                        dayTextColor: '#2d4150',
+                        textDisabledColor: '#d9e1e8',
+                        dotColor: '#00adf5',
+                        selectedDotColor: '#ffffff',
+                        arrowColor: 'blue',
+                        disabledArrowColor: '#d9e1e8',
+                        monthTextColor: 'black',
+                        indicatorColor: 'blue',
+                        textDayFontFamily: 'monospace',
+                        textMonthFontFamily: 'monospace',
+                        textDayHeaderFontFamily: 'monospace',
+                        textDayFontWeight: '300',
+                        textMonthFontWeight: 'bold',
+                        textDayHeaderFontWeight: '300',
+                        textDayFontSize: 14,
+                        textMonthFontSize: 14,
+                        textDayHeaderFontSize: 14,
+                        'stylesheet.day.basic': {
+                          base: {
+                            width: 30,
+                            height: 30,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          },
+                        },
+                      }}
+                      onDayPress={(day) => {
+                        dateEnd(day.dateString);
+                        setSwitchDateEnd(true);
+                        setFilter({...filter, cmax: `cmax=${day.dateString}`});
+                      }}
+                      markedDates={markedDatesEnd}
+                    />
+                  </Popover>
+                </Pressable>
+              </View>
+            </View>
+
+            {/* coadmin */}
+            <View style={{...styles.flexRow, marginTop: 10}}>
+              <Text style={{fontSize: 12}}>CO-ADMIN</Text>
+
+              <Popover
+                placement={PopoverPlacement.BOTTOM}
+                popoverStyle={styles.containerPopCoadmin}
+                from={
+                  <TouchableOpacity style={styles.btnLeader}>
+                    <Text style={{fontSize: 10}}>
+                      {checkCoAdmin === '' ? 'NONE' : checkCoAdmin.name}{' '}
                     </Text>
                     <Image source={ArrowDown} style={{height: 5, width: 10}} />
                   </TouchableOpacity>
@@ -1042,228 +927,361 @@ const ViewJob = ({
                 <View style={styles.containerBoxPop}>
                   <View style={styles.formSearch}>
                     <TextInput
-                      placeholderTextColor="grey"
                       placeholder="Search"
-                      value={namePt}
-                      onChangeText={(text) => setNamePt(text)}
-                      onEndEditing={() => {
-                        filterItems(namePt);
-                      }}
+                      onChangeText={(search) => setSearch(search)}
+                      onSubmitEditing={searchName}
                     />
                     <Image source={Search} styl={{height: 10, width: 10}} />
                   </View>
                   <FlatList
-                    data={listPt}
+                    data={searchData.length === 0 ? listDataCrew : searchData}
                     renderItem={({item}) => {
-                      const {id, pt} = item;
-                      var foundValue =
-                        checkPt.length > 0 &&
-                        checkPt.filter((obj) => obj.id === id);
+                      const {idUser, name, idPt, pt} = item;
                       return (
                         <Pressable
+                          style={styles.rowCoadmin}
                           onPress={() => {
-                            addListPt(id, pt);
+                            if (idUser === checkCoAdmin.idUser) {
+                              setCheckCoAdmin('');
+                              setFilter({...filter, d: null});
+                            } else {
+                              setCheckCoAdmin({
+                                idUser,
+                                name,
+                                idPt,
+                              });
+                              setFilter({...filter, d: `d=${idUser}`});
+                            }
                           }}
-                          style={{
-                            flexDirection: 'row',
-                            marginBottom: 10,
-                            justifyContent: 'space-between',
-                            marginHorizontal: 20,
-                          }}>
+                          disabled={
+                            checkLeader.idUser == idUser ? true : false
+                          }>
                           <Text
                             style={{
                               fontFamily: fonts.SFProDisplayMedium,
+                              color:
+                                checkLeader.idUser == idUser
+                                  ? 'lightgrey'
+                                  : 'black',
                             }}>
-                            {pt}
+                            {name}
                           </Text>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
                             }}>
+                            <Text
+                              style={{
+                                color:
+                                  checkLeader.idUser == idUser
+                                    ? 'lightgrey'
+                                    : 'black',
+                              }}>
+                              {pt}
+                            </Text>
                             <Image
                               source={
-                                foundValue.length > 0
-                                  ? foundValue[0].id
-                                    ? CheckActive
-                                    : null
-                                  : null
+                                checkCoAdmin.idUser === idUser
+                                  ? RadioChecked
+                                  : RadioUncheck
                               }
-                              style={{height: 10, width: 15, marginLeft: 10}}
+                              style={{height: 15, width: 15, marginLeft: 10}}
                             />
                           </View>
                         </Pressable>
                       );
                     }}
                     keyExtractor={(item, index) => index.toString()}
+                    onEndReached={handleLoadmore}
+                    onEndReachedThreshold={0.01}
+                    ListFooterComponent={
+                      searchData.length === 0 ? renderFooter : null
+                    }
                   />
                 </View>
               </Popover>
             </View>
-          </View>
 
-          {/* Leader */}
-          <View style={{...styles.flexRow, marginTop: 10}}>
-            <Text style={{fontSize: 12}}>LEADER</Text>
-            <Popover
-              popoverStyle={styles.containerPopCoadmin}
-              placement={PopoverPlacement.BOTTOM}
-              from={
-                <TouchableOpacity style={styles.btnLeader}>
-                  <Text style={{fontSize: 10}}>
-                    {checkLeader === '' ? 'NONE' : checkLeader.name}
-                  </Text>
-                  <Image source={ArrowDown} style={{height: 5, width: 10}} />
-                </TouchableOpacity>
-              }>
-              <View style={styles.containerBoxPop}>
-                <View style={styles.formSearch}>
+            {/* Crew */}
+            <View style={{...styles.flexRow, marginTop: 10}}>
+              <Text style={{fontSize: 12}}>CREW</Text>
+              <View style={styles.crewRowContainer}>
+                <View style={{...styles.inputMinMax, marginLeft: 0}}>
                   <TextInput
-                    placeholder="Search"
-                    onChangeText={(search) => setSearch(search)}
-                    onSubmitEditing={searchName}
+                    placeholderTextColor="grey"
+                    keyboardType="number-pad"
+                    placeholder="Min"
+                    style={{fontSize: 10}}
+                    maxLength={2}
+                    value={minCrew}
+                    onChangeText={(text) => setMinCrew(text)}
+                    onEndEditing={() => {
+                      setFilter({...filter, emin: `emin=${minCrew}`});
+                    }}
                   />
-                  <Image source={Search} styl={{height: 10, width: 10}} />
                 </View>
-                <FlatList
-                  data={searchData.length === 0 ? listDataCrew : searchData}
-                  renderItem={({item}) => {
-                    const {name, idUser, pt} = item;
-                    return (
-                      <Pressable
-                        style={styles.rowLeader}
-                        onPress={() => {
-                          if (idUser === checkLeader.idUser) {
-                            setCheckLeader('');
-                            setFilter({...filter, g: null});
-                          } else {
-                            setCheckLeader({idUser, name});
-                            setFilter({
-                              ...filter,
-                              g: `g=${idUser}`,
-                            });
-                          }
+                <Text style={{fontSize: 10, marginLeft: 10}}>To</Text>
+                <View style={styles.inputMinMax}>
+                  <TextInput
+                    placeholderTextColor="grey"
+                    keyboardType="number-pad"
+                    placeholder="Max"
+                    style={{fontSize: 10}}
+                    maxLength={2}
+                    value={maxCrew}
+                    onChangeText={(text) => setMaxCrew(text)}
+                    onEndEditing={() => {
+                      setFilter({...filter, emax: `emax=${maxCrew}`});
+                    }}
+                  />
+                </View>
+                <Popover
+                  popoverStyle={styles.containerPopCoadmin}
+                  placement={PopoverPlacement.BOTTOM}
+                  from={
+                    <TouchableOpacity style={styles.ChosePt}>
+                      <Text style={{fontSize: 10}}>
+                        {checkPt.length === 0
+                          ? 'None'
+                          : checkPt.length > 1
+                          ? `${checkPt.length} Pt's`
+                          : `${checkPt.length} Pt`}{' '}
+                      </Text>
+                      <Image
+                        source={ArrowDown}
+                        style={{height: 5, width: 10}}
+                      />
+                    </TouchableOpacity>
+                  }>
+                  <View style={styles.containerBoxPop}>
+                    <View style={styles.formSearch}>
+                      <TextInput
+                        placeholderTextColor="grey"
+                        placeholder="Search"
+                        value={namePt}
+                        onChangeText={(text) => setNamePt(text)}
+                        onEndEditing={() => {
+                          filterItems(namePt);
                         }}
-                        disabled={checkCoAdmin.idUser == idUser ? true : false}>
-                        <Text
-                          style={{
-                            fontFamily: fonts.SFProDisplayMedium,
-                            color:
-                              checkCoAdmin.idUser == idUser
-                                ? 'lightgrey'
-                                : 'black',
-                          }}>
-                          {name}
-                        </Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
+                      />
+                      <Image source={Search} styl={{height: 10, width: 10}} />
+                    </View>
+                    <FlatList
+                      data={listPt}
+                      renderItem={({item}) => {
+                        const {id, pt} = item;
+                        var foundValue =
+                          checkPt.length > 0 &&
+                          checkPt.filter((obj) => obj.id === id);
+                        return (
+                          <Pressable
+                            onPress={() => {
+                              addListPt(id, pt);
+                            }}
+                            style={{
+                              flexDirection: 'row',
+                              marginBottom: 10,
+                              justifyContent: 'space-between',
+                              marginHorizontal: 20,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: fonts.SFProDisplayMedium,
+                              }}>
+                              {pt}
+                            </Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Image
+                                source={
+                                  foundValue.length > 0
+                                    ? foundValue[0].id
+                                      ? CheckActive
+                                      : null
+                                    : null
+                                }
+                                style={{height: 10, width: 15, marginLeft: 10}}
+                              />
+                            </View>
+                          </Pressable>
+                        );
+                      }}
+                      keyExtractor={(item, index) => index.toString()}
+                    />
+                  </View>
+                </Popover>
+              </View>
+            </View>
+
+            {/* Leader */}
+            <View style={{...styles.flexRow, marginTop: 10}}>
+              <Text style={{fontSize: 12}}>LEADER</Text>
+              <Popover
+                popoverStyle={styles.containerPopCoadmin}
+                placement={PopoverPlacement.BOTTOM}
+                from={
+                  <TouchableOpacity style={styles.btnLeader}>
+                    <Text style={{fontSize: 10}}>
+                      {checkLeader === '' ? 'NONE' : checkLeader.name}
+                    </Text>
+                    <Image source={ArrowDown} style={{height: 5, width: 10}} />
+                  </TouchableOpacity>
+                }>
+                <View style={styles.containerBoxPop}>
+                  <View style={styles.formSearch}>
+                    <TextInput
+                      placeholder="Search"
+                      onChangeText={(search) => setSearch(search)}
+                      onSubmitEditing={searchName}
+                    />
+                    <Image source={Search} styl={{height: 10, width: 10}} />
+                  </View>
+                  <FlatList
+                    data={searchData.length === 0 ? listDataCrew : searchData}
+                    renderItem={({item}) => {
+                      const {name, idUser, pt} = item;
+                      return (
+                        <Pressable
+                          style={styles.rowLeader}
+                          onPress={() => {
+                            if (idUser === checkLeader.idUser) {
+                              setCheckLeader('');
+                              setFilter({...filter, g: null});
+                            } else {
+                              setCheckLeader({idUser, name});
+                              setFilter({
+                                ...filter,
+                                g: `g=${idUser}`,
+                              });
+                            }
+                          }}
+                          disabled={
+                            checkCoAdmin.idUser == idUser ? true : false
+                          }>
                           <Text
                             style={{
+                              fontFamily: fonts.SFProDisplayMedium,
                               color:
                                 checkCoAdmin.idUser == idUser
                                   ? 'lightgrey'
                                   : 'black',
                             }}>
-                            {pt}
+                            {name}
                           </Text>
-                          <Image
-                            source={
-                              checkLeader.idUser === idUser
-                                ? RadioChecked
-                                : RadioUncheck
-                            }
-                            style={{height: 15, width: 15, marginLeft: 10}}
-                          />
-                        </View>
-                      </Pressable>
-                    );
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                  onEndReached={handleLoadmore}
-                  onEndReachedThreshold={0.01}
-                  ListFooterComponent={
-                    searchData.length === 0 ? renderFooter : null
-                  }
-                />
-              </View>
-            </Popover>
-          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                color:
+                                  checkCoAdmin.idUser == idUser
+                                    ? 'lightgrey'
+                                    : 'black',
+                              }}>
+                              {pt}
+                            </Text>
+                            <Image
+                              source={
+                                checkLeader.idUser === idUser
+                                  ? RadioChecked
+                                  : RadioUncheck
+                              }
+                              style={{height: 15, width: 15, marginLeft: 10}}
+                            />
+                          </View>
+                        </Pressable>
+                      );
+                    }}
+                    keyExtractor={(item, index) => index.toString()}
+                    onEndReached={handleLoadmore}
+                    onEndReachedThreshold={0.01}
+                    ListFooterComponent={
+                      searchData.length === 0 ? renderFooter : null
+                    }
+                  />
+                </View>
+              </Popover>
+            </View>
 
-          {/* ButtonAction */}
-          <View style={styles.btnActionContainer}>
-            <View style={{...styles.btnBottom, borderColor: 'blue'}}>
-              <TouchableOpacity
-                style={styles.touchRange}
-                onPress={() => {
-                  handleFilter();
+            {/* ButtonAction */}
+            <View style={styles.btnActionContainer}>
+              <View style={{...styles.btnBottom, borderColor: 'blue'}}>
+                <TouchableOpacity
+                  style={styles.touchRange}
+                  onPress={() => {
+                    handleFilter();
+                  }}>
+                  <Text style={{color: 'blue'}}>APPLY</Text>
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  ...styles.btnBottom,
+                  marginHorizontal: 10,
+                  borderColor: 'blue',
                 }}>
-                <Text style={{color: 'blue'}}>APPLY</Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                ...styles.btnBottom,
-                marginHorizontal: 10,
-                borderColor: 'blue',
-              }}>
-              <TouchableOpacity
-                style={styles.touchRange}
-                onPress={() => {
-                  handleReset();
-                }}>
-                <Text style={{color: 'blue'}}>RESET</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{...styles.btnBottom, borderColor: 'red'}}>
-              <TouchableOpacity
-                style={styles.touchRange}
-                onPress={() => {
-                  handleReset();
-                  setCollapse(true);
-                }}>
-                <Text style={{color: 'red'}}>CANCEL</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.touchRange}
+                  onPress={() => {
+                    handleReset();
+                  }}>
+                  <Text style={{color: 'blue'}}>RESET</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{...styles.btnBottom, borderColor: 'red'}}>
+                <TouchableOpacity
+                  style={styles.touchRange}
+                  onPress={() => {
+                    handleReset();
+                    setCollapse(true);
+                  }}>
+                  <Text style={{color: 'red'}}>CANCEL</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Collapsible>
-      <View style={styles.flexRow}>
-        <Animated.View
-          style={{
-            ...styles.searchInput,
-            width: widthValue,
-          }}>
-          <Image source={Search} style={styles.iconSearch} />
-          <TextInput
-            placeholderTextColor="grey"
-            placeholder="Search"
-            style={{width: '100%'}}
-            onEndEditing={() => {
-              handleEnd();
-            }}
-            onFocus={() => {
-              handleOnFocus();
-            }}
-          />
-        </Animated.View>
-        {isFocused ? (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              Keyboard.dismiss();
-              handleEnd();
+        </Collapsible>
+        <View style={styles.flexRow}>
+          <Animated.View
+            style={{
+              ...styles.searchInput,
+              width: widthValue,
             }}>
-            <Text style={styles.cancleStyle}>Cancel</Text>
-          </TouchableOpacity>
-        ) : null}
-      </View>
-      <ActiveJobs navigation={navigation} />
-      <InActiveJob navigation={navigation} />
-      <DeactiveJob navigation={navigation} />
-    </ScrollView>
+            <Image source={Search} style={styles.iconSearch} />
+            <TextInput
+              placeholderTextColor="grey"
+              placeholder="Search"
+              style={{width: '100%'}}
+              onEndEditing={() => {
+                handleEnd();
+              }}
+              onFocus={() => {
+                handleOnFocus();
+              }}
+            />
+          </Animated.View>
+          {isFocused ? (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                Keyboard.dismiss();
+                handleEnd();
+              }}>
+              <Text style={styles.cancleStyle}>Cancel</Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+        <ActiveJobs navigation={navigation} />
+        <InActiveJob navigation={navigation} />
+        <DeactiveJob navigation={navigation} />
+      </ScrollView>
+    </Root>
   );
 };
 

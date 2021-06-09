@@ -196,6 +196,9 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
   const [optionRemind, setOptionRemind] = useState('');
   const [stopable, setStopable] = useState(false);
 
+  const [modalViewImage, setModalViewImage] = useState(false);
+  const [viewImage, setViewImage] = useState('');
+
   //---------------------End of State-------------------------
 
   useEffect(() => {
@@ -843,6 +846,18 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               if (switchDate === true && switchHour === true) {
                 setCollapseDeadline(!collapseDeadline);
                 setCollapseDeadlineHour(!collapseDeadlineHour);
+              } else if (
+                switchDate === false &&
+                switchHour === false &&
+                collapseDeadline === false &&
+                collapseDeadlineHour === false
+              ) {
+                setCollapseDeadline(!collapseDeadline);
+                setCollapseDeadlineHour(!collapseDeadlineHour);
+                setSwitchDate(false);
+                setSwitchHour(false);
+                OptionDate(today);
+                setOption('today');
               } else if (switchDate === false && switchHour === false) {
                 setCollapseDeadline(!collapseDeadline);
                 setCollapseDeadlineHour(!collapseDeadlineHour);
@@ -1436,9 +1451,15 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
             <ScrollView style={styles.rowImage} horizontal={true}>
               {images
                 ? images.map((i) => (
-                    <View style={{alignSelf: 'center'}} key={i.uri}>
+                    <TouchableOpacity
+                      style={{alignSelf: 'center'}}
+                      key={i.uri}
+                      onPress={() => {
+                        setModalViewImage(true);
+                        setViewImage(i);
+                      }}>
                       {renderAsset(i)}
-                    </View>
+                    </TouchableOpacity>
                   ))
                 : null}
             </ScrollView>
@@ -1796,6 +1817,21 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               <Image source={Galery} style={{height: 50, width: 50}} />
               <Text>Galery</Text>
             </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal view Image */}
+      <Modal
+        isVisible={modalViewImage}
+        transparent={true}
+        hasBackdrop={true}
+        onBackdropPress={() => {
+          setModalViewImage(false);
+        }}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View>
+            <Image source={viewImage} style={{height: 500, width: 400}} />
           </View>
         </View>
       </Modal>

@@ -9,6 +9,7 @@ import {
   ToastAndroid,
   Pressable,
   Platform,
+  Dimensions,
 } from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
@@ -44,6 +45,11 @@ import CardArsipJob from '../../components/dashboard/cardArsipJob';
 import qs from 'qs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SafeAreaView} from 'react-native';
+import {Root, Toast} from 'native-base';
+
+const deviceWidth = Dimensions.get('window').width;
+const deviceHeight = Dimensions.get('window').height;
+console.log('Ini adalah widt dari device ini', deviceWidth);
 
 const Dashboard = ({
   navigation,
@@ -88,13 +94,11 @@ const Dashboard = ({
   }
 
   const showToastWithGravityAndOffset = (msg) => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
+    Toast.show({
+      text: msg,
+      buttonText: 'Ok',
+      duration: 2000,
+    });
   };
 
   useEffect(() => {
@@ -179,48 +183,13 @@ const Dashboard = ({
   };
 
   return (
-    <>
+    <Root>
       <View style={styles.container}>
-        {/* header */}
-        <SafeAreaView>
-          <View style={styles.header}>
-            <Image source={Logo} style={styles.logo} />
-            <View style={{flexDirection: 'row'}}>
-              <Text>
-                Hello
-                <Text style={{fontWeight: 'bold'}}>
-                  {' '}
-                  {name === null ? null : name.split(' ')[0]}
-                </Text>
-              </Text>
-              <TouchableOpacity
-                style={{marginLeft: 20}}
-                onPress={() => setModalVisible(true)}>
-                <Image style={styles.bell} source={Logout} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </SafeAreaView>
-
         <Animated.ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.body}
           onScroll={handleScroll}>
           {/* Top Navigator */}
-          <View style={styles.topNav}>
-            <TouchableOpacity>
-              <Text>Profile</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text>Job</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text>Event</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text>HRD</Text>
-            </TouchableOpacity>
-          </View>
 
           {/* Card active job */}
           <View style={styles.cardActiveJob}>
@@ -366,58 +335,7 @@ const Dashboard = ({
           />
         ) : null}
       </View>
-
-      {/* prompt Logout */}
-      <Modal
-        animationType="fade"
-        animationInTiming={300}
-        hasBackdrop={true}
-        onBackdropPress={() => {
-          setModalVisible(!modalVisible);
-        }}
-        backdropColor="black"
-        backdropOpacity={0.6}
-        visible={modalVisible}
-        onRequestClose={() => {
-          showToastWithGravityAndOffset('Modal Has been Close');
-          setModalVisible(!modalVisible);
-        }}
-        useNativeDriver={true}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Are you sure you want to logout ?
-            </Text>
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                style={{...styles.btnModal, borderRightWidth: 0.5}}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Text
-                  style={{
-                    color: colors.badgeRed,
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}>
-                  Cancel
-                </Text>
-              </Pressable>
-              <Pressable
-                style={{...styles.btnModal, borderLeftWidth: 0.5}}
-                onPress={() => handleLogout()}>
-                <Text
-                  style={{
-                    color: colors.badgeBlue,
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                  }}>
-                  Yes
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </>
+    </Root>
   );
 };
 
@@ -451,7 +369,7 @@ const styles = StyleSheet.create({
   },
   topNav: {
     height: 30,
-    width: 343,
+    width: deviceWidth - 49,
     backgroundColor: '#D9D8DD',
     marginTop: 30,
     alignSelf: 'center',
@@ -526,44 +444,6 @@ const styles = StyleSheet.create({
   rowContainer: {
     width: '100%',
     marginBottom: 15,
-  },
-
-  // modal
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    height: 150,
-    width: 300,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  btnModal: {
-    height: 50,
-    width: 150,
-    borderTopWidth: 0.7,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalText: {
-    justifyContent: 'center',
-    marginTop: 35,
-    textAlign: 'center',
-    fontSize: 18,
   },
 });
 

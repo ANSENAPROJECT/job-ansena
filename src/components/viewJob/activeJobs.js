@@ -34,6 +34,8 @@ import {
   deactivatedJobGroup,
   inactiveJobGroup,
 } from '../../public/redux/ActionCreators/viewjob';
+import {Alert} from 'react-native';
+import {Platform} from 'react-native';
 
 const ActiveJobs = ({
   activeJobRedux,
@@ -52,13 +54,15 @@ const ActiveJobs = ({
   const idUser = useSelector((state) => state.auth.idUser);
 
   const showToast = (msg) => {
-    ToastAndroid.showWithGravityAndOffset(
-      msg,
-      ToastAndroid.SHORT,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
+    Platform.OS === 'ios'
+      ? Alert.alert(msg)
+      : ToastAndroid.showWithGravityAndOffset(
+          msg,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50,
+        );
   };
 
   const handleSubmit = () => {

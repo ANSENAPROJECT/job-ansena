@@ -78,7 +78,7 @@ class Login extends Component {
             this.showToastWithGravityAndOffset(msg);
           } else {
             this.showToastWithGravityAndOffset(msg);
-            this.props.navigation.replace('dashboard');
+            this.props.navigation.replace('headerDashboard');
           }
           this.setState({
             isLoading: false,

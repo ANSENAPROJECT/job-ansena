@@ -965,7 +965,7 @@ const AddJobGroup = ({
         {/* SubJOB */}
         <View
           activeOpacity={0.9}
-          style={{...styles.crew, borderRadius: 20, marginBottom: 30}}
+          style={{...styles.crew, borderRadius: 20, marginBottom: 40}}
           onPress={() => {
             toogleCrew();
           }}>
@@ -977,7 +977,8 @@ const AddJobGroup = ({
               justifyContent: 'space-between',
               width: '100%',
               alignItems: 'center',
-              marginBottom: Platform.OS === 'ios' ? 10 : 0,
+              marginBottom:
+                Platform.OS === 'ios' ? (colapseSubjob === false ? 20 : 0) : 0,
             }}>
             <View
               style={{
