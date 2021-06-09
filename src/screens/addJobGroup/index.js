@@ -353,7 +353,7 @@ const AddJobGroup = ({
         console.log(res);
         deleteJobRedux();
         deleteAllsubJob();
-        navigation.replace('dashboard');
+        navigation.replace('headerDashboard');
       })
       .catch(({response}) => {
         console.log(response);

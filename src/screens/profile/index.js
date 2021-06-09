@@ -4,7 +4,7 @@ import {StyleSheet, Text, View} from 'react-native';
 const Profile = () => {
   return (
     <View style={styles.container}>
-      <Text>Cooming soon</Text>
+      <Text style={styles.txt}>Coming Soon.</Text>
     </View>
   );
 };
@@ -16,5 +16,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  txt: {
+    fontSize: 40,
   },
 });
