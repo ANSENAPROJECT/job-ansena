@@ -87,12 +87,12 @@ const HeaderDashboard = ({logoutRedux, navigation}) => {
             tabStyle: {
               paddingTop: 0,
               paddingBottom: 20,
-              borderRadius: 20,
+              borderRadius: 10,
             },
             indicatorStyle: {
               height: 30,
               backgroundColor: 'white',
-              borderRadius: 20,
+              borderRadius: 10,
             },
             style: {
               backgroundColor: '#D9D8DD',

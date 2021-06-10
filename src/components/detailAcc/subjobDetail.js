@@ -22,6 +22,7 @@ import DuplicateJob from './subjobComponents/duplicateJob';
 import ImageGalery from './subjobComponents/imageGalery';
 import Purpose from './subjobComponents/purpose';
 import Remind from './subjobComponents/remind';
+import {ActivityIndicator} from 'react-native';
 
 const SubjobDetail = () => {
   //porpose
@@ -34,9 +35,7 @@ const SubjobDetail = () => {
   const [imgView, setImgView] = useState('');
   const [visible, setIsVisible] = useState(false);
 
-
   //Crew
-  
 
   return (
     <View style={styles.container}>
@@ -122,6 +121,13 @@ const SubjobDetail = () => {
 
       <Modal visible={visible} transparent={true}>
         <ImageViewer
+          loadingRender={() => {
+            return (
+              <View>
+                <ActivityIndicator size="large" colors="blue" />
+              </View>
+            );
+          }}
           enableSwipeDown={true}
           useNativeDriver
           imageUrls={[{url: imgView}]}

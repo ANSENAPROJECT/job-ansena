@@ -7,6 +7,7 @@ import {fonts} from '../../utils/fonts';
 import {API_URL} from '@env';
 import {useSelector} from 'react-redux';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import {ActivityIndicator} from 'react-native';
 
 const ImageGalery = () => {
   const [collapse, setCollapse] = useState(true);
@@ -70,6 +71,13 @@ const ImageGalery = () => {
       </Collapsible>
       <Modal visible={visible} transparent={true}>
         <ImageViewer
+          loadingRender={() => {
+            return (
+              <View>
+                <ActivityIndicator size="large" colors="blue" />
+              </View>
+            );
+          }}
           enableSwipeDown={true}
           useNativeDriver
           imageUrls={[{url: renderImg}]}
