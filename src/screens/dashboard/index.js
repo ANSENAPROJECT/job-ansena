@@ -232,7 +232,7 @@ const Dashboard = ({
                 Waiting
               </Text>
             </View>
-            <View style={styles.cardStatus}>
+            <View style={{...styles.cardStatus, marginHorizontal: 10}}>
               <View
                 style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{fontSize: 24, fontWeight: 'bold', color: 'grey'}}>
@@ -292,10 +292,10 @@ const Dashboard = ({
             }}>
             {`${isAdmin}` === 'true' ? (
               <TouchableOpacity
-                style={{flexDirection: 'row', alignItems: 'center'}}
+                style={{flexDirection: 'row', alignItems: 'center', ...styles.btnBleed}}
                 activeOpacity={0.6}
                 onPress={handleAddJobGroup}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 16}}>
                   <Image source={Plus} style={styles.plus} />
                   <Text
                     style={{
@@ -311,11 +311,12 @@ const Dashboard = ({
               <View />
             )}
             <TouchableOpacity
+            style={styles.btnBleed}
               activeOpacity={0.6}
               onPress={() => {
                 navigation.navigate('viewjob');
               }}>
-              <Text style={{color: colors.primary, fontWeight: 'bold'}}>
+              <Text style={{color: colors.primary, fontWeight: 'bold', marginLeft: 16}}>
                 View
               </Text>
             </TouchableOpacity>
@@ -380,7 +381,7 @@ const styles = StyleSheet.create({
   },
   cardActiveJob: {
     height: 100,
-    width: 343,
+    width: '100%',
     backgroundColor: 'white',
     borderRadius: 20,
     alignSelf: 'center',
@@ -392,14 +393,14 @@ const styles = StyleSheet.create({
   statusContainer: {
     alignSelf: 'center',
     marginTop: 15,
-    width: 343,
+    width: '100%',
     height: 77,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   cardStatus: {
     height: '100%',
-    width: 108,
+    flex: 1,
     backgroundColor: 'white',
     borderRadius: 25,
     paddingHorizontal: 15,
@@ -408,7 +409,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     width: '100%',
-    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 15,
   },
+  btnBleed: {height: 48,justifyContent: 'center', alignItems: 'center'}
 });
 
 const mapDispatchToProps = (dispatch) => {

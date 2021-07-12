@@ -61,6 +61,7 @@ import {SafeAreaView} from 'react-native';
 
 const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
+console.log('Ini device width',deviceWidth);
 
 const datenow = new Date().getDate();
 const montNow = new Date().getMonth() + 1;
@@ -74,7 +75,6 @@ const nextWeek = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
 const tomorrow = new Date().getTime() + 1 * 24 * 60 * 60 * 1000;
 const today = new Date().getTime();
 
-console.log('Ini adalah Datenow', datenow);
 const monthNames = [
   'January',
   'February',
@@ -895,7 +895,8 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
           <View style={styles.containerCalendar}>
             <CalendarList
               theme={{
-                width: 250,
+                flex: 1,
+                width: deviceWidth - 142,
                 backgroundColor: 'transparent',
                 textDayHeaderFontWeight: '100',
                 calendarBackground: 'transparent',
@@ -922,7 +923,7 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
                   },
                   dayHeader: {
                     marginTop: 2,
-                    marginBottom: 7,
+                    marginBottom: 20,
                     width: 30,
                     textAlign: 'center',
                     fontSize: 12,
@@ -934,13 +935,13 @@ const AddSubJob = ({navigation, route, updateDetailSubjobRedux}) => {
               style={{
                 borderRadius: 20,
                 alignSelf: 'center',
-                width: 220,
-                height: 150,
+                width: deviceWidth - 175,
+                height: 200,
                 borderRadius: 20,
                 backgroundColor: '#f2f3f7',
               }}
               horizontal={true}
-              calendarWidth={230}
+              calendarWidth={deviceWidth - 168}
               pastScrollRange={0}
               futureScrollRange={1}
               scrollEnabled={true}

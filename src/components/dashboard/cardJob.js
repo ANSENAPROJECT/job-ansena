@@ -33,7 +33,7 @@ const CardJob = ({navigation}) => {
   }, [jobList, isFocused]);
 
   const [jobList, setJobList] = useState([]);
-
+ 
   const getData = () => {
     axios
       .get(`${API_URL}/jzl/api/api/getListIndex/${idUser}`)
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   containerAi: {
     minHeight: 350,
     maxHeight: 350,
-    width: 343,
+    width: '100%',
     alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 15,
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.7,
     borderColor: '#eaeaea',
     marginTop: 10,
-    width: 285,
+    width: '95%',
     marginLeft: 10,
   },
   rowContainer: {

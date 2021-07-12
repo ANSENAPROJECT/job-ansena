@@ -56,11 +56,13 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native';
 import {Root, Toast} from 'native-base';
+
 const config = {
   headers: {
     'Content-type': 'multipart/form-data',
   },
 };
+
 const auth = {
   headers: {
     Authorization:
@@ -519,6 +521,7 @@ const AddJobGroup = ({
     });
   };
 
+  //from duplicate
   const getDetailJob = () => {
     if (!route.params) {
       null;
@@ -527,10 +530,12 @@ const AddJobGroup = ({
       axios
         .get(`${API_URL}/jzl/api/api/duplicate_job/${jobId}`)
         .then((res) => {
-          console.log(res);
+          console.log('Ini dari duplicate job : ', res);
           setJobIdDuplicate(res.data.data.jobId);
           setcheckCrew(res.data.data.crew);
-          setCheckedCoAdmin(res.data.data.coadmin);
+          setCheckedCoAdmin(
+            res.data.data.coadmin === '-' ? '' : res.data.data.coadmin,
+          );
           setLeader(res.data.data.leader);
           setTitle(res.data.data.title);
         })
@@ -755,7 +760,7 @@ const AddJobGroup = ({
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: colors.txtGrey}}>
-              {checkedCoadmin === ''
+              {checkedCoadmin == ''
                 ? 'None'
                 : checkedCoadmin.name.split(' ')[0]}
             </Text>

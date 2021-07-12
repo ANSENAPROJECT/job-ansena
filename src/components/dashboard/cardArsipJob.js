@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   containerAi: {
     minHeight: 300,
     maxHeight: 300,
-    width: 343,
+    width: '100%',
     alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 15,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.7,
     borderColor: '#eaeaea',
     marginTop: 10,
-    width: 285,
+    width: '95%',
     marginLeft: 10,
   },
   rowContainer: {

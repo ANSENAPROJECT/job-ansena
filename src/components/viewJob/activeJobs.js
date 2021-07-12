@@ -519,6 +519,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'row',
     width: '100%',
-    marginTop: 10,
+    marginTop: 20,
   },
 });
